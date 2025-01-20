@@ -22,14 +22,14 @@ local update_content = function()
 	local container_lines = {}
 	for index, buffer in ipairs(api.get_buffers_list()) do
 		table.insert(content_lines, vim.fn.fnamemodify(buffer.name, ":."))
-		table.insert(container_lines, tostring(index))
+		table.insert(container_lines, string.format("%2d", index))
 	end
 
 	vim.api.nvim_buf_set_lines(state.content_buf, 0, -1, false, content_lines)
 	vim.api.nvim_buf_set_lines(state.container_buf, 0, -1, false, container_lines)
 
 	for line = 0, #container_lines do
-		vim.api.nvim_buf_add_highlight(state.container_buf, -1, "String", line, 0, -1)
+		vim.api.nvim_buf_add_highlight(state.container_buf, -1, "Constant", line, 0, -1)
 	end
 end
 
@@ -59,6 +59,7 @@ M.show = function()
 
 	local width = vim.api.nvim_get_option("columns")
 	local height = vim.api.nvim_get_option("lines")
+
 	local opts_container = {
 		title = " Buffon ",
 		title_pos = "center",
@@ -71,15 +72,17 @@ M.show = function()
 		border = "single",
 		zindex = 1,
 	}
+
 	local opts_content = {
 		relative = "editor",
-		width = math.floor(width * 0.5) - 2,
+		width = math.floor(width * 0.5) - 3,
 		height = math.floor(height * 0.5),
-		col = math.floor(width * 0.25) + 3,
+		col = math.floor(width * 0.25) + 4,
 		row = math.floor(height * 0.25) + 1,
 		style = "minimal",
 		zindex = 2,
 	}
+
 	state.content_win = vim.api.nvim_open_win(state.content_buf, true, opts_content)
 	state.container_win = vim.api.nvim_open_win(state.container_buf, false, opts_container)
 	update_content()
