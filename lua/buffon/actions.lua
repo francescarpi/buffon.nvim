@@ -1,5 +1,6 @@
 local api = require("buffon.api")
 local config = require("buffon.config")
+local utils = require("buffon.utils")
 
 local M = {}
 
@@ -14,7 +15,7 @@ local get_current_buf_info = function()
 		return
 	end
 
-	local current_buf_name = vim.api.nvim_buf_get_name(current_buf_id)
+	local current_buf_name = utils.format_buffer_name(vim.api.nvim_buf_get_name(current_buf_id))
 	local current_buf_info = api.get_buffer_by_name(current_buf_name)
 	if current_buf_info == nil then
 		return
