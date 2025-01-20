@@ -12,18 +12,10 @@ local state = {
 
 local update_content = function()
 	assert(state.content_buf, "buf must to be created")
-	local buffers = {}
-	for name, buf_info in pairs(api.get_buffers_by_name()) do
-		table.insert(buffers, { name = name, order = buf_info.order })
-	end
-
-	table.sort(buffers, function(a, b)
-		return a.order < b.order
-	end)
 
 	local lines = {}
-	for _, buf_info in ipairs(buffers) do
-		table.insert(lines, buf_info.name)
+	for _, buffer in ipairs(api.get_buffers_list()) do
+		table.insert(lines, buffer.name)
 	end
 
 	vim.api.nvim_buf_set_lines(state.content_buf, 0, -1, false, lines)
@@ -47,7 +39,7 @@ local register_keymaps = function()
 
 	keymap("<cr>", function()
 		local line_num = vim.fn.line(".")
-		local buffer = api.get_buffer_by_order(line_num - 1)
+		local buffer = api.get_buffer_by_index(line_num)
 		if buffer then
 			M.close()
 			vim.api.nvim_set_current_buf(buffer.id)
