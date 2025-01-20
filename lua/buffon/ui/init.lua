@@ -54,7 +54,7 @@ M.show = function()
 	if state.content_buf == nil then
 		state.content_buf = vim.api.nvim_create_buf(false, true)
 		state.container_buf = vim.api.nvim_create_buf(false, true)
-		keymaps.register(M)
+		keymaps.register(state.content_buf, M.close)
 	end
 
 	local width = vim.api.nvim_get_option("columns")

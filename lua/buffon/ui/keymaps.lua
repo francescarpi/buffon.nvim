@@ -2,29 +2,33 @@ local api = require("buffon.api")
 
 local M = {}
 
-local keymap = function(m, shortcut, callback)
+local keymap = function(buffer_id, shortcut, callback)
 	vim.keymap.set("n", shortcut, callback, {
-		buffer = m.content_buf,
+		buffer = buffer_id,
 		silent = true,
 	})
 end
 
-M.register = function(m)
-	keymap(m, "q", function()
-		m.close()
+---@param buffer_id number
+---@param close function
+M.register = function(buffer_id, close)
+	keymap(buffer_id, "q", function()
+		close()
 	end)
 
-	keymap(m, "esc", function()
-		m.close()
+	keymap(buffer_id, "esc", function()
+		close()
 	end)
 
-	keymap(m, "<cr>", function()
+	keymap(buffer_id, "<cr>", function()
+		api.sort_buffers_by_list(vim.api.nvim_buf_get_lines(buffer_id, 0, -1, false))
+
 		local line_num = vim.fn.line(".")
 		local buffer = api.get_buffer_by_index(line_num)
 		if buffer then
-			m.close()
 			vim.api.nvim_set_current_buf(buffer.id)
 		end
+		close()
 	end)
 end
 
