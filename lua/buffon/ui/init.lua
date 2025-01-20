@@ -21,7 +21,7 @@ local update_content = function()
 	local content_lines = {}
 	local container_lines = {}
 	for index, buffer in ipairs(api.get_buffers_list()) do
-		table.insert(content_lines, buffer.name)
+		table.insert(content_lines, vim.fn.fnamemodify(buffer.name, ":."))
 		table.insert(container_lines, tostring(index))
 	end
 
