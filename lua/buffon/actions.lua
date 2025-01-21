@@ -4,9 +4,10 @@ local ui = require("buffon.ui")
 
 local M = {}
 
----@return BuffonBufferNyName | nil
+---@return table<BuffonBuffer, number> | nil
 local get_current_buf_info = function()
-	if #api.get_buffers_list() == 0 then
+	local buffers = api.get_buffers_list()
+	if #buffers == 0 then
 		return
 	end
 
@@ -16,22 +17,22 @@ local get_current_buf_info = function()
 	end
 
 	local current_buf_name = vim.api.nvim_buf_get_name(current_buf_id)
-	local current_buf_info = api.get_buffer_by_name(current_buf_name)
-	if current_buf_info == nil then
+	local current_buf_index = api.get_index_by_name(current_buf_name)
+	if current_buf_index == nil then
 		return
 	end
 
-	return current_buf_info
+	return {buffers[current_buf_index], current_buf_index}
 end
 
 M.next = function()
-	local buffer = get_current_buf_info()
-	if buffer == nil then
+	local current_buffer = get_current_buf_info()
+	if current_buffer == nil then
 		return
 	end
 
 	local opts = config.opts()
-	local next_buf = api.get_buffer_by_index(buffer.index + 1)
+	local next_buf = api.get_buffer_by_index(current_buffer[2] + 1)
 	if next_buf == nil then
 		if opts.cyclic_navigation then
 			next_buf = api.get_buffer_by_index(1)
@@ -41,30 +42,30 @@ M.next = function()
 	end
 
 	assert(next_buf, "next buffer must exists")
-	if next_buf.id ~= buffer.id then
+	if next_buf.id ~= current_buffer[1].id then
 		vim.api.nvim_set_current_buf(next_buf.id)
 	end
 end
 
 M.previous = function()
-	local buffer = get_current_buf_info()
-	if buffer == nil then
+	local current_buffer = get_current_buf_info()
+	if current_buffer == nil then
 		return
 	end
 
 	local opts = config.opts()
-	local previous_buf = api.get_buffer_by_index(buffer.index - 1)
-	if previous_buf == nil then
+	local previous_buf_index = api.get_buffer_by_index(current_buffer[2] - 1)
+	if previous_buf_index == nil then
 		if opts.cyclic_navigation then
-			previous_buf = api.get_buffer_by_index(#api.get_buffers_list())
+			previous_buf_index = api.get_buffer_by_index(#api.get_buffers_list())
 		else
 			return
 		end
 	end
 
-	assert(previous_buf, "previous should exists")
-	if previous_buf.id ~= buffer.id then
-		vim.api.nvim_set_current_buf(previous_buf.id)
+	assert(previous_buf_index, "previous should exists")
+	if previous_buf_index.id ~= current_buffer[1].id then
+		vim.api.nvim_set_current_buf(previous_buf_index.id)
 	end
 end
 
@@ -77,7 +78,7 @@ M.goto = function(order)
 		return
 	end
 
-	if next_buffer.id ~= current_buffer.id then
+	if next_buffer.id ~= current_buffer[1].id then
 		vim.api.nvim_set_current_buf(next_buffer.id)
 	end
 
@@ -85,12 +86,12 @@ end
 
 --- Move current buffer up
 M.buffer_up = function()
-	local buffer = get_current_buf_info()
-	if buffer == nil then
+	local current_buffer = get_current_buf_info()
+	if current_buffer == nil then
 		return
 	end
 
-	local position = api.move_buffer_up(buffer.name)
+	local position = api.move_buffer_up(current_buffer[1].name)
 	if position > -1 then
 		ui.refresh()
 		vim.print("Buffer moved to position " .. position)
@@ -99,12 +100,12 @@ end
 
 --- Move current buffer down
 M.buffer_down = function()
-	local buffer = get_current_buf_info()
-	if buffer == nil then
+	local current_buffer = get_current_buf_info()
+	if current_buffer == nil then
 		return
 	end
 
-	local position = api.move_buffer_down(buffer.name)
+	local position = api.move_buffer_down(current_buffer[1].name)
 	if position > -1 then
 		ui.refresh()
 		vim.print("Buffer moved to position " .. position)
@@ -113,12 +114,12 @@ end
 
 --- Move current buffer to top
 M.buffer_top = function()
-	local buffer = get_current_buf_info()
-	if buffer == nil then
+	local current_buffer = get_current_buf_info()
+	if current_buffer == nil then
 		return
 	end
 
-	api.move_buffer_top(buffer.name)
+	api.move_buffer_top(current_buffer[1].name)
 	ui.refresh()
 	vim.print("Buffer moved to top")
 end

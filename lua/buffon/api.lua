@@ -2,12 +2,7 @@ local config = require("buffon.config")
 
 local M = {}
 
--- TODO Deprecated this class. In the future, it will only has a record<string, number> to map the index. The data (such id and name), is already
--- present within the BuffonBuffer
----@class BuffonBufferNyName
----@field id number
----@field name string
----@field index number
+-- TODO Rename buffers_list by buffers
 
 ---@class BuffonBuffer
 ---@field name string
@@ -16,30 +11,26 @@ local M = {}
 ---@field id number
 
 ---@class BuffonApiState
----@field buffers_by_name table<string, BuffonBufferNyName>
+---@field index_buffers_by_name table<string, number>
 ---@field buffers_list table<BuffonBuffer>
 ---@field opts BuffonConfig
 local state = {
-	buffers_by_name = {},
+	index_buffers_by_name = {},
 	buffers_list = {},
 }
 
 --- This method is called after update buffers_list and generates
 --- the buffes_by_name list automatically
 local refresh_buffers_by_name = function()
-	---@type table<string, BuffonBufferNyName>
+	---@type table<string, number>
 	local buffers = {}
 
 	for i = 1, #state.buffers_list do
 		---@type BuffonBuffer
 		local buffer = state.buffers_list[i]
-		buffers[buffer.name] = {
-			id = buffer.id,
-			name = buffer.name,
-			index = i,
-		}
+		buffers[buffer.name] = i
 	end
-	state.buffers_by_name = buffers
+	state.index_buffers_by_name = buffers
 end
 
 ---@param list table<BuffonBuffer>
@@ -66,9 +57,9 @@ M.add_buffer = function(name, id)
 	refresh_buffers_by_name()
 end
 
----@return table<string, BuffonBufferNyName>
-M.get_buffers_by_name = function()
-	return state.buffers_by_name
+---@return table<string, number>
+M.get_index_buffers_by_name = function()
+	return state.index_buffers_by_name
 end
 
 ---@return table<BuffonBuffer>
@@ -83,20 +74,20 @@ M.get_buffer_by_index = function(index)
 end
 
 ---@param name string
----@return BuffonBufferNyName | nil
-M.get_buffer_by_name = function(name)
-	return state.buffers_by_name[name]
+---@return number | nil
+M.get_index_by_name = function(name)
+	return state.index_buffers_by_name[name]
 end
 
 ---@param name string
 ---@return nil
 M.delete_buffer = function(name)
-	local buffer = state.buffers_by_name[name]
-	if buffer == nil then
+	local buffer_index = state.index_buffers_by_name[name]
+	if buffer_index == nil then
 		return
 	end
 
-	table.remove(state.buffers_list, buffer.index)
+	table.remove(state.buffers_list, buffer_index)
 	refresh_buffers_by_name()
 end
 
@@ -110,41 +101,39 @@ local swap_buffers = function(list, index1, index2)
 end
 
 ---@param name string
----@return number new index
 M.move_buffer_up = function(name)
-	---@type BuffonBufferNyName | nil
-	local buffer = state.buffers_by_name[name]
-	if buffer == nil or buffer.index == 1 then
+	---@type number | nil
+	local buffer_index = state.index_buffers_by_name[name]
+	if buffer_index == nil or buffer_index == 1 then
 		return -1
 	end
-	local new_index = buffer.index - 1
-	swap_buffers(state.buffers_list, buffer.index, new_index)
+	local new_index = buffer_index - 1
+	swap_buffers(state.buffers_list, buffer_index, new_index)
 	refresh_buffers_by_name()
 	return new_index
 end
 
 ---@param name string
----@return number target position
 M.move_buffer_down = function(name)
-	---@type BuffonBufferNyName | nil
-	local buffer = state.buffers_by_name[name]
-	if buffer == nil or buffer.index == #state.buffers_list then
+	---@type number | nil
+	local buffer_index = state.index_buffers_by_name[name]
+	if buffer_index == nil or buffer_index == #state.buffers_list then
 		return -1
 	end
-	local new_index = buffer.index + 1
-	swap_buffers(state.buffers_list, buffer.index, new_index)
+	local new_index = buffer_index + 1
+	swap_buffers(state.buffers_list, buffer_index, new_index)
 	refresh_buffers_by_name()
 	return new_index
 end
 
 ---@param name string
 M.move_buffer_top = function(name)
-	---@type BuffonBufferNyName | nil
-	local buffer = state.buffers_by_name[name]
-	if buffer == nil or buffer.index == 1 then
+	---@type number | nil
+	local buffer_index = state.index_buffers_by_name[name]
+	if buffer_index == nil or buffer_index == 1 then
 		return
 	end
-	local buffer_removed = table.remove(state.buffers_list, buffer.index)
+	local buffer_removed = table.remove(state.buffers_list, buffer_index)
 	table.insert(state.buffers_list, 1, buffer_removed)
 	refresh_buffers_by_name()
 end

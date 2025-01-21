@@ -86,8 +86,8 @@ local refresh_container = function(buffers)
 end
 
 ---@param buffers table<BuffonBuffer>
----@param buffers_by_name table<string, BuffonBufferNyName>
-local refresh_content = function(buffers, buffers_by_name)
+---@param index_buffers_by_name table<string, number>
+local refresh_content = function(buffers, index_buffers_by_name)
 	local lines = {}
 	local width = 19
 
@@ -95,9 +95,9 @@ local refresh_content = function(buffers, buffers_by_name)
 	local current_buf = vim.api.nvim_get_current_buf()
 	if current_buf then
 		local current_buf_name = vim.api.nvim_buf_get_name(current_buf)
-		local buffer = buffers_by_name[current_buf_name]
-		if buffer then
-			line_active = buffer.index - 1
+		local buffer_index = index_buffers_by_name[current_buf_name]
+		if buffer_index ~= nil then
+			line_active = buffer_index - 1
 		end
 	end
 
@@ -133,7 +133,7 @@ end
 M.refresh = function()
 	if state.container.win and state.content.win then
 		local buffers = api.get_buffers_list()
-		local buffers_by_name = api.get_buffers_by_name()
+		local buffers_by_name = api.get_index_buffers_by_name()
 		refresh_container(buffers)
 		refresh_content(buffers, buffers_by_name)
 	end

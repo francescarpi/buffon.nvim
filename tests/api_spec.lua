@@ -3,7 +3,7 @@ local api = require("buffon.api")
 
 local check_buffer = function(index, id, name)
 	eq(api.get_buffer_by_index(index), { id = id, name = name, short_name = name, filename = name })
-	eq(api.get_buffer_by_name(name), { id = id, name = name, index = index })
+	eq(api.get_index_by_name(name), index)
 end
 
 describe("api", function()
