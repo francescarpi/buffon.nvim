@@ -53,7 +53,7 @@ end
 ---@return nil
 M.add_buffer = function(name, id)
 	-- [No Name] buffer is ignored
-	if name == "" then
+	if name == "" or name == "/" then
 		return
 	end
 
