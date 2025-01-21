@@ -81,4 +81,18 @@ M.register = function()
 	end
 end
 
+---@param buffer_mappings_chars string
+---@return boolean
+M.are_valid_mapping_chars = function(buffer_mappings_chars)
+	for i = 1, #buffer_mappings_chars do
+		local char = buffer_mappings_chars:sub(i, i)
+		for _, keybinding in ipairs(keybindings) do
+			if char == keybinding.lhs then
+				return false
+			end
+		end
+	end
+	return true
+end
+
 return M
