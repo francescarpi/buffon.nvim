@@ -61,11 +61,7 @@ local refresh_container = function(buffers)
 		if shortcut ~= "" then
 			shortcut = state.config.leader_key .. shortcut
 		end
-
-		table.insert(
-			lines,
-			string.format("%2d", index) .. string.rep(" ", vim.api.nvim_win_get_width(state.container.win) - 4) .. shortcut
-		)
+		table.insert(lines, shortcut)
 	end
 
 	vim.api.nvim_buf_set_lines(state.container.buf, 0, -1, false, lines)
@@ -94,6 +90,10 @@ local refresh_content = function(buffers, buffers_by_name)
 
 	for _, buffer in ipairs(buffers) do
 		table.insert(lines, buffer.shorter_name)
+	end
+
+	if #lines == 0 then
+		lines = { "No buffers..." }
 	end
 
 	vim.api.nvim_buf_set_lines(state.content.buf, 0, -1, false, lines)
