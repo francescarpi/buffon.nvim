@@ -14,19 +14,14 @@ local state = {}
 
 ---@return table
 local wins_options = function()
-	local editor_width = vim.api.nvim_get_option("columns")
-
-	local container_width = 50
-	local left = editor_width - container_width
-
 	return {
 		{
 			title = " Buffon ",
 			title_pos = "right",
 			relative = "editor",
-			width = container_width,
+			width = 1,
 			height = 1,
-			col = left - 2,
+			col = 1,
 			row = 0,
 			style = "minimal",
 			border = "single",
@@ -35,9 +30,9 @@ local wins_options = function()
 		},
 		{
 			relative = "editor",
-			width = container_width - 4,
+			width = 1,
 			height = 1,
-			col = left + 2,
+			col = 1,
 			row = 1,
 			style = "minimal",
 			zindex = 2,
@@ -53,6 +48,21 @@ local set_win_height = function(win, height)
 		height = 1
 	end
 	vim.api.nvim_win_set_height(win, height)
+end
+
+---@param width number
+local update_width = function(width)
+	local editor_width = vim.api.nvim_get_option("columns")
+
+	local container_cfg = vim.api.nvim_win_get_config(state.container.win)
+	container_cfg.width = width
+	container_cfg.col = editor_width - width - 2
+	vim.api.nvim_win_set_config(state.container.win, container_cfg)
+
+	local content_cfg = vim.api.nvim_win_get_config(state.content.win)
+	content_cfg.width = width - 3
+	content_cfg.col = editor_width - width + 2
+	vim.api.nvim_win_set_config(state.content.win, content_cfg)
 end
 
 ---@param buffers table<BuffonBuffer>
@@ -79,6 +89,7 @@ end
 ---@param buffers_by_name table<string, BuffonBufferNyName>
 local refresh_content = function(buffers, buffers_by_name)
 	local lines = {}
+	local width = 19
 
 	local line_active = nil
 	local current_buf = vim.api.nvim_get_current_buf()
@@ -92,6 +103,9 @@ local refresh_content = function(buffers, buffers_by_name)
 
 	for _, buffer in ipairs(buffers) do
 		table.insert(lines, buffer.filename)
+		if #buffer.filename > width then
+			width = #buffer.filename + 4
+		end
 	end
 
 	if #lines == 0 then
@@ -105,6 +119,8 @@ local refresh_content = function(buffers, buffers_by_name)
 	end
 
 	set_win_height(state.content.win, #buffers)
+
+	update_width(width)
 end
 
 ---@param opts BuffonConfig

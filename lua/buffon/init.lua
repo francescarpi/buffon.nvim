@@ -6,19 +6,23 @@ local ui = require("buffon.ui")
 local M = {}
 
 local register_autocommands = function(group)
-	vim.api.nvim_create_autocmd("BufNew", {
+	vim.api.nvim_create_autocmd("BufAdd", {
 		group = group,
 		callback = function(buf)
-			api.add_buffer(buf.match, buf.buf)
-			ui.refresh()
+			if buf and buf.match ~= "" then
+				api.add_buffer(buf.match, buf.buf)
+				ui.refresh()
+			end
 		end,
 	})
 
 	vim.api.nvim_create_autocmd("BufDelete", {
 		group = group,
 		callback = function(buf)
-			api.delete_buffer(buf.match)
-			ui.refresh()
+			if buf and buf.match ~= "" then
+				api.delete_buffer(buf.match)
+				ui.refresh()
+			end
 		end,
 	})
 

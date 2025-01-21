@@ -155,25 +155,4 @@ M.setup = function(opts)
 	set_buffers_list({})
 end
 
----@param buffers_list table<string>
----@return boolean
-M.sort_buffers_by_list = function(buffers_list)
-	if #buffers_list ~= #state.buffers_list then
-		return false
-	end
-
-	local new_list = {}
-	for _, buffer_name in ipairs(buffers_list) do
-		local buffer = state.buffers_by_name[buffer_name]
-		if buffer == nil then
-			return false
-		end
-		table.insert(new_list, { id = buffer.id, name = buffer.name })
-	end
-
-	set_buffers_list(new_list)
-
-	return true
-end
-
 return M
