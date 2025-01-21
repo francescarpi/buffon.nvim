@@ -3,6 +3,55 @@ local ui = require("buffon.ui")
 
 local M = {}
 
+---@class BuffonKeybinding
+---@field lhs string
+---@field rhs function | string
+---@field help string
+
+---@type table<BuffonKeybinding>
+local keybindings = {
+	{
+		lhs = "l",
+		rhs = function() actions.next() end,
+		help = "Go to next buffer"
+	},
+	{
+		lhs = "h",
+		rhs = function() actions.previous() end,
+		help = "Go to previous buffer"
+	},
+	{
+		lhs = "k",
+		rhs = function() actions.buffer_up() end,
+		help = "Move buffer to up one position"
+	},
+	{
+		lhs = "j",
+		rhs = function() actions.buffer_down() end,
+		help = "Move buffer to down one position"
+	},
+	{
+		lhs = "t",
+		rhs = function() actions.buffer_top() end,
+		help = "Move buffer to the top position"
+	},
+	{
+		lhs = "a",
+		rhs = function() ui.show() end,
+		help = "Toggle opened buffers window visibility"
+	},
+	{
+		lhs = ";",
+		rhs = "<cmd>e #<cr>",
+		help = "Switch to previous used buffer"
+	},
+	{
+		lhs = "d",
+		rhs = "<cmd>bdelete<cr>",
+		help = "Delete current buffer"
+	}
+}
+
 ---@class BuffonKeybindingsState
 ---@field config BuffonConfig
 local state = {}
@@ -20,33 +69,9 @@ M.setup = function(opts)
 end
 
 M.register = function()
-	keymap("l", function()
-		actions.next()
-	end, "Next buffer")
-
-	keymap("h", function()
-		actions.previous()
-	end, "Previous buffer")
-
-	keymap("k", function()
-		actions.buffer_up()
-	end, "Move buffer to up")
-
-	keymap("j", function()
-		actions.buffer_down()
-	end, "Move buffer to down")
-
-	keymap("t", function()
-		actions.buffer_top()
-	end, "Move buffer to top position")
-
-	keymap("a", function()
-		ui.show()
-	end, "Toggle info window")
-
-	keymap(";", "<cmd>e #<cr>", "Switch to previous used buffer")
-
-	keymap("d", "<cmd>bdelete<cr>", "Delete current buffer")
+	for _, keybinding in ipairs(keybindings) do
+		keymap(keybinding.lhs, keybinding.rhs, keybinding.help)
+	end
 
 	for i = 1, #state.config.buffer_mappings_chars do
 		local char = state.config.buffer_mappings_chars:sub(i, i)
