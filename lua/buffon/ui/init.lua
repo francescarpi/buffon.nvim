@@ -31,15 +31,17 @@ local wins_options = function()
 			style = "minimal",
 			border = "single",
 			zindex = 1,
+			focusable = false,
 		},
 		{
 			relative = "editor",
-			width = container_width - 5,
+			width = container_width - 4,
 			height = 1,
 			col = left + 2,
 			row = 1,
 			style = "minimal",
 			zindex = 2,
+			focusable = false,
 		},
 	}
 end
@@ -89,7 +91,7 @@ local refresh_content = function(buffers, buffers_by_name)
 	end
 
 	for _, buffer in ipairs(buffers) do
-		table.insert(lines, buffer.shorter_name)
+		table.insert(lines, buffer.filename)
 	end
 
 	if #lines == 0 then

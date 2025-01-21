@@ -12,7 +12,7 @@ local M = {}
 ---@class BuffonBuffer
 ---@field name string
 ---@field short_name string
----@field shorter_name string
+---@field filename string
 ---@field id number
 
 ---@class BuffonApiState
@@ -61,7 +61,7 @@ M.add_buffer = function(name, id)
 		id = id,
 		name = name,
 		short_name = vim.fn.fnamemodify(name, ":."),
-		shorter_name = vim.fn.fnamemodify(name, ":t"),
+		filename = vim.fn.fnamemodify(name, ":t"),
 	})
 	refresh_buffers_by_name()
 end
