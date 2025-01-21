@@ -34,7 +34,7 @@ local wins_options = function()
 		},
 		{
 			relative = "editor",
-			width = container_width - 3,
+			width = container_width - 5,
 			height = 1,
 			col = left + 2,
 			row = 1,
@@ -57,7 +57,15 @@ end
 local refresh_container = function(buffers)
 	local lines = {}
 	for index, _ in ipairs(buffers) do
-		table.insert(lines, string.format("%2d", index))
+		local shortcut = state.config.buffer_mappings_chars:sub(index, index)
+		if shortcut ~= "" then
+			shortcut = state.config.leader_key .. shortcut
+		end
+
+		table.insert(
+			lines,
+			string.format("%2d", index) .. string.rep(" ", vim.api.nvim_win_get_width(state.container.win) - 4) .. shortcut
+		)
 	end
 
 	vim.api.nvim_buf_set_lines(state.container.buf, 0, -1, false, lines)
