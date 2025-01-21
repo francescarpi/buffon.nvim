@@ -11,7 +11,7 @@ local M = {}
 ---@class BuffonApiState
 ---@field index_buffers_by_name table<string, number>
 ---@field buffers table<BuffonBuffer>
----@field opts BuffonConfig
+---@field config BuffonConfig
 local state = {
 	index_buffers_by_name = {},
 	buffers = {},
@@ -46,12 +46,19 @@ M.add_buffer = function(name, id)
 		return
 	end
 
-	table.insert(state.buffers, {
+	local buffer = {
 		id = id,
 		name = name,
 		short_name = vim.fn.fnamemodify(name, ":."),
 		filename = vim.fn.fnamemodify(name, ":t"),
-	})
+	}
+
+	if state.config.prepend_buffers then
+		table.insert(state.buffers, 1, buffer)
+	else
+		table.insert(state.buffers, buffer)
+	end
+
 	refresh_indexes()
 end
 
@@ -138,7 +145,7 @@ end
 
 ---@param opts BuffonConfig | nil
 M.setup = function(opts)
-	state.opts = opts or config.opts()
+	state.config = opts or config.opts()
 	set_buffers_list({})
 end
 

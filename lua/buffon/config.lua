@@ -4,17 +4,20 @@ local M = {}
 ---@field cyclic_navigation? boolean
 ---@field leader_key? string
 ---@field buffer_mappings_chars? string
+---@field prepend_buffers? boolean
 
 ---@class BuffonConfig
 ---@field cyclic_navigation boolean
 ---@field leader_key string
 ---@field buffer_mappings_chars string
+---@field prepend_buffers boolean
 
 ---@type BuffonConfig
 local plugin_config = {
 	cyclic_navigation = false,
 	leader_key = ";",
 	buffer_mappings_chars = "qwer",
+	prepend_buffers = false,
 }
 
 ---@return BuffonConfig

@@ -6,6 +6,8 @@ local check_buffer = function(index, id, name)
 	eq(api.get_index_by_name(name), index)
 end
 
+api.setup()
+
 describe("api", function()
 	it("full test", function()
 		-- 3 + 1(blank) buffers are added, but there only have to be 3 (the blank is ignored)
@@ -80,5 +82,14 @@ describe("api", function()
 		check_buffer(1, 98, "buffer1")
 		check_buffer(2, 97, "buffer2")
 		check_buffer(3, 96, "buffer3")
+	end)
+
+	it("prepend buffers", function()
+		api.setup({ prepend_buffers = true, cyclic_navigation = true, leader_key = ";", buffer_mappings_chars = "qwer" })
+		api.add_buffer("buffer1", 1)
+		api.add_buffer("buffer2", 2)
+
+		check_buffer(1, 2, "buffer2")
+		check_buffer(2, 1, "buffer1")
 	end)
 end)
