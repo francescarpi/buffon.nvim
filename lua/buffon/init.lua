@@ -32,6 +32,13 @@ local register_autocommands = function(group)
 			ui.refresh()
 		end,
 	})
+
+	vim.api.nvim_create_autocmd("VimResized", {
+		group = group,
+		callback = function()
+			ui.refresh()
+		end,
+	})
 end
 
 M.setup = function(opts)
