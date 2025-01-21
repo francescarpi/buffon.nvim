@@ -2,8 +2,6 @@ local config = require("buffon.config")
 
 local M = {}
 
--- TODO Rename buffers_list by buffers
-
 ---@class BuffonBuffer
 ---@field name string
 ---@field short_name string
@@ -12,22 +10,22 @@ local M = {}
 
 ---@class BuffonApiState
 ---@field index_buffers_by_name table<string, number>
----@field buffers_list table<BuffonBuffer>
+---@field buffers table<BuffonBuffer>
 ---@field opts BuffonConfig
 local state = {
 	index_buffers_by_name = {},
-	buffers_list = {},
+	buffers = {},
 }
 
 --- This method is called after update buffers_list and generates
 --- the buffes_by_name list automatically
-local refresh_buffers_by_name = function()
+local refresh_indexes = function()
 	---@type table<string, number>
 	local buffers = {}
 
-	for i = 1, #state.buffers_list do
+	for i = 1, #state.buffers do
 		---@type BuffonBuffer
-		local buffer = state.buffers_list[i]
+		local buffer = state.buffers[i]
 		buffers[buffer.name] = i
 	end
 	state.index_buffers_by_name = buffers
@@ -35,8 +33,8 @@ end
 
 ---@param list table<BuffonBuffer>
 local set_buffers_list = function(list)
-	state.buffers_list = list
-	refresh_buffers_by_name()
+	state.buffers = list
+	refresh_indexes()
 end
 
 ---@param name string
@@ -48,13 +46,13 @@ M.add_buffer = function(name, id)
 		return
 	end
 
-	table.insert(state.buffers_list, {
+	table.insert(state.buffers, {
 		id = id,
 		name = name,
 		short_name = vim.fn.fnamemodify(name, ":."),
 		filename = vim.fn.fnamemodify(name, ":t"),
 	})
-	refresh_buffers_by_name()
+	refresh_indexes()
 end
 
 ---@return table<string, number>
@@ -64,13 +62,13 @@ end
 
 ---@return table<BuffonBuffer>
 M.get_buffers_list = function()
-	return state.buffers_list
+	return state.buffers
 end
 
 ---@param index number
 ---@return BuffonBuffer | nil
 M.get_buffer_by_index = function(index)
-	return state.buffers_list[index]
+	return state.buffers[index]
 end
 
 ---@param name string
@@ -87,8 +85,8 @@ M.delete_buffer = function(name)
 		return
 	end
 
-	table.remove(state.buffers_list, buffer_index)
-	refresh_buffers_by_name()
+	table.remove(state.buffers, buffer_index)
+	refresh_indexes()
 end
 
 ---@param list table<BuffonBuffer>
@@ -108,8 +106,8 @@ M.move_buffer_up = function(name)
 		return -1
 	end
 	local new_index = buffer_index - 1
-	swap_buffers(state.buffers_list, buffer_index, new_index)
-	refresh_buffers_by_name()
+	swap_buffers(state.buffers, buffer_index, new_index)
+	refresh_indexes()
 	return new_index
 end
 
@@ -117,12 +115,12 @@ end
 M.move_buffer_down = function(name)
 	---@type number | nil
 	local buffer_index = state.index_buffers_by_name[name]
-	if buffer_index == nil or buffer_index == #state.buffers_list then
+	if buffer_index == nil or buffer_index == #state.buffers then
 		return -1
 	end
 	local new_index = buffer_index + 1
-	swap_buffers(state.buffers_list, buffer_index, new_index)
-	refresh_buffers_by_name()
+	swap_buffers(state.buffers, buffer_index, new_index)
+	refresh_indexes()
 	return new_index
 end
 
@@ -133,9 +131,9 @@ M.move_buffer_top = function(name)
 	if buffer_index == nil or buffer_index == 1 then
 		return
 	end
-	local buffer_removed = table.remove(state.buffers_list, buffer_index)
-	table.insert(state.buffers_list, 1, buffer_removed)
-	refresh_buffers_by_name()
+	local buffer_removed = table.remove(state.buffers, buffer_index)
+	table.insert(state.buffers, 1, buffer_removed)
+	refresh_indexes()
 end
 
 ---@param opts BuffonConfig | nil
