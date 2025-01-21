@@ -40,11 +40,11 @@ M.register = function()
 		actions.buffer_top()
 	end, "Move buffer to top position")
 
-	keymap(";", function()
+	keymap("a", function()
 		ui.show()
 	end, "Toggle info window")
 
-	keymap("a", "<cmd>e #<cr>", "Switch to previous used buffer")
+	keymap(";", "<cmd>e #<cr>", "Switch to previous used buffer")
 
 	keymap("d", "<cmd>bdelete<cr>", "Delete current buffer")
 
