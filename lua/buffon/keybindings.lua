@@ -11,32 +11,32 @@ local M = {}
 ---@type table<BuffonKeybinding>
 local keybindings = {
 	{
-		lhs = "l",
+		lhs = "<s-l>",
 		rhs = function() actions.next() end,
 		help = "Go to next buffer"
 	},
 	{
-		lhs = "h",
+		lhs = "<s-h>",
 		rhs = function() actions.previous() end,
 		help = "Go to previous buffer"
 	},
 	{
-		lhs = "k",
+		lhs = "<s-k>",
 		rhs = function() actions.buffer_up() end,
 		help = "Move buffer to up one position"
 	},
 	{
-		lhs = "j",
+		lhs = "<s-j>",
 		rhs = function() actions.buffer_down() end,
 		help = "Move buffer to down one position"
 	},
 	{
-		lhs = "t",
+		lhs = "<s-t>",
 		rhs = function() actions.buffer_top() end,
 		help = "Move buffer to the top position"
 	},
 	{
-		lhs = "a",
+		lhs = ";a",
 		rhs = function() ui.show() end,
 		help = "Toggle opened buffers window visibility"
 	},
@@ -46,7 +46,7 @@ local keybindings = {
 		help = "Switch to previous used buffer"
 	},
 	{
-		lhs = "d",
+		lhs = ";d",
 		rhs = "<cmd>bdelete<cr>",
 		help = "Delete current buffer"
 	}
@@ -60,7 +60,7 @@ local state = {}
 ---@param rhs function | string
 ---@param help string
 local keymap = function(lhs, rhs, help)
-	vim.keymap.set("n", state.config.leader_key .. lhs, rhs, { silent = true, desc = "Buffon: " .. help })
+	vim.keymap.set("n", lhs, rhs, { silent = true, desc = "Buffon: " .. help })
 end
 
 ---@param opts BuffonConfig
@@ -75,24 +75,10 @@ M.register = function()
 
 	for i = 1, #state.config.buffer_mappings_chars do
 		local char = state.config.buffer_mappings_chars:sub(i, i)
-		keymap(char, function()
+		keymap(";" .. char, function()
 			actions.goto(i)
 		end, 'Goto to buffer ' .. i)
 	end
-end
-
----@param buffer_mappings_chars string
----@return boolean
-M.are_valid_mapping_chars = function(buffer_mappings_chars)
-	for i = 1, #buffer_mappings_chars do
-		local char = buffer_mappings_chars:sub(i, i)
-		for _, keybinding in ipairs(keybindings) do
-			if char == keybinding.lhs then
-				return false
-			end
-		end
-	end
-	return true
 end
 
 return M

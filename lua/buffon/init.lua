@@ -45,13 +45,6 @@ M.setup = function(opts)
 	config.setup(opts)
 	local plugin_opts = config.opts()
 
-	if keybindings.are_valid_mapping_chars(plugin_opts.buffer_mappings_chars) == false then
-		vim.print(
-			"The Buffon plugin could not be initiated because the 'buffer_mappings_chars' settings are not valid. Some letters collide with existing keybindings."
-		)
-		return
-	end
-
 	api.setup(plugin_opts)
 	ui.setup(plugin_opts)
 	keybindings.setup(plugin_opts)
