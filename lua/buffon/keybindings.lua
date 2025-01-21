@@ -1,25 +1,25 @@
 local actions = require("buffon.actions")
+local ui = require("buffon.ui")
 
 local M = {}
 
----@class State
----@field leader_key string
-local state = {
-	leader_key = ";",
-}
+---@class BuffonKeybindingsState
+---@field config BuffonConfig
+local state = {}
 
 ---@param lhs string
 ---@param rhs function | string
 ---@param help string
 local keymap = function(lhs, rhs, help)
-	vim.keymap.set("n", state.leader_key .. lhs, rhs, { silent = true, desc = "Buffon: " .. help })
+	vim.keymap.set("n", state.config.leader_key .. lhs, rhs, { silent = true, desc = "Buffon: " .. help })
 end
 
----@param leader_key string
----@param buffer_mappings_chars string
-M.register = function(leader_key, buffer_mappings_chars)
-	state.leader_key = leader_key
+---@param opts BuffonConfig
+M.setup = function(opts)
+	state.config = opts
+end
 
+M.register = function()
 	keymap("l", function()
 		actions.next()
 	end, "Next buffer")
@@ -40,12 +40,16 @@ M.register = function(leader_key, buffer_mappings_chars)
 		actions.buffer_top()
 	end, "Move buffer to top position")
 
-	keymap("m", "<cmd>e #<cr>", "Move buffer to top position")
+	keymap(";", function()
+		ui.show()
+	end, "Toggle info window")
 
-	keymap("d", "<cmd>bdelete<cr>", "Move buffer to top position")
+	keymap("a", "<cmd>e #<cr>", "Switch to previous used buffer")
 
-	for i = 1, #buffer_mappings_chars do
-		local char = buffer_mappings_chars:sub(i, i)
+	keymap("d", "<cmd>bdelete<cr>", "Delete current buffer")
+
+	for i = 1, #state.config.buffer_mappings_chars do
+		local char = state.config.buffer_mappings_chars:sub(i, i)
 		keymap(char, function()
 			actions.goto(i)
 		end, 'Goto to buffer ' .. i)

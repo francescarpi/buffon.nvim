@@ -1,10 +1,10 @@
 local api = require("buffon.api")
 local config = require("buffon.config")
-local utils = require("buffon.utils")
+local ui = require("buffon.ui")
 
 local M = {}
 
----@return BufferByName | nil
+---@return BuffonBufferNyName | nil
 local get_current_buf_info = function()
 	if #api.get_buffers_list() == 0 then
 		return
@@ -15,7 +15,7 @@ local get_current_buf_info = function()
 		return
 	end
 
-	local current_buf_name = utils.format_buffer_name(vim.api.nvim_buf_get_name(current_buf_id))
+	local current_buf_name = vim.api.nvim_buf_get_name(current_buf_id)
 	local current_buf_info = api.get_buffer_by_name(current_buf_name)
 	if current_buf_info == nil then
 		return
@@ -92,6 +92,7 @@ M.buffer_up = function()
 
 	local position = api.move_buffer_up(buffer.name)
 	if position > -1 then
+		ui.refresh()
 		vim.print("Buffer moved to position " .. position)
 	end
 end
@@ -105,6 +106,7 @@ M.buffer_down = function()
 
 	local position = api.move_buffer_down(buffer.name)
 	if position > -1 then
+		ui.refresh()
 		vim.print("Buffer moved to position " .. position)
 	end
 end
@@ -117,6 +119,7 @@ M.buffer_top = function()
 	end
 
 	api.move_buffer_top(buffer.name)
+	ui.refresh()
 	vim.print("Buffer moved to top")
 end
 
