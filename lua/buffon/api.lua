@@ -38,6 +38,12 @@ local refresh_buffers_by_name = function()
 	state.buffers_by_name = buffers
 end
 
+---@param list table<BuffersList>
+local set_buffers_list = function(list)
+	state.buffers_list = list
+	refresh_buffers_by_name()
+end
+
 ---@param name string
 ---@param id number
 ---@return nil
@@ -137,6 +143,7 @@ end
 ---@param opts PluginConfig | nil
 M.setup = function(opts)
 	state.opts = opts or config.opts()
+	set_buffers_list({})
 end
 
 ---@param buffers_list table<string>
@@ -155,8 +162,7 @@ M.sort_buffers_by_list = function(buffers_list)
 		table.insert(new_list, { id = buffer.id, name = buffer.name })
 	end
 
-	state.buffers_list = new_list
-	refresh_buffers_by_name()
+	set_buffers_list(new_list)
 
 	return true
 end

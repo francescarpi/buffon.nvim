@@ -2,13 +2,19 @@ local M = {}
 
 ---@class NvimConfig
 ---@field cyclic_navigation? boolean
+---@field leader_key? string
+---@field buffer_mappings_chars? string
 
 ---@class PluginConfig
 ---@field cyclic_navigation boolean
+---@field leader_key string
+---@field buffer_mappings_chars string
 
 ---@type PluginConfig
 local plugin_config = {
 	cyclic_navigation = false,
+	leader_key = ";",
+	buffer_mappings_chars = "qwer",
 }
 
 ---@return PluginConfig

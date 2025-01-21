@@ -1,6 +1,7 @@
 local api = require("buffon.api")
 local config = require("buffon.config")
 local utils = require("buffon.utils")
+local keybindings = require("buffon.keybindings")
 
 local M = {}
 
@@ -22,7 +23,9 @@ end
 
 M.setup = function(opts)
 	config.setup(opts)
-	api.setup(config.opts())
+	local plugin_opts = config.opts()
+	api.setup(plugin_opts)
+	keybindings.register(plugin_opts.leader_key, plugin_opts.buffer_mappings_chars)
 
 	local group = vim.api.nvim_create_augroup("Buffon", { clear = true })
 	register_autocommands(group)
