@@ -60,8 +60,8 @@ local update_width = function(width)
 	vim.api.nvim_win_set_config(state.container.win, container_cfg)
 
 	local content_cfg = vim.api.nvim_win_get_config(state.content.win)
-	content_cfg.width = width - 3
-	content_cfg.col = editor_width - width + 2
+	content_cfg.width = width - (#state.config.leader_key + 2)
+	content_cfg.col = editor_width - width + (#state.config.leader_key + 1)
 	vim.api.nvim_win_set_config(state.content.win, content_cfg)
 end
 
@@ -89,7 +89,7 @@ end
 ---@param index_buffers_by_name table<string, number>
 local refresh_content = function(buffers, index_buffers_by_name)
 	local lines = {}
-	local width = 19
+	local width = 18 + #state.config.leader_key
 
 	local line_active = nil
 	local current_buf = vim.api.nvim_get_current_buf()
