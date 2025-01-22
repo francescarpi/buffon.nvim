@@ -22,22 +22,22 @@ local M = {}
 
 ---@type BuffonConfig
 local default = {
-    cyclic_navigation = false,
-    prepend_buffers = false,
-    keybindings = {
-        goto_next_buffer = "<s-j>",
-        goto_previous_buffer = "<s-k>",
-        move_buffer_up = "<s-h>",
-        move_buffer_down = "<s-l>",
-        move_buffer_top = "<s-t>",
-        toggle_buffon_window = ";a",
-        switch_previous_used_buffer = ";;",
-        close_buffer = ";d",
-        buffer_mapping = {
-            mapping_chars = "qwer",
-            leader_key = ";",
-        },
+  cyclic_navigation = false,
+  prepend_buffers = false,
+  keybindings = {
+    goto_next_buffer = "<s-j>",
+    goto_previous_buffer = "<s-k>",
+    move_buffer_up = "<s-h>",
+    move_buffer_down = "<s-l>",
+    move_buffer_top = "<s-t>",
+    toggle_buffon_window = ";a",
+    switch_previous_used_buffer = ";;",
+    close_buffer = ";d",
+    buffer_mapping = {
+      mapping_chars = "qwer",
+      leader_key = ";",
     },
+  },
 }
 
 ---@type BuffonConfig
@@ -45,12 +45,12 @@ local plugin_config = default
 
 ---@return BuffonConfig
 M.opts = function()
-    return plugin_config
+  return plugin_config
 end
 
 M.setup = function(opts)
-    opts = opts or {}
-    plugin_config = vim.tbl_deep_extend("force", default, opts)
+  opts = opts or {}
+  plugin_config = vim.tbl_deep_extend("force", default, opts)
 end
 
 return M

@@ -13,28 +13,28 @@ local M = {}
 ---@field buffers table<BuffonBuffer>
 ---@field config BuffonConfig
 local state = {
-    index_buffers_by_name = {},
-    buffers = {},
+  index_buffers_by_name = {},
+  buffers = {},
 }
 
 --- Refreshes the index_buffers_by_name list based on the current buffers list.
 local refresh_indexes = function()
-    ---@type table<string, number>
-    local buffers = {}
+  ---@type table<string, number>
+  local buffers = {}
 
-    for i = 1, #state.buffers do
-        ---@type BuffonBuffer
-        local buffer = state.buffers[i]
-        buffers[buffer.name] = i
-    end
-    state.index_buffers_by_name = buffers
+  for i = 1, #state.buffers do
+    ---@type BuffonBuffer
+    local buffer = state.buffers[i]
+    buffers[buffer.name] = i
+  end
+  state.index_buffers_by_name = buffers
 end
 
 --- Sets the buffers list and refreshes the indexes.
 ---@param list table<BuffonBuffer> The list of buffers to set.
 local set_buffers_list = function(list)
-    state.buffers = list
-    refresh_indexes()
+  state.buffers = list
+  refresh_indexes()
 end
 
 --- Moves a buffer to the top of the list.
@@ -42,64 +42,64 @@ end
 ---@param id number
 ---@return nil
 M.add_buffer = function(name, id)
-    -- [No Name] buffer is ignored
-    if name == "" or name == "/" then
-        return
-    end
+  -- [No Name] buffer is ignored
+  if name == "" or name == "/" then
+    return
+  end
 
-    local buffer = {
-        id = id,
-        name = name,
-        short_name = vim.fn.fnamemodify(name, ":."),
-        filename = vim.fn.fnamemodify(name, ":t"),
-    }
+  local buffer = {
+    id = id,
+    name = name,
+    short_name = vim.fn.fnamemodify(name, ":."),
+    filename = vim.fn.fnamemodify(name, ":t"),
+  }
 
-    if state.config.prepend_buffers then
-        table.insert(state.buffers, 1, buffer)
-    else
-        table.insert(state.buffers, buffer)
-    end
+  if state.config.prepend_buffers then
+    table.insert(state.buffers, 1, buffer)
+  else
+    table.insert(state.buffers, buffer)
+  end
 
-    refresh_indexes()
+  refresh_indexes()
 end
 
 --- Gets the index_buffers_by_name list.
 ---@return table<string, number> The index_buffers_by_name list.
 M.get_index_buffers_by_name = function()
-    return state.index_buffers_by_name
+  return state.index_buffers_by_name
 end
 
 --- Gets the list of buffers.
 ---@return table<BuffonBuffer> The list of buffers.
 M.get_buffers_list = function()
-    return state.buffers
+  return state.buffers
 end
 
 --- Gets a buffer by its index.
 ---@param index number The index of the buffer.
 ---@return BuffonBuffer | nil The buffer at the specified index, or nil if not found.
 M.get_buffer_by_index = function(index)
-    return state.buffers[index]
+  return state.buffers[index]
 end
 
 --- Gets the index of a buffer by its name.
 ---@param name string The name of the buffer.
 ---@return number | nil The index of the buffer, or nil if not found.
 M.get_index_by_name = function(name)
-    return state.index_buffers_by_name[name]
+  return state.index_buffers_by_name[name]
 end
 
 --- Deletes a buffer by its name.
 ---@param name string The name of the buffer to delete.
 ---@return nil
 M.delete_buffer = function(name)
-    local buffer_index = state.index_buffers_by_name[name]
-    if buffer_index == nil then
-        return
-    end
+  local buffer_index = state.index_buffers_by_name[name]
+  if buffer_index == nil then
+    return
+  end
 
-    table.remove(state.buffers, buffer_index)
-    refresh_indexes()
+  table.remove(state.buffers, buffer_index)
+  refresh_indexes()
 end
 
 --- Swaps two buffers in the list.
@@ -107,54 +107,54 @@ end
 ---@param index1 number The index of the first buffer.
 ---@param index2 number The index of the second buffer.
 local swap_buffers = function(list, index1, index2)
-    local tmp = list[index1]
-    list[index1] = list[index2]
-    list[index2] = tmp
+  local tmp = list[index1]
+  list[index1] = list[index2]
+  list[index2] = tmp
 end
 
 ---@param name string
 M.move_buffer_up = function(name)
-    ---@type number | nil
-    local buffer_index = state.index_buffers_by_name[name]
-    if buffer_index == nil or buffer_index == 1 then
-        return -1
-    end
-    local new_index = buffer_index - 1
-    swap_buffers(state.buffers, buffer_index, new_index)
-    refresh_indexes()
-    return new_index
+  ---@type number | nil
+  local buffer_index = state.index_buffers_by_name[name]
+  if buffer_index == nil or buffer_index == 1 then
+    return -1
+  end
+  local new_index = buffer_index - 1
+  swap_buffers(state.buffers, buffer_index, new_index)
+  refresh_indexes()
+  return new_index
 end
 
 ---@param name string
 M.move_buffer_down = function(name)
-    ---@type number | nil
-    local buffer_index = state.index_buffers_by_name[name]
-    if buffer_index == nil or buffer_index == #state.buffers then
-        return -1
-    end
-    local new_index = buffer_index + 1
-    swap_buffers(state.buffers, buffer_index, new_index)
-    refresh_indexes()
-    return new_index
+  ---@type number | nil
+  local buffer_index = state.index_buffers_by_name[name]
+  if buffer_index == nil or buffer_index == #state.buffers then
+    return -1
+  end
+  local new_index = buffer_index + 1
+  swap_buffers(state.buffers, buffer_index, new_index)
+  refresh_indexes()
+  return new_index
 end
 
 ---@param name string
 M.move_buffer_top = function(name)
-    ---@type number | nil
-    local buffer_index = state.index_buffers_by_name[name]
-    if buffer_index == nil or buffer_index == 1 then
-        return
-    end
-    local buffer_removed = table.remove(state.buffers, buffer_index)
-    table.insert(state.buffers, 1, buffer_removed)
-    refresh_indexes()
+  ---@type number | nil
+  local buffer_index = state.index_buffers_by_name[name]
+  if buffer_index == nil or buffer_index == 1 then
+    return
+  end
+  local buffer_removed = table.remove(state.buffers, buffer_index)
+  table.insert(state.buffers, 1, buffer_removed)
+  refresh_indexes()
 end
 
 --- Sets up the API state with the provided configuration.
 ---@param opts BuffonConfig | nil The configuration options.
 M.setup = function(opts)
-    state.config = opts or config.opts()
-    set_buffers_list({})
+  state.config = opts or config.opts()
+  set_buffers_list({})
 end
 
 return M
