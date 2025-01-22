@@ -140,4 +140,20 @@ M.close_buffer = function()
   end
 end
 
+--- Close buffers above
+M.close_buffers_above = function()
+  local current_buffer = get_current_buf_info()
+  if current_buffer == nil then
+    return
+  end
+
+  local buffers = api.get_buffers_list()
+  for i = 1, current_buffer[2] - 1 do
+    if vim.api.nvim_buf_is_valid(buffers[i].id) then
+      vim.api.nvim_buf_delete(buffers[i].id, { force = true })
+    end
+  end
+  vim.print("Buffers above closed")
+end
+
 return M
