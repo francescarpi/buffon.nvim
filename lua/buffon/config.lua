@@ -13,6 +13,8 @@ local M = {}
 ---@field toggle_buffon_window string
 ---@field switch_previous_used_buffer string
 ---@field close_buffer string
+---@field close_buffers_above string
+---@field close_buffers_below string
 ---@field buffer_mapping BuffonConfigKeyBindingBufferMapping
 
 ---@class BuffonConfig
@@ -33,6 +35,8 @@ local default = {
     toggle_buffon_window = ";a",
     switch_previous_used_buffer = ";;",
     close_buffer = ";d",
+    close_buffers_above = ";da",
+    close_buffers_below = ";db",
     buffer_mapping = {
       mapping_chars = "qwer",
       leader_key = ";",

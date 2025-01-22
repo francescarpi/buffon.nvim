@@ -127,4 +127,17 @@ M.buffer_top = function()
   vim.print("Buffer moved to top")
 end
 
+--- Close current buffer
+M.close_buffer = function()
+  local current_buffer = get_current_buf_info()
+  if current_buffer == nil then
+    return
+  end
+
+  if vim.api.nvim_buf_is_valid(current_buffer[1].id) then
+    vim.api.nvim_buf_delete(current_buffer[1].id, { force = true })
+    vim.print("Buffer closed")
+  end
+end
+
 return M

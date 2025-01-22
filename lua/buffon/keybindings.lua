@@ -65,7 +65,9 @@ local keybindings = function()
     },
     {
       lhs = state.config.keybindings.close_buffer,
-      rhs = "<cmd>bdelete<cr>",
+      rhs = function()
+        actions.close_buffer()
+      end,
       help = "Delete current buffer",
     },
   }
