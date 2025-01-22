@@ -17,8 +17,8 @@ describe("config", function()
         toggle_buffon_window = ";a",
         switch_previous_used_buffer = ";;",
         close_buffer = ";d",
-        close_buffers_above = ";da",
-        close_buffers_below = ";db",
+        close_buffers_above = ";v",
+        close_buffers_below = ";b",
         buffer_mapping = {
           mapping_chars = "qwer",
           leader_key = ";",
@@ -46,8 +46,8 @@ describe("config", function()
         toggle_buffon_window = ";a",
         switch_previous_used_buffer = ";;",
         close_buffer = ";d",
-        close_buffers_above = ";da",
-        close_buffers_below = ";db",
+        close_buffers_above = ";v",
+        close_buffers_below = ";b",
         buffer_mapping = {
           mapping_chars = "qwer",
           leader_key = ";",
@@ -79,8 +79,8 @@ describe("config", function()
         toggle_buffon_window = ";a",
         switch_previous_used_buffer = ";;",
         close_buffer = ";d",
-        close_buffers_above = ";da",
-        close_buffers_below = ";db",
+        close_buffers_above = ";v",
+        close_buffers_below = ";b",
         buffer_mapping = {
           mapping_chars = "qwer",
           leader_key = "<space>",
