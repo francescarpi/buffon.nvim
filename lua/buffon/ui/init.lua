@@ -43,7 +43,7 @@ end
 
 ---@param win number
 ---@param height number
-local set_win_height = function(win, height)
+local update_height = function(win, height)
 	if height == 0 then
 		height = 1
 	end
@@ -82,7 +82,7 @@ local refresh_container = function(buffers)
 		vim.api.nvim_buf_add_highlight(state.container.buf, -1, "Constant", line, 0, -1)
 	end
 
-	set_win_height(state.container.win, #buffers)
+	update_height(state.container.win, #buffers)
 end
 
 ---@param buffers table<BuffonBuffer>
@@ -103,7 +103,7 @@ local refresh_content = function(buffers, index_buffers_by_name)
 
 	for _, buffer in ipairs(buffers) do
 		table.insert(lines, buffer.filename)
-		if #buffer.filename > width then
+		if #buffer.filename >= width then
 			width = #buffer.filename + 4
 		end
 	end
@@ -118,8 +118,7 @@ local refresh_content = function(buffers, index_buffers_by_name)
 		vim.api.nvim_buf_add_highlight(state.content.buf, -1, "String", line_active, 0, -1)
 	end
 
-	set_win_height(state.content.win, #buffers)
-
+	update_height(state.content.win, #buffers)
 	update_width(width)
 end
 
