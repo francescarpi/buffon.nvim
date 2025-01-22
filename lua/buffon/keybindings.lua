@@ -11,22 +11,22 @@ local M = {}
 ---@type table<BuffonKeybinding>
 local keybindings = {
 	{
-		lhs = "<s-l>",
+		lhs = "<s-j>",
 		rhs = function() actions.next() end,
 		help = "Go to next buffer"
 	},
 	{
-		lhs = "<s-h>",
+		lhs = "<s-k>",
 		rhs = function() actions.previous() end,
 		help = "Go to previous buffer"
 	},
 	{
-		lhs = "<s-k>",
+		lhs = "<s-h>",
 		rhs = function() actions.buffer_up() end,
 		help = "Move buffer to up one position"
 	},
 	{
-		lhs = "<s-j>",
+		lhs = "<s-l>",
 		rhs = function() actions.buffer_down() end,
 		help = "Move buffer to down one position"
 	},
@@ -41,7 +41,7 @@ local keybindings = {
 		help = "Toggle opened buffers window visibility"
 	},
 	{
-		lhs = ";",
+		lhs = ";;",
 		rhs = "<cmd>e #<cr>",
 		help = "Switch to previous used buffer"
 	},
