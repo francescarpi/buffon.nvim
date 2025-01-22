@@ -120,7 +120,7 @@ local refresh_content = function(buffers, index_buffers_by_name)
   vim.api.nvim_buf_set_lines(state.content.buf, 0, -1, false, lines)
 
   if line_active then
-    vim.api.nvim_buf_add_highlight(state.content.buf, -1, "String", line_active, 0, -1)
+    vim.api.nvim_buf_add_highlight(state.content.buf, -1, "Title", line_active, 0, -1)
   end
 
   update_height(state.content.win, #buffers)
