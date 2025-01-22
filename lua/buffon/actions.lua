@@ -4,7 +4,8 @@ local ui = require("buffon.ui")
 
 local M = {}
 
----@return table<BuffonBuffer, number> | nil
+--- Gets the current buffer information.
+---@return table<BuffonBuffer, number> | nil The current buffer and its index, or nil if no buffer is found.
 local get_current_buf_info = function()
     local buffers = api.get_buffers_list()
     if #buffers == 0 then
@@ -25,6 +26,7 @@ local get_current_buf_info = function()
     return { buffers[current_buf_index], current_buf_index }
 end
 
+--- Switches to the next buffer. If cyclic navigation is enabled, wraps around to the first buffer.
 M.next = function()
     local current_buffer = get_current_buf_info()
     if current_buffer == nil then
@@ -47,6 +49,7 @@ M.next = function()
     end
 end
 
+--- Switches to the previous buffer. If cyclic navigation is enabled, wraps around to the last buffer.
 M.previous = function()
     local current_buffer = get_current_buf_info()
     if current_buffer == nil then
@@ -69,7 +72,8 @@ M.previous = function()
     end
 end
 
----@param order number
+--- Goes to the buffer at the specified order.
+---@param order number The index of the buffer to switch to.
 M.goto_buffer = function(order)
     local next_buffer = api.get_buffer_by_index(order)
     local current_buffer = get_current_buf_info()
@@ -83,7 +87,7 @@ M.goto_buffer = function(order)
     end
 end
 
---- Move current buffer up
+--- Moves the current buffer up in the buffer list.
 M.buffer_up = function()
     local current_buffer = get_current_buf_info()
     if current_buffer == nil then
@@ -97,7 +101,7 @@ M.buffer_up = function()
     end
 end
 
---- Move current buffer down
+--- Moves the current buffer down in the buffer list.
 M.buffer_down = function()
     local current_buffer = get_current_buf_info()
     if current_buffer == nil then
@@ -111,7 +115,7 @@ M.buffer_down = function()
     end
 end
 
---- Move current buffer to top
+--- Moves the current buffer to the top of the buffer list.
 M.buffer_top = function()
     local current_buffer = get_current_buf_info()
     if current_buffer == nil then

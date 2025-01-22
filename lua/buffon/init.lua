@@ -5,6 +5,8 @@ local ui = require("buffon.ui")
 
 local M = {}
 
+--- Registers autocommands for buffer and UI events.
+---@param group any The augroup to which the autocommands will be added.
 local register_autocommands = function(group)
     vim.api.nvim_create_autocmd("BufAdd", {
         group = group,
@@ -41,6 +43,10 @@ local register_autocommands = function(group)
     })
 end
 
+--- Sets up the Buffon plugin with the provided options.
+--- Initializes configuration, API, UI, and keybindings.
+--- Registers autocommands for buffer and UI events.
+---@param opts table The options to configure the Buffon plugin.
 M.setup = function(opts)
     config.setup(opts)
     local plugin_opts = config.opts()

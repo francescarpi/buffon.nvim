@@ -17,8 +17,7 @@ local state = {
     buffers = {},
 }
 
---- This method is called after update buffers_list and generates
---- the buffes_by_name list automatically
+--- Refreshes the index_buffers_by_name list based on the current buffers list.
 local refresh_indexes = function()
     ---@type table<string, number>
     local buffers = {}
@@ -31,13 +30,15 @@ local refresh_indexes = function()
     state.index_buffers_by_name = buffers
 end
 
----@param list table<BuffonBuffer>
+--- Sets the buffers list and refreshes the indexes.
+---@param list table<BuffonBuffer> The list of buffers to set.
 local set_buffers_list = function(list)
     state.buffers = list
     refresh_indexes()
 end
 
----@param name string
+--- Moves a buffer to the top of the list.
+---@param name string The name of the buffer to move to the top.
 ---@param id number
 ---@return nil
 M.add_buffer = function(name, id)
@@ -62,29 +63,34 @@ M.add_buffer = function(name, id)
     refresh_indexes()
 end
 
----@return table<string, number>
+--- Gets the index_buffers_by_name list.
+---@return table<string, number> The index_buffers_by_name list.
 M.get_index_buffers_by_name = function()
     return state.index_buffers_by_name
 end
 
----@return table<BuffonBuffer>
+--- Gets the list of buffers.
+---@return table<BuffonBuffer> The list of buffers.
 M.get_buffers_list = function()
     return state.buffers
 end
 
----@param index number
----@return BuffonBuffer | nil
+--- Gets a buffer by its index.
+---@param index number The index of the buffer.
+---@return BuffonBuffer | nil The buffer at the specified index, or nil if not found.
 M.get_buffer_by_index = function(index)
     return state.buffers[index]
 end
 
----@param name string
----@return number | nil
+--- Gets the index of a buffer by its name.
+---@param name string The name of the buffer.
+---@return number | nil The index of the buffer, or nil if not found.
 M.get_index_by_name = function(name)
     return state.index_buffers_by_name[name]
 end
 
----@param name string
+--- Deletes a buffer by its name.
+---@param name string The name of the buffer to delete.
 ---@return nil
 M.delete_buffer = function(name)
     local buffer_index = state.index_buffers_by_name[name]
@@ -96,9 +102,10 @@ M.delete_buffer = function(name)
     refresh_indexes()
 end
 
----@param list table<BuffonBuffer>
----@param index1 number
----@param index2 number
+--- Swaps two buffers in the list.
+---@param list table<BuffonBuffer> The list of buffers.
+---@param index1 number The index of the first buffer.
+---@param index2 number The index of the second buffer.
 local swap_buffers = function(list, index1, index2)
     local tmp = list[index1]
     list[index1] = list[index2]
@@ -143,7 +150,8 @@ M.move_buffer_top = function(name)
     refresh_indexes()
 end
 
----@param opts BuffonConfig | nil
+--- Sets up the API state with the provided configuration.
+---@param opts BuffonConfig | nil The configuration options.
 M.setup = function(opts)
     state.config = opts or config.opts()
     set_buffers_list({})

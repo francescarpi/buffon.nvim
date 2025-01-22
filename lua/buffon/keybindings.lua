@@ -12,7 +12,8 @@ local state = {}
 ---@field rhs function | string
 ---@field help string
 
----@return table<BuffonKeybinding>
+--- Returns the list of keybindings based on the current configuration.
+---@return table<BuffonKeybinding> The list of keybindings.
 local keybindings = function()
     return {
         {
@@ -70,18 +71,21 @@ local keybindings = function()
     }
 end
 
----@param lhs string
----@param rhs function | string
----@param help string
+--- Sets a keymap with the given parameters.
+---@param lhs string The left-hand side of the keymap.
+---@param rhs function | string The right-hand side of the keymap.
+---@param help string The description of the keymap.
 local keymap = function(lhs, rhs, help)
     vim.keymap.set("n", lhs, rhs, { silent = true, desc = "Buffon: " .. help })
 end
 
----@param opts BuffonConfig
+--- Sets up the keybindings state with the provided configuration.
+---@param opts BuffonConfig The configuration options.
 M.setup = function(opts)
     state.config = opts
 end
 
+--- Registers all the keybindings based on the current configuration.
 M.register = function()
     for _, keybinding in ipairs(keybindings()) do
         keymap(keybinding.lhs, keybinding.rhs, keybinding.help)

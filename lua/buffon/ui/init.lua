@@ -12,6 +12,7 @@ local M = {}
 ---@field content BuffonWindow
 local state = {}
 
+--- Returns the window options for the container and content windows.
 ---@return table
 local wins_options = function()
     return {
@@ -41,8 +42,9 @@ local wins_options = function()
     }
 end
 
----@param win number
----@param height number
+--- Updates the height of the specified window.
+---@param win number The window ID.
+---@param height number The new height for the window.
 local update_height = function(win, height)
     if height == 0 then
         height = 1
@@ -50,7 +52,8 @@ local update_height = function(win, height)
     vim.api.nvim_win_set_height(win, height)
 end
 
----@param width number
+--- Updates the width of the container and content windows.
+---@param width number The new width for the windows.
 local update_width = function(width)
     local editor_width = vim.api.nvim_get_option("columns")
 
@@ -65,11 +68,12 @@ local update_width = function(width)
     vim.api.nvim_win_set_config(state.content.win, content_cfg)
 end
 
----@param buffers table<BuffonBuffer>
+--- Refreshes the container window with the buffer shortcuts.
+---@param buffers table<BuffonBuffer> The list of buffers.
 local refresh_container = function(buffers)
     local lines = {}
     for index, _ in ipairs(buffers) do
-        local shortcut = state.config.buffer_mappings_chars:sub(index, index)
+        local shortcut = state.config.keybindings.buffer_mapping.mapping_chars:sub(index, index)
         if shortcut ~= "" then
             shortcut = state.config.keybindings.buffer_mapping.leader_key .. shortcut
         end
@@ -85,8 +89,9 @@ local refresh_container = function(buffers)
     update_height(state.container.win, #buffers)
 end
 
----@param buffers table<BuffonBuffer>
----@param index_buffers_by_name table<string, number>
+--- Refreshes the content window with the buffer filenames.
+---@param buffers table<BuffonBuffer> The list of buffers.
+---@param index_buffers_by_name table<string, number> A table mapping buffer names to their indices.
 local refresh_content = function(buffers, index_buffers_by_name)
     local lines = {}
     local width = 18 + #state.config.keybindings.buffer_mapping.leader_key
@@ -122,13 +127,15 @@ local refresh_content = function(buffers, index_buffers_by_name)
     update_width(width)
 end
 
----@param opts BuffonConfig
+--- Sets up the UI state with the provided configuration.
+---@param opts BuffonConfig The configuration options.
 M.setup = function(opts)
     state.config = opts
     state.container = { buf = vim.api.nvim_create_buf(false, true), win = nil }
     state.content = { buf = vim.api.nvim_create_buf(false, true), win = nil }
 end
 
+--- Refreshes the container and content windows with the current buffer list.
 M.refresh = function()
     if state.container.win and state.content.win then
         local buffers = api.get_buffers_list()
@@ -138,6 +145,7 @@ M.refresh = function()
     end
 end
 
+--- Hides the container and content windows.
 M.hide = function()
     vim.api.nvim_win_close(state.content.win, true)
     vim.api.nvim_win_close(state.container.win, true)
@@ -145,6 +153,7 @@ M.hide = function()
     state.container.win = nil
 end
 
+--- Shows the container and content windows, or hides them if they are already visible.
 M.show = function()
     if state.content.win and not vim.api.nvim_win_is_valid(state.content.win) then
         state.container.win = nil
