@@ -8,17 +8,22 @@ local config = require("buffon.config")
 ---@field name string
 ---@field short_path string
 
----@param index number
 ---@param buffer BuffonTestBuffer
-local check_buffer = function(index, buffer)
-  eq(api.get_buffer_by_index(index), {
+---@return BuffonBuffer
+local test_buffer_to_buffon_buffer = function(buffer)
+  return {
     id = buffer.id,
     name = buffer.path,
     short_name = buffer.path,
     filename = buffer.name,
     short_path = buffer.short_path,
-  })
+  }
+end
 
+---@param index number
+---@param buffer BuffonTestBuffer
+local check_buffer = function(index, buffer)
+  eq(api.get_buffer_by_index(index), test_buffer_to_buffon_buffer(buffer))
   eq(api.get_index_by_name(buffer.path), index)
 end
 
@@ -139,5 +144,36 @@ describe("api", function()
     add_buffers({ { path = "/foo/bar.json", id = 1 } })
     eq(#api.get_buffers(), 1)
     check_buffer(1, { path = "/foo/bar.json", id = 1, name = "bar.json", short_path = "/f/bar.json" })
+  end)
+
+  it("next/prev buffers", function()
+    -- no cyclic
+    api.setup()
+    add_buffers({ buffer1, buffer2, buffer3 })
+
+    eq(api.get_next_buffer(buffer2.path), test_buffer_to_buffon_buffer(buffer3))
+    eq(api.get_next_buffer(buffer3.path), nil)
+    eq(api.get_previous_buffer(buffer2.path), test_buffer_to_buffon_buffer(buffer1))
+    eq(api.get_previous_buffer(buffer1.path), nil)
+
+    -- cyclic
+    local opts = config.opts()
+    api.setup(vim.tbl_deep_extend("force", opts, { cyclic_navigation = true }))
+    add_buffers({ buffer1, buffer2, buffer3 })
+
+    eq(api.get_next_buffer(buffer3.path), test_buffer_to_buffon_buffer(buffer1))
+    eq(api.get_previous_buffer(buffer1.path), test_buffer_to_buffon_buffer(buffer3))
+  end)
+
+  it("methods usefuls to close buffers", function()
+    api.setup()
+    add_buffers({ buffer1, buffer2, buffer3 })
+    eq(api.get_buffers_id_above(buffer3.path), { buffer1.id, buffer2.id })
+    eq(api.get_buffers_id_above(buffer2.path), { buffer1.id })
+    eq(api.get_buffers_id_above(buffer1.path), {})
+
+    eq(api.get_buffers_id_below(buffer1.path), { buffer2.id, buffer3.id })
+    eq(api.get_buffers_id_below(buffer2.path), { buffer3.id })
+    eq(api.get_buffers_id_below(buffer3.path), {})
   end)
 end)

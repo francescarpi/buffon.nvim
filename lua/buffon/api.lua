@@ -159,11 +159,14 @@ local swap_buffers = function(list, index1, index2)
   list[index2] = tmp
 end
 
+-- TODO Refactor these three functions. Are similar
+
 ---@param name string
+---@return number
 M.move_buffer_up = function(name)
   ---@type number | nil
   local buffer_index = state.index_buffers_by_name[name]
-  if buffer_index == nil or buffer_index == 1 then
+  if not buffer_index or buffer_index == 1 then
     return -1
   end
   local new_index = buffer_index - 1
@@ -174,6 +177,7 @@ M.move_buffer_up = function(name)
 end
 
 ---@param name string
+---@return number
 M.move_buffer_down = function(name)
   ---@type number | nil
   local buffer_index = state.index_buffers_by_name[name]
@@ -188,21 +192,85 @@ M.move_buffer_down = function(name)
 end
 
 ---@param name string
+---@return number
 M.move_buffer_top = function(name)
   ---@type number | nil
   local buffer_index = state.index_buffers_by_name[name]
   if buffer_index == nil or buffer_index == 1 then
-    return
+    return -1
   end
   local buffer_removed = table.remove(state.buffers, buffer_index)
   table.insert(state.buffers, 1, buffer_removed)
   refresh_indexes()
   update_storage()
+  return 1
 end
 
 ---@return boolean
 M.are_duplicated_filenames = function()
   return state.are_duplicated_filenames
+end
+
+---@param name string
+---@return BuffonBuffer?
+M.get_next_buffer = function(name)
+  local buffer_index = state.index_buffers_by_name[name]
+  if not buffer_index then
+    return nil
+  end
+
+  local next_buffer = state.buffers[buffer_index + 1]
+  if not next_buffer and state.config.cyclic_navigation then
+    next_buffer = state.buffers[1]
+  end
+
+  return next_buffer
+end
+
+---@param name string
+---@return BuffonBuffer?
+M.get_previous_buffer = function(name)
+  local buffer_index = state.index_buffers_by_name[name]
+  if not buffer_index then
+    return nil
+  end
+
+  local previous_buffer = state.buffers[buffer_index - 1]
+  if not previous_buffer and state.config.cyclic_navigation then
+    previous_buffer = state.buffers[#state.buffers]
+  end
+
+  return previous_buffer
+end
+
+---@name string
+---@return table<number>
+M.get_buffers_id_above = function(name)
+  local buffer_index = state.index_buffers_by_name[name]
+  if not buffer_index then
+    return {}
+  end
+
+  local response = {}
+  for i = 1, buffer_index - 1 do
+    table.insert(response, state.buffers[i].id)
+  end
+  return response
+end
+
+---@name string
+---@return table<number>
+M.get_buffers_id_below = function(name)
+  local buffer_index = state.index_buffers_by_name[name]
+  if not buffer_index then
+    return {}
+  end
+
+  local response = {}
+  for i = buffer_index + 1, #state.buffers do
+    table.insert(response, state.buffers[i].id)
+  end
+  return response
 end
 
 --- Sets up the API state with the provided configuration.
