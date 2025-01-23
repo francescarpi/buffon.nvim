@@ -52,20 +52,46 @@ local update_height = function(win, height)
   vim.api.nvim_win_set_height(win, height)
 end
 
+---@param win_id number
+---@param col number
+---@param width number
+---@return nil
+local set_win_col_width = function(win_id, col, width)
+  local wincfg = vim.api.nvim_win_get_config(win_id)
+  wincfg.col = col
+  wincfg.width = width
+  vim.api.nvim_win_set_config(win_id, wincfg)
+end
+
 --- Updates the width of the container and content windows.
----@param width number The new width for the windows.
-local update_width = function(width)
+---@param longest_word_length number The new width for the windows.
+local update_width = function(longest_word_length)
   local editor_width = vim.api.nvim_get_option("columns")
+  local leader_key_length = #state.config.keybindings.buffer_mapping.leader_key
+  local mapping_chart_length = 1
+  local space_length = 1
+  local border_length = 1
+  local mapping_chart_block = leader_key_length + mapping_chart_length + space_length
 
-  local container_cfg = vim.api.nvim_win_get_config(state.container.win)
-  container_cfg.width = width
-  container_cfg.col = editor_width - width - 2
-  vim.api.nvim_win_set_config(state.container.win, container_cfg)
+  local container_width = mapping_chart_block + longest_word_length
+  local container_col = editor_width - (border_length + container_width + border_length)
 
-  local content_cfg = vim.api.nvim_win_get_config(state.content.win)
-  content_cfg.width = width - (#state.config.keybindings.buffer_mapping.leader_key + 2)
-  content_cfg.col = editor_width - width + (#state.config.keybindings.buffer_mapping.leader_key + 1)
-  vim.api.nvim_win_set_config(state.content.win, content_cfg)
+  local content_width = container_width - mapping_chart_block
+  local content_col = container_col + border_length + mapping_chart_block
+
+  vim.print(
+    string.format(
+      "Editor Width: %d - Container Col/Width: %d/%d - Content Col/Width: %d/%d",
+      editor_width,
+      container_col,
+      container_width,
+      content_col,
+      content_width
+    )
+  )
+
+  set_win_col_width(state.container.win, container_col, container_width)
+  set_win_col_width(state.content.win, content_col, content_width)
 end
 
 --- Refreshes the container window with the buffer shortcuts.
@@ -94,7 +120,7 @@ end
 ---@param index_buffers_by_name table<string, number> A table mapping buffer names to their indices.
 local refresh_content = function(buffers, index_buffers_by_name)
   local lines = {}
-  local width = 18 + #state.config.keybindings.buffer_mapping.leader_key
+  local longest_word_length = 18 -- Minimum width if modal is empty
   local lines_of_unloaded_buffers = {}
 
   local line_active = nil
@@ -115,8 +141,8 @@ local refresh_content = function(buffers, index_buffers_by_name)
 
     table.insert(lines, fn)
 
-    if #fn >= width then
-      width = #fn + 4
+    if #fn > longest_word_length then
+      longest_word_length = #fn
     end
 
     if buffer.id == nil then
@@ -139,7 +165,7 @@ local refresh_content = function(buffers, index_buffers_by_name)
   end
 
   update_height(state.content.win, #buffers)
-  update_width(width)
+  update_width(longest_word_length)
 end
 
 --- Sets up the UI state with the provided configuration.
