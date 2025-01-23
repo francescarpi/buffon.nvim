@@ -1,5 +1,6 @@
 local api = require("buffon.api")
 local ui = require("buffon.ui")
+local utils = require("buffon.utils")
 
 local M = {}
 
@@ -107,6 +108,11 @@ end
 M.close_buffers_below = function()
   local buffers = api.get_buffers_below(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
   close_buffers(buffers)
+end
+
+--- Close all buffers
+M.close_all_buffers = function()
+  close_buffers(utils.table_copy(api.get_buffers()))
 end
 
 return M

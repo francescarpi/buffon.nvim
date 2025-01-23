@@ -19,6 +19,7 @@ describe("config", function()
         close_buffer = ";d",
         close_buffers_above = ";v",
         close_buffers_below = ";b",
+        close_all_buffers = ";cc",
         buffer_mapping = {
           mapping_chars = "qwertyuiop",
           leader_key = ";",
@@ -48,6 +49,7 @@ describe("config", function()
         close_buffer = ";d",
         close_buffers_above = ";v",
         close_buffers_below = ";b",
+        close_all_buffers = ";cc",
         buffer_mapping = {
           mapping_chars = "qwertyuiop",
           leader_key = ";",
@@ -81,6 +83,7 @@ describe("config", function()
         close_buffer = ";d",
         close_buffers_above = ";v",
         close_buffers_below = ";b",
+        close_all_buffers = ";cc",
         buffer_mapping = {
           mapping_chars = "qwertyuiop",
           leader_key = "<space>",

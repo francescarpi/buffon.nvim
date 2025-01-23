@@ -84,6 +84,13 @@ local keybindings = function()
       end,
       help = "Close buffers below the current one",
     },
+    {
+      lhs = state.config.keybindings.close_all_buffers,
+      rhs = function()
+        actions.close_all_buffers()
+      end,
+      help = "Close all buffers",
+    },
   }
 end
 
