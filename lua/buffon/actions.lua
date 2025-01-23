@@ -174,8 +174,9 @@ M.close_buffers_above = function()
   local buffers = utils.table_copy(api.get_buffers())
 
   for i = 1, current_buffer.index - 1 do
-    if vim.api.nvim_buf_is_valid(buffers[i].id) then
-      vim.api.nvim_buf_delete(buffers[i].id, { force = false })
+    local buf_id = buffers[i].id
+    if buf_id and vim.api.nvim_buf_is_valid(buf_id) then
+      vim.api.nvim_buf_delete(buf_id, { force = false })
     end
   end
 end
@@ -188,10 +189,11 @@ M.close_buffers_below = function()
   end
 
   local buffers = utils.table_copy(api.get_buffers())
+  vim.print(buffers)
 
   for i = current_buffer.index + 1, #buffers do
     local buf_id = buffers[i].id
-    if vim.api.nvim_buf_is_valid(buf_id) then
+    if buf_id and vim.api.nvim_buf_is_valid(buf_id) then
       vim.api.nvim_buf_delete(buf_id, { force = false })
     end
   end

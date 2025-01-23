@@ -38,7 +38,7 @@ local default = {
     close_buffers_above = ";v",
     close_buffers_below = ";b",
     buffer_mapping = {
-      mapping_chars = "qwer",
+      mapping_chars = "qwertyuiop",
       leader_key = ";",
     },
   },
