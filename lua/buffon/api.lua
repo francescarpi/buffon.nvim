@@ -15,11 +15,19 @@ local M = {}
 ---@field buffers table<BuffonBuffer>
 ---@field config BuffonConfig
 ---@field are_duplicated_filenames boolean
+---@field storage? BuffonStorage
 local state = {
   index_buffers_by_name = {},
   buffers = {},
   are_duplicated_filenames = false,
+  storage = nil,
 }
+
+local update_storage = function()
+  if state.storage then
+    state.storage:save(state.buffers)
+  end
+end
 
 --- Refreshes the index_buffers_by_name list based on the current buffers list.
 local refresh_indexes = function()
@@ -36,7 +44,7 @@ end
 
 --- Sets the buffers list and refreshes the indexes.
 ---@param list table<BuffonBuffer> The list of buffers to set.
-local set_buffers_list = function(list)
+local set_buffers = function(list)
   state.buffers = list
   refresh_indexes()
 end
@@ -62,7 +70,7 @@ end
 ---@return nil
 M.add_buffer = function(name, id)
   -- [No Name] buffer is ignored
-  if name == "" or name == "/" then
+  if name == "" or name == "/" or state.index_buffers_by_name[name] ~= nil then
     return
   end
 
@@ -83,6 +91,7 @@ M.add_buffer = function(name, id)
 
   check_duplicated_filenames()
   refresh_indexes()
+  update_storage()
 end
 
 --- Gets the index_buffers_by_name list.
@@ -93,7 +102,7 @@ end
 
 --- Gets the list of buffers.
 ---@return table<BuffonBuffer> The list of buffers.
-M.get_buffers_list = function()
+M.get_buffers = function()
   return state.buffers
 end
 
@@ -123,6 +132,7 @@ M.delete_buffer = function(name)
   table.remove(state.buffers, buffer_index)
   check_duplicated_filenames()
   refresh_indexes()
+  update_storage()
 end
 
 --- Swaps two buffers in the list.
@@ -145,6 +155,7 @@ M.move_buffer_up = function(name)
   local new_index = buffer_index - 1
   swap_buffers(state.buffers, buffer_index, new_index)
   refresh_indexes()
+  update_storage()
   return new_index
 end
 
@@ -158,6 +169,7 @@ M.move_buffer_down = function(name)
   local new_index = buffer_index + 1
   swap_buffers(state.buffers, buffer_index, new_index)
   refresh_indexes()
+  update_storage()
   return new_index
 end
 
@@ -171,6 +183,7 @@ M.move_buffer_top = function(name)
   local buffer_removed = table.remove(state.buffers, buffer_index)
   table.insert(state.buffers, 1, buffer_removed)
   refresh_indexes()
+  update_storage()
 end
 
 ---@return boolean
@@ -179,10 +192,17 @@ M.are_duplicated_filenames = function()
 end
 
 --- Sets up the API state with the provided configuration.
----@param opts BuffonConfig | nil The configuration options.
-M.setup = function(opts)
+---@param opts? BuffonConfig The configuration options.
+---@param storage? BuffonStorage The instance of the storage class
+M.setup = function(opts, storage)
   state.config = opts or config.opts()
-  set_buffers_list({})
+  set_buffers({})
+
+  if storage then
+    state.storage = storage
+    -- TODO validate buffers before add them
+    set_buffers(state.storage:load())
+  end
 end
 
 return M

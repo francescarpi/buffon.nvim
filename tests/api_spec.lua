@@ -29,7 +29,7 @@ local add_buffers = function(buffers)
 end
 
 local check_initial_state = function(buffers)
-  eq(#api.get_buffers_list(), #buffers)
+  eq(#api.get_buffers(), #buffers)
   for i, buffer in ipairs(buffers) do
     check_buffer(i, buffer)
   end
@@ -55,19 +55,19 @@ describe("api", function()
 
     -- buffer2 is deleted and buffer3's index will be set to 1 (instead 2)
     api.delete_buffer(buffer2.path)
-    eq(#api.get_buffers_list(), 2)
+    eq(#api.get_buffers(), 2)
     check_buffer(1, buffer1)
     check_buffer(2, buffer3)
     eq(api.get_buffer_by_index(3), nil)
 
     -- buffer1 is deleted. only buffer3 will be present with index 0
     api.delete_buffer("/home/foo/buffer1")
-    eq(#api.get_buffers_list(), 1)
+    eq(#api.get_buffers(), 1)
     check_buffer(1, buffer3)
 
     -- finally, if buffer3 is deleted, the buffers's list will be empty
     api.delete_buffer("/home/foo/buffer3")
-    eq(#api.get_buffers_list(), 0)
+    eq(#api.get_buffers(), 0)
   end)
 
   it("change order", function()
@@ -116,5 +116,17 @@ describe("api", function()
     eq(api.are_duplicated_filenames(), false)
     add_buffers({ buffer4 })
     eq(api.are_duplicated_filenames(), true)
+  end)
+
+  it("prevent add duplicated buffers", function()
+    api.setup()
+    add_buffers({ buffer1, buffer3 })
+    eq(#api.get_buffers(), 2)
+    check_buffer(1, buffer1)
+    check_buffer(2, buffer3)
+    add_buffers({ buffer1 })
+    eq(#api.get_buffers(), 2)
+    check_buffer(1, buffer1)
+    check_buffer(2, buffer3)
   end)
 end)

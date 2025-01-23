@@ -95,6 +95,7 @@ end
 local refresh_content = function(buffers, index_buffers_by_name)
   local lines = {}
   local width = 18 + #state.config.keybindings.buffer_mapping.leader_key
+  local lines_of_unloaded_buffers = {}
 
   local line_active = nil
   local current_buf = vim.api.nvim_get_current_buf()
@@ -106,15 +107,20 @@ local refresh_content = function(buffers, index_buffers_by_name)
     end
   end
 
-  for _, buffer in ipairs(buffers) do
+  for index, buffer in ipairs(buffers) do
     local fn = buffer.filename
     if api.are_duplicated_filenames() then
       fn = buffer.short_path
     end
 
     table.insert(lines, fn)
+
     if #fn >= width then
       width = #fn + 4
+    end
+
+    if buffer.id == nil then
+      table.insert(lines_of_unloaded_buffers, index - 1)
     end
   end
 
@@ -126,6 +132,10 @@ local refresh_content = function(buffers, index_buffers_by_name)
 
   if line_active then
     vim.api.nvim_buf_add_highlight(state.content.buf, -1, "Title", line_active, 0, -1)
+  end
+
+  for _, num in ipairs(lines_of_unloaded_buffers) do
+    vim.api.nvim_buf_add_highlight(state.content.buf, -1, "LineNr", num, 0, -1)
   end
 
   update_height(state.content.win, #buffers)
@@ -143,7 +153,7 @@ end
 --- Refreshes the container and content windows with the current buffer list.
 M.refresh = function()
   if state.container.win and state.content.win then
-    local buffers = api.get_buffers_list()
+    local buffers = api.get_buffers()
     local buffers_by_name = api.get_index_buffers_by_name()
     refresh_container(buffers)
     refresh_content(buffers, buffers_by_name)

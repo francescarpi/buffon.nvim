@@ -2,6 +2,7 @@ local api = require("buffon.api")
 local config = require("buffon.config")
 local keybindings = require("buffon.keybindings")
 local ui = require("buffon.ui")
+local storage = require("buffon.storage")
 
 local M = {}
 
@@ -51,7 +52,10 @@ M.setup = function(opts)
   config.setup(opts)
   local plugin_opts = config.opts()
 
-  api.setup(plugin_opts)
+  local stg = storage.Storage:new(vim.fn.getcwd())
+  stg:init()
+
+  api.setup(plugin_opts, stg)
   ui.setup(plugin_opts)
   keybindings.setup(plugin_opts)
   keybindings.register()
