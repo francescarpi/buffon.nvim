@@ -75,7 +75,7 @@ local update_width = function(longest_word_length)
   local mapping_chart_block = leader_key_length + mapping_chart_length + space_length
   local icon_length = 2
 
-  local container_width = mapping_chart_block + icon_length + longest_word_length
+  local container_width = mapping_chart_block + icon_length + longest_word_length + space_length
   local container_col = editor_width - (border_length + container_width + border_length)
 
   local content_width = container_width - mapping_chart_block
@@ -131,7 +131,7 @@ local refresh_content = function(buffers, index_buffers_by_name)
     end
 
     local icon, _ = devicons.get_icon_color(buffer.filename, buffer.filename:match("%.(%a+)$"))
-    table.insert(lines, string.format("%s %s", icon or "", fn))
+    table.insert(lines, string.format("%s %s", fn, icon or ""))
 
     if #fn > longest_word_length then
       longest_word_length = #fn
