@@ -41,6 +41,21 @@ local set_buffers_list = function(list)
   refresh_indexes()
 end
 
+--- Check if buffers list have repeated filenames and update the are_duplicated_filenames state flag
+---@return nil
+local check_duplicated_filenames = function()
+  local filenames = {}
+  state.are_duplicated_filenames = false
+
+  for _, buffer in ipairs(state.buffers) do
+    if filenames[buffer.filename] then
+      state.are_duplicated_filenames = true
+      return
+    end
+    filenames[buffer.filename] = true
+  end
+end
+
 --- Moves a buffer to the top of the list.
 ---@param name string The name of the buffer to move to the top.
 ---@param id number
@@ -66,6 +81,7 @@ M.add_buffer = function(name, id)
     table.insert(state.buffers, buffer)
   end
 
+  check_duplicated_filenames()
   refresh_indexes()
 end
 
@@ -105,6 +121,7 @@ M.delete_buffer = function(name)
   end
 
   table.remove(state.buffers, buffer_index)
+  check_duplicated_filenames()
   refresh_indexes()
 end
 

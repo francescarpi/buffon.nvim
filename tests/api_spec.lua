@@ -38,6 +38,7 @@ end
 local buffer1 = { path = "/home/foo/buffer1", id = 98, name = "buffer1", short_path = "/h/f/buffer1" }
 local buffer2 = { path = "/home/foo/buffer2", id = 97, name = "buffer2", short_path = "/h/f/buffer2" }
 local buffer3 = { path = "/home/foo/buffer3", id = 96, name = "buffer3", short_path = "/h/f/buffer3" }
+local buffer4 = { path = "/home/boo/buffer3", id = 96, name = "buffer3", short_path = "/h/b/buffer3" }
 
 api.setup()
 
@@ -104,9 +105,16 @@ describe("api", function()
   it("prepend buffers", function()
     local opts = config.opts()
     api.setup(vim.tbl_deep_extend("force", opts, { prepend_buffers = true }))
-    local buffers = { buffer1, buffer2 }
-    add_buffers(buffers)
+    add_buffers({ buffer1, buffer2 })
     check_buffer(1, buffer2)
     check_buffer(2, buffer1)
+  end)
+
+  it("duplicated buffer names", function()
+    api.setup()
+    add_buffers({ buffer1, buffer3 })
+    eq(api.are_duplicated_filenames(), false)
+    add_buffers({ buffer4 })
+    eq(api.are_duplicated_filenames(), true)
   end)
 end)

@@ -110,7 +110,7 @@ M.register = function()
   for i = 1, #state.config.keybindings.buffer_mapping.mapping_chars do
     local char = state.config.keybindings.buffer_mapping.mapping_chars:sub(i, i)
     keymap(";" .. char, function()
-      actions.goto_bufer(i)
+      actions.goto_buffer(i)
     end, "Goto to buffer " .. i)
   end
 end
