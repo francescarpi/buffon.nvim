@@ -39,10 +39,15 @@ local move_buffer = function(callback)
   end
 end
 
----@param buffers_ids table<number>
-local close_buffers = function(buffers_ids)
-  for _, buffer_id in ipairs(buffers_ids) do
-    vim.api.nvim_buf_delete(buffer_id, { force = false })
+---@param buffers table<BuffonBuffer>
+local close_buffers = function(buffers)
+  for _, buffer in ipairs(buffers) do
+    if buffer.id then
+      vim.api.nvim_buf_delete(buffer.id, { force = false })
+    else
+      api.delete_buffer(buffer.name)
+      ui.refresh()
+    end
   end
 end
 
@@ -84,18 +89,23 @@ end
 --- Close current buffer
 M.close_buffer = function()
   local buffer_id = vim.api.nvim_get_current_buf()
-  close_buffers({ buffer_id })
+  close_buffers({
+    {
+      id = buffer_id,
+      name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()),
+    },
+  })
 end
 
 --- Close buffers above
 M.close_buffers_above = function()
-  local buffers = api.get_buffers_id_above(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
+  local buffers = api.get_buffers_above(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
   close_buffers(buffers)
 end
 
 --- Close buffers below
 M.close_buffers_below = function()
-  local buffers = api.get_buffers_id_below(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
+  local buffers = api.get_buffers_below(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
   close_buffers(buffers)
 end
 

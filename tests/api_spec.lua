@@ -168,12 +168,22 @@ describe("api", function()
   it("methods usefuls to close buffers", function()
     api.setup()
     add_buffers({ buffer1, buffer2, buffer3 })
-    eq(api.get_buffers_id_above(buffer3.path), { buffer1.id, buffer2.id })
-    eq(api.get_buffers_id_above(buffer2.path), { buffer1.id })
-    eq(api.get_buffers_id_above(buffer1.path), {})
+    eq(api.get_buffers_above(buffer3.path), {
+      test_buffer_to_buffon_buffer(buffer1),
+      test_buffer_to_buffon_buffer(buffer2),
+    })
+    eq(api.get_buffers_above(buffer2.path), {
+      test_buffer_to_buffon_buffer(buffer1),
+    })
+    eq(api.get_buffers_above(buffer1.path), {})
 
-    eq(api.get_buffers_id_below(buffer1.path), { buffer2.id, buffer3.id })
-    eq(api.get_buffers_id_below(buffer2.path), { buffer3.id })
-    eq(api.get_buffers_id_below(buffer3.path), {})
+    eq(api.get_buffers_below(buffer1.path), {
+      test_buffer_to_buffon_buffer(buffer2),
+      test_buffer_to_buffon_buffer(buffer3),
+    })
+    eq(api.get_buffers_below(buffer2.path), {
+      test_buffer_to_buffon_buffer(buffer3),
+    })
+    eq(api.get_buffers_below(buffer3.path), {})
   end)
 end)

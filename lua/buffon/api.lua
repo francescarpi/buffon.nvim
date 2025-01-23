@@ -144,6 +144,7 @@ M.delete_buffer = function(name)
   end
 
   table.remove(state.buffers, buffer_index)
+
   check_duplicated_filenames()
   refresh_indexes()
   update_storage()
@@ -247,7 +248,7 @@ end
 ---@param name string
 ---@param from_callback function
 ---@param to_callback function
----@return table<number>
+---@return table<BuffonBuffer>
 local get_buffers_above_below = function(name, from_callback, to_callback)
   local buffer_index = state.index_buffers_by_name[name]
   if not buffer_index then
@@ -259,15 +260,15 @@ local get_buffers_above_below = function(name, from_callback, to_callback)
   local for_to = to_callback(buffer_index)
 
   for i = for_from, for_to do
-    table.insert(response, state.buffers[i].id)
+    table.insert(response, state.buffers[i])
   end
 
   return response
 end
 
----@name string
----@return table<number>
-M.get_buffers_id_above = function(name)
+---@param name string
+---@return table<BuffonBuffer>
+M.get_buffers_above = function(name)
   return get_buffers_above_below(name, function(_)
     return 1
   end, function(index)
@@ -275,9 +276,9 @@ M.get_buffers_id_above = function(name)
   end)
 end
 
----@name string
----@return table<number>
-M.get_buffers_id_below = function(name)
+---@param name string
+---@return table<BuffonBuffer>
+M.get_buffers_below = function(name)
   return get_buffers_above_below(name, function(index)
     return index + 1
   end, function(_)
