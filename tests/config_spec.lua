@@ -20,8 +20,9 @@ describe("config", function()
         close_buffers_above = ";v",
         close_buffers_below = ";b",
         close_all_buffers = ";cc",
+        restore_last_closed_buffer = ";t",
         buffer_mapping = {
-          mapping_chars = "qwertyuiop",
+          mapping_chars = "qweryuiop",
           leader_key = ";",
         },
       },
@@ -50,8 +51,9 @@ describe("config", function()
         close_buffers_above = ";v",
         close_buffers_below = ";b",
         close_all_buffers = ";cc",
+        restore_last_closed_buffer = ";t",
         buffer_mapping = {
-          mapping_chars = "qwertyuiop",
+          mapping_chars = "qweryuiop",
           leader_key = ";",
         },
       },
@@ -84,8 +86,9 @@ describe("config", function()
         close_buffers_above = ";v",
         close_buffers_below = ";b",
         close_all_buffers = ";cc",
+        restore_last_closed_buffer = ";t",
         buffer_mapping = {
-          mapping_chars = "qwertyuiop",
+          mapping_chars = "qweryuiop",
           leader_key = "<space>",
         },
       },

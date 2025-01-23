@@ -91,6 +91,13 @@ local keybindings = function()
       end,
       help = "Close all buffers",
     },
+    {
+      lhs = state.config.keybindings.restore_last_closed_buffer,
+      rhs = function()
+        actions.restore_last_closed_buffer()
+      end,
+      help = "Restore last closed tab",
+    },
   }
 end
 
