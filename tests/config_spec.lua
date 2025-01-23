@@ -11,8 +11,8 @@ describe("config", function()
       keybindings = {
         goto_next_buffer = "<s-j>",
         goto_previous_buffer = "<s-k>",
-        move_buffer_up = "<s-h>",
-        move_buffer_down = "<s-l>",
+        move_buffer_up = "<s-l>",
+        move_buffer_down = "<s-h>",
         move_buffer_top = "<s-t>",
         toggle_buffon_window = ";a",
         switch_previous_used_buffer = ";;",
@@ -40,8 +40,8 @@ describe("config", function()
       keybindings = {
         goto_next_buffer = "<s-j>",
         goto_previous_buffer = "<s-k>",
-        move_buffer_up = "<s-h>",
-        move_buffer_down = "<s-l>",
+        move_buffer_up = "<s-l>",
+        move_buffer_down = "<s-h>",
         move_buffer_top = "<s-t>",
         toggle_buffon_window = ";a",
         switch_previous_used_buffer = ";;",
@@ -73,7 +73,7 @@ describe("config", function()
       keybindings = {
         goto_next_buffer = "<s-j>",
         goto_previous_buffer = "<s-k>",
-        move_buffer_up = "<s-h>",
+        move_buffer_up = "<s-l>",
         move_buffer_down = "aa",
         move_buffer_top = "<s-t>",
         toggle_buffon_window = ";a",

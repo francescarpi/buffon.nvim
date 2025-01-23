@@ -107,9 +107,14 @@ local refresh_content = function(buffers, index_buffers_by_name)
   end
 
   for _, buffer in ipairs(buffers) do
-    table.insert(lines, buffer.filename)
-    if #buffer.filename >= width then
-      width = #buffer.filename + 4
+    local fn = buffer.filename
+    if api.are_duplicated_filenames() then
+      fn = buffer.short_path
+    end
+
+    table.insert(lines, fn)
+    if #fn >= width then
+      width = #fn + 4
     end
   end
 

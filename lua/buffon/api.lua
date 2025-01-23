@@ -1,20 +1,24 @@
 local config = require("buffon.config")
+local utils = require("buffon.utils")
 
 local M = {}
 
 ---@class BuffonBuffer
+---@field id number
 ---@field name string
 ---@field short_name string
 ---@field filename string
----@field id number
+---@field short_path string
 
 ---@class BuffonApiState
 ---@field index_buffers_by_name table<string, number>
 ---@field buffers table<BuffonBuffer>
 ---@field config BuffonConfig
+---@field are_duplicated_filenames boolean
 local state = {
   index_buffers_by_name = {},
   buffers = {},
+  are_duplicated_filenames = false,
 }
 
 --- Refreshes the index_buffers_by_name list based on the current buffers list.
@@ -47,11 +51,13 @@ M.add_buffer = function(name, id)
     return
   end
 
+  ---@type BuffonBuffer
   local buffer = {
     id = id,
     name = name,
     short_name = vim.fn.fnamemodify(name, ":."),
     filename = vim.fn.fnamemodify(name, ":t"),
+    short_path = utils.abbreviate_path(vim.fn.fnamemodify(name, ":.")),
   }
 
   if state.config.prepend_buffers then
@@ -148,6 +154,11 @@ M.move_buffer_top = function(name)
   local buffer_removed = table.remove(state.buffers, buffer_index)
   table.insert(state.buffers, 1, buffer_removed)
   refresh_indexes()
+end
+
+---@return boolean
+M.are_duplicated_filenames = function()
+  return state.are_duplicated_filenames
 end
 
 --- Sets up the API state with the provided configuration.
