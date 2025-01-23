@@ -92,6 +92,13 @@ local keybindings = function()
       help = "Close all buffers",
     },
     {
+      lhs = state.config.keybindings.close_others,
+      rhs = function()
+        actions.close_others()
+      end,
+      help = "Close others buffers",
+    },
+    {
       lhs = state.config.keybindings.restore_last_closed_buffer,
       rhs = function()
         actions.restore_last_closed_buffer()

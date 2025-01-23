@@ -16,6 +16,7 @@ local M = {}
 ---@field close_buffers_above string
 ---@field close_buffers_below string
 ---@field close_all_buffers string
+---@field close_others string
 ---@field restore_last_closed_buffer string
 ---@field buffer_mapping BuffonConfigKeyBindingBufferMapping
 
@@ -40,6 +41,7 @@ local default = {
     close_buffers_above = ";v",
     close_buffers_below = ";b",
     close_all_buffers = ";cc",
+    close_others = ";cd",
     restore_last_closed_buffer = ";t",
     buffer_mapping = {
       mapping_chars = "qweryuiop",

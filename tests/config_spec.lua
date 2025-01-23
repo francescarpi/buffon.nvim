@@ -20,6 +20,7 @@ describe("config", function()
         close_buffers_above = ";v",
         close_buffers_below = ";b",
         close_all_buffers = ";cc",
+        close_others = ";cd",
         restore_last_closed_buffer = ";t",
         buffer_mapping = {
           mapping_chars = "qweryuiop",
@@ -51,6 +52,7 @@ describe("config", function()
         close_buffers_above = ";v",
         close_buffers_below = ";b",
         close_all_buffers = ";cc",
+        close_others = ";cd",
         restore_last_closed_buffer = ";t",
         buffer_mapping = {
           mapping_chars = "qweryuiop",
@@ -86,6 +88,7 @@ describe("config", function()
         close_buffers_above = ";v",
         close_buffers_below = ";b",
         close_all_buffers = ";cc",
+        close_others = ";cd",
         restore_last_closed_buffer = ";t",
         buffer_mapping = {
           mapping_chars = "qweryuiop",

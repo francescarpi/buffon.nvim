@@ -119,6 +119,12 @@ M.close_all_buffers = function()
   close_buffers(utils.table_copy(api.get_buffers()))
 end
 
+--- Close others buffers
+M.close_others = function()
+  M.close_buffers_above()
+  M.close_buffers_below()
+end
+
 --- Restore last closed buffer
 M.restore_last_closed_buffer = function()
   local name = table.remove(last_closed_buffers)
