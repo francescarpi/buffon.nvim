@@ -79,17 +79,6 @@ local update_width = function(longest_word_length)
   local content_width = container_width - mapping_chart_block
   local content_col = container_col + border_length + mapping_chart_block
 
-  vim.print(
-    string.format(
-      "Editor Width: %d - Container Col/Width: %d/%d - Content Col/Width: %d/%d",
-      editor_width,
-      container_col,
-      container_width,
-      content_col,
-      content_width
-    )
-  )
-
   set_win_col_width(state.container.win, container_col, container_width)
   set_win_col_width(state.content.win, content_col, content_width)
 end

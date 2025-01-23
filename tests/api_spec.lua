@@ -4,7 +4,7 @@ local config = require("buffon.config")
 
 ---@class BuffonTestBuffer
 ---@field path string
----@field id number
+---@field id? number
 ---@field name string
 ---@field short_path string
 
@@ -128,5 +128,16 @@ describe("api", function()
     eq(#api.get_buffers(), 2)
     check_buffer(1, buffer1)
     check_buffer(2, buffer3)
+  end)
+
+  it("update buffer id", function()
+    api.setup()
+    add_buffers({ { path = "/foo/bar.json", id = nil } })
+    eq(#api.get_buffers(), 1)
+    check_buffer(1, { path = "/foo/bar.json", id = nil, name = "bar.json", short_path = "/f/bar.json" })
+
+    add_buffers({ { path = "/foo/bar.json", id = 1 } })
+    eq(#api.get_buffers(), 1)
+    check_buffer(1, { path = "/foo/bar.json", id = 1, name = "bar.json", short_path = "/f/bar.json" })
   end)
 end)

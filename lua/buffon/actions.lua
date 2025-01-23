@@ -189,7 +189,6 @@ M.close_buffers_below = function()
   end
 
   local buffers = utils.table_copy(api.get_buffers())
-  vim.print(buffers)
 
   for i = current_buffer.index + 1, #buffers do
     local buf_id = buffers[i].id

@@ -70,7 +70,21 @@ end
 ---@return nil
 M.add_buffer = function(name, id)
   -- [No Name] buffer is ignored
-  if name == "" or name == "/" or state.index_buffers_by_name[name] ~= nil then
+  if name == "" or name == "/" then
+    return
+  end
+
+  local existent_buffer_index = state.index_buffers_by_name[name]
+  if existent_buffer_index then
+    local existent_buffer = state.buffers[existent_buffer_index]
+    if existent_buffer.id then
+      -- trying to add an existent buffer
+      return
+    end
+    -- it means that there is a buffer in the list, but without buffer id
+    -- it only needs to be set
+    existent_buffer.id = id
+    update_storage()
     return
   end
 
