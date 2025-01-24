@@ -4,8 +4,11 @@ local utils = require("buffon.utils")
 
 local M = {}
 
----@type table<string>
-local last_closed_buffers = {}
+---@class BuffonActionsState
+---@field last_closed_buffers table<string>
+local state = {
+  last_closed_buffers = {},
+}
 
 ---@param buffer BuffonBuffer
 local open_buffer = function(buffer)
@@ -52,7 +55,7 @@ local close_buffers = function(buffers)
       api.delete_buffer(buffer.name)
       ui.refresh()
     end
-    table.insert(last_closed_buffers, buffer.name)
+    table.insert(state.last_closed_buffers, buffer.name)
   end
 end
 
@@ -127,7 +130,7 @@ end
 
 --- Restore last closed buffer
 M.restore_last_closed_buffer = function()
-  local name = table.remove(last_closed_buffers)
+  local name = table.remove(state.last_closed_buffers)
   if name then
     vim.api.nvim_command("edit " .. name)
   end
