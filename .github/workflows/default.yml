@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: apt-get install nvim
+        run: sudo apt-get install -y nvim
 
       # - name: Nvim Busted Action
       #   uses: nvim-neorocks/nvim-busted-action@v1.1.0
