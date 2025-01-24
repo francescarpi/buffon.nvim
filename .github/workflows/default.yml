@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install dependencies
-        run: apk add --no-cache make
+        run: apt-cahce update
 
       - uses: MilesChou/lua-action@v0.0.1
         with:
