@@ -5,105 +5,51 @@ local M = {}
 
 ---@class BuffonWindow
 ---@field buf number
----@field win number | nil
+---@field id number | nil
 
 ---@class BuffonUIState
 ---@field config BuffonConfig
----@field container BuffonWindow
----@field content BuffonWindow
+---@field window BuffonWindow
 local state = {}
 
---- Returns the window options for the container and content windows.
----@return table
-local wins_options = function()
-  return {
-    {
-      title = " Buffon ",
-      title_pos = "right",
-      relative = "editor",
-      width = 1,
-      height = 1,
-      col = 1,
-      row = 0,
-      style = "minimal",
-      border = "single",
-      zindex = 1,
-      focusable = false,
-    },
-    {
-      relative = "editor",
-      width = 1,
-      height = 1,
-      col = 1,
-      row = 1,
-      style = "minimal",
-      zindex = 2,
-      focusable = false,
-    },
-  }
-end
+local window_options = {
+  title = " Buffon ",
+  title_pos = "right",
+  relative = "editor",
+  width = 1,
+  height = 1,
+  col = 1,
+  row = 0,
+  style = "minimal",
+  border = "single",
+  zindex = 1,
+  focusable = false,
+}
 
---- Updates the height of the specified window.
----@param win number The window ID.
----@param height number The new height for the window.
-local update_height = function(win, height)
-  if height == 0 then
-    height = 1
-  end
-  vim.api.nvim_win_set_height(win, height)
-end
-
----@param win_id number
----@param col number
----@param width number
----@return nil
-local set_win_col_width = function(win_id, col, width)
-  local wincfg = vim.api.nvim_win_get_config(win_id)
-  wincfg.col = col
-  wincfg.width = width
-  vim.api.nvim_win_set_config(win_id, wincfg)
-end
-
---- Updates the width of the container and content windows.
+--- Updates the width of the window.
 ---@param longest_word_length number The new width for the windows.
-local update_width = function(longest_word_length)
+---@param num_lines number
+local update_dimensions = function(longest_word_length, num_lines)
   local editor_width = vim.api.nvim_get_option("columns")
   local leader_key_length = #state.config.keybindings.buffer_mapping.leader_key
-  local mapping_chart_length = 1
-  local space_length = 1
-  local border_length = 1
-  local mapping_chart_block = leader_key_length + mapping_chart_length + space_length
-  local icon_length = 2
+  local MAPPING_CHAR_LENGTH = 1
+  local SPACE_LENGTH = 1
+  local BORDER_LENGTH = 1
+  local ICON_LENGTH = 2
 
-  local container_width = mapping_chart_block + icon_length + longest_word_length + space_length
-  local container_col = editor_width - (border_length + container_width + border_length)
+  local width = leader_key_length + MAPPING_CHAR_LENGTH + SPACE_LENGTH + longest_word_length + ICON_LENGTH
+  local col = editor_width - (BORDER_LENGTH + width + BORDER_LENGTH)
 
-  local content_width = container_width - mapping_chart_block
-  local content_col = container_col + border_length + mapping_chart_block
+  local wincfg = vim.api.nvim_win_get_config(state.window.id)
+  wincfg.col = col
+  wincfg.width = width
+  vim.api.nvim_win_set_config(state.window.id, wincfg)
 
-  set_win_col_width(state.container.win, container_col, container_width)
-  set_win_col_width(state.content.win, content_col, content_width)
-end
-
---- Refreshes the container window with the buffer shortcuts.
----@param buffers table<BuffonBuffer> The list of buffers.
-local refresh_container = function(buffers)
-  local lines = {}
-  for index, _ in ipairs(buffers) do
-    local shortcut = state.config.keybindings.buffer_mapping.mapping_chars:sub(index, index)
-    if shortcut ~= "" then
-      shortcut = state.config.keybindings.buffer_mapping.leader_key .. shortcut
-    end
-    table.insert(lines, shortcut)
+  local height = num_lines
+  if num_lines == 0 then
+    height = 1
   end
-
-  vim.api.nvim_buf_set_lines(state.container.buf, 0, -1, false, lines)
-
-  for line = 0, #lines do
-    vim.api.nvim_buf_add_highlight(state.container.buf, -1, "Constant", line, 0, -1)
-  end
-
-  update_height(state.container.win, #buffers)
+  vim.api.nvim_win_set_height(state.window.id, height)
 end
 
 --- Refreshes the content window with the buffer filenames.
@@ -111,34 +57,36 @@ end
 ---@param index_buffers_by_name table<string, number> A table mapping buffer names to their indices.
 local refresh_content = function(buffers, index_buffers_by_name)
   local lines = {}
-  local longest_word_length = 18 -- Minimum width if modal is empty
-  local lines_of_unloaded_buffers = {}
+  local longest_word_length = 7 -- Width minimum for the empty modal
+  local leader_key_length = #state.config.keybindings.buffer_mapping.leader_key + 1
 
   local line_active = nil
   local current_buf = vim.api.nvim_get_current_buf()
   if current_buf then
-    local current_buf_name = vim.api.nvim_buf_get_name(current_buf)
-    local buffer_index = index_buffers_by_name[current_buf_name]
-    if buffer_index ~= nil then
+    local buffer_index = index_buffers_by_name[vim.api.nvim_buf_get_name(current_buf)]
+    if buffer_index then
       line_active = buffer_index - 1
     end
   end
 
+  -- lines loop
   for index, buffer in ipairs(buffers) do
-    local fn = buffer.filename
+    local filename = buffer.filename
     if api.are_duplicated_filenames() then
-      fn = buffer.short_path
+      filename = buffer.short_path
+    end
+
+    local shortcut = state.config.keybindings.buffer_mapping.mapping_chars:sub(index, index)
+    if shortcut ~= "" then
+      shortcut = state.config.keybindings.buffer_mapping.leader_key .. shortcut
     end
 
     local icon, _ = devicons.get_icon_color(buffer.filename, buffer.filename:match("%.(%a+)$"))
-    table.insert(lines, string.format("%s %s", fn, icon or ""))
 
-    if #fn > longest_word_length then
-      longest_word_length = #fn
-    end
+    table.insert(lines, string.format("%s %s %s", shortcut, filename, icon or ""))
 
-    if buffer.id == nil then
-      table.insert(lines_of_unloaded_buffers, index - 1)
+    if #filename > longest_word_length then
+      longest_word_length = #filename
     end
   end
 
@@ -146,61 +94,58 @@ local refresh_content = function(buffers, index_buffers_by_name)
     lines = { "No buffers..." }
   end
 
-  vim.api.nvim_buf_set_lines(state.content.buf, 0, -1, false, lines)
+  vim.api.nvim_buf_set_lines(state.window.buf, 0, -1, false, lines)
+
+  -- colors loop
+  for index, buffer in ipairs(buffers) do
+    if buffer.id == nil then -- unloaded buffer
+      vim.api.nvim_buf_add_highlight(state.window.buf, -1, "LineNr", index - 1, 0, -1)
+    end
+
+    vim.api.nvim_buf_add_highlight(state.window.buf, -1, "Constant", index - 1, 0, leader_key_length) -- shortcut
+  end
 
   if line_active then
-    vim.api.nvim_buf_add_highlight(state.content.buf, -1, "Title", line_active, 0, -1)
+    vim.api.nvim_buf_add_highlight(state.window.buf, -1, "Label", line_active, leader_key_length + 1, -1)
   end
 
-  for _, num in ipairs(lines_of_unloaded_buffers) do
-    vim.api.nvim_buf_add_highlight(state.content.buf, -1, "LineNr", num, 0, -1)
-  end
-
-  update_height(state.content.win, #buffers)
-  update_width(longest_word_length)
+  update_dimensions(longest_word_length, #buffers)
 end
 
 --- Sets up the UI state with the provided configuration.
 ---@param opts BuffonConfig The configuration options.
 M.setup = function(opts)
   state.config = opts
-  state.container = { buf = vim.api.nvim_create_buf(false, true), win = nil }
-  state.content = { buf = vim.api.nvim_create_buf(false, true), win = nil }
+  state.window = { buf = vim.api.nvim_create_buf(false, true), id = nil }
 end
 
 --- Refreshes the container and content windows with the current buffer list.
 M.refresh = function()
-  if state.container.win and state.content.win then
+  if state.window.id then
     local buffers = api.get_buffers()
     local buffers_by_name = api.get_index_buffers_by_name()
-    refresh_container(buffers)
     refresh_content(buffers, buffers_by_name)
   end
 end
 
---- Hides the container and content windows.
+--- Hides the windows
 M.hide = function()
-  vim.api.nvim_win_close(state.content.win, true)
-  vim.api.nvim_win_close(state.container.win, true)
-  state.content.win = nil
-  state.container.win = nil
+  vim.api.nvim_win_close(state.window.id, true)
+  state.window.id = nil
 end
 
---- Shows the container and content windows, or hides them if they are already visible.
+--- Shows the window, or hides them if they are already visible.
 M.show = function()
-  if state.content.win and not vim.api.nvim_win_is_valid(state.content.win) then
-    state.container.win = nil
-    state.content.win = nil
+  if state.window.id and not vim.api.nvim_win_is_valid(state.window.id) then
+    state.window.id = nil
   end
 
-  if state.container.win ~= nil then
+  if state.window.id then
     M.hide()
     return
   end
 
-  local opts = wins_options()
-  state.container.win = vim.api.nvim_open_win(state.container.buf, false, opts[1])
-  state.content.win = vim.api.nvim_open_win(state.content.buf, false, opts[2])
+  state.window.id = vim.api.nvim_open_win(state.window.buf, false, window_options)
 
   M.refresh()
 end
