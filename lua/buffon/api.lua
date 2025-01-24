@@ -42,13 +42,6 @@ local refresh_indexes = function()
   state.index_buffers_by_name = buffers
 end
 
---- Sets the buffers list and refreshes the indexes.
----@param list table<BuffonBuffer> The list of buffers to set.
-local set_buffers = function(list)
-  state.buffers = list
-  refresh_indexes()
-end
-
 --- Check if buffers list have repeated filenames and update the are_duplicated_filenames state flag
 ---@return nil
 local check_duplicated_filenames = function()
@@ -62,6 +55,14 @@ local check_duplicated_filenames = function()
     end
     filenames[buffer.filename] = true
   end
+end
+
+--- Sets the buffers list and refreshes the indexes.
+---@param list table<BuffonBuffer> The list of buffers to set.
+local set_buffers = function(list)
+  state.buffers = list
+  refresh_indexes()
+  check_duplicated_filenames()
 end
 
 --- Moves a buffer to the top of the list.
