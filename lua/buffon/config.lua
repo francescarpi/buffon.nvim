@@ -4,6 +4,10 @@ local M = {}
 ---@field mapping_chars string -- Each character maps to a buffer ("qwer" maps 'q' to buffer 1, 'w' to buffer 2, etc.)
 ---@field leader_key string -- Leader key used as a prefix for buffer mappings (';' creates mappings ';q', ';w', etc.)
 
+---@class BuffonConfigOpen
+---@field by_default boolean
+---@field ignore_ft table<string>
+
 ---@class BuffonConfigKeyBinding
 ---@field goto_next_buffer string
 ---@field goto_previous_buffer string
@@ -23,12 +27,17 @@ local M = {}
 ---@class BuffonConfig
 ---@field cyclic_navigation boolean -- If true, navigation between buffers will wrap around (cyclic navigation).
 ---@field prepend_buffers boolean -- If true, new buffers are added at the first position, shifting existing buffers.
+---@field open BuffonConfigOpen
 ---@field keybindings BuffonConfigKeyBinding
 
 ---@type BuffonConfig
 local default = {
   cyclic_navigation = false,
   prepend_buffers = false,
+  open = {
+    by_default = false,
+    ignore_ft = { "gitcommit" },
+  },
   keybindings = {
     goto_next_buffer = "<s-j>",
     goto_previous_buffer = "<s-k>",

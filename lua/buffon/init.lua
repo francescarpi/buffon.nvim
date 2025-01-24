@@ -34,6 +34,7 @@ local register_autocommands = function(group)
     group = group,
     callback = function()
       ui.refresh()
+      ui.check_open()
     end,
   })
 
@@ -62,8 +63,7 @@ M.setup = function(opts)
   keybindings.setup(plugin_opts)
   keybindings.register()
 
-  local group = vim.api.nvim_create_augroup("Buffon", { clear = true })
-  register_autocommands(group)
+  register_autocommands(vim.api.nvim_create_augroup("Buffon", { clear = true }))
 end
 
 return M

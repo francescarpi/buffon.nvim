@@ -154,4 +154,13 @@ M.show = function()
   M.refresh()
 end
 
+M.check_open = function()
+  if state.window.id or not vim.bo.filetype then
+    return
+  end
+  if state.config.open.by_default and not vim.tbl_contains(state.config.open.ignore_ft, vim.bo.filetype) then
+    M.show()
+  end
+end
+
 return M

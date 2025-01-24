@@ -8,6 +8,10 @@ describe("config", function()
     eq(opts, {
       cyclic_navigation = false,
       prepend_buffers = false,
+      open = {
+        by_default = false,
+        ignore_ft = { "gitcommit" },
+      },
       keybindings = {
         goto_next_buffer = "<s-j>",
         goto_previous_buffer = "<s-k>",
@@ -40,6 +44,10 @@ describe("config", function()
     eq(opts, {
       cyclic_navigation = true,
       prepend_buffers = true,
+      open = {
+        by_default = false,
+        ignore_ft = { "gitcommit" },
+      },
       keybindings = {
         goto_next_buffer = "<s-j>",
         goto_previous_buffer = "<s-k>",
@@ -76,6 +84,10 @@ describe("config", function()
     eq(opts, {
       cyclic_navigation = false,
       prepend_buffers = false,
+      open = {
+        by_default = false,
+        ignore_ft = { "gitcommit" },
+      },
       keybindings = {
         goto_next_buffer = "<s-j>",
         goto_previous_buffer = "<s-k>",
