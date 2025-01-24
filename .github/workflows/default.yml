@@ -9,8 +9,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Nvim Busted Action
-        uses: nvim-neorocks/nvim-busted-action@v1.1.0
+      - name: Install dependencies
+        run: apt-get install nvim
+
+      # - name: Nvim Busted Action
+      #   uses: nvim-neorocks/nvim-busted-action@v1.1.0
 
       - name: Run test
         run: make
