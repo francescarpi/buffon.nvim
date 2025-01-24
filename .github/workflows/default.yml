@@ -13,9 +13,7 @@ jobs:
         run: sudo apt-get install -y neovim
 
       - name: Check out plenary
-        uses: actions/checkout@master
-        with:
-          repository: nvim-lua/plenary.nvim
+        run: git clone https://github.com/nvim-lua/plenary.nvim.git plenary.nvim
 
       - name: Run test
-        run: make
+        run: ls -la && make
