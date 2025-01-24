@@ -9,3 +9,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: MilesChou/lua-action@v0.0.1
+        with:
+          args: make
