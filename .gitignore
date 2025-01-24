@@ -40,3 +40,4 @@ luac.out
 *.hex
 
 actions-runner
+plenary.nvim
