@@ -12,8 +12,10 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get install -y neovim
 
-      # - name: Nvim Busted Action
-      #   uses: nvim-neorocks/nvim-busted-action@v1.1.0
+      - name: Check out plenary
+        uses: actions/checkout@master
+        with:
+          repository: nvim-lua/plenary.nvim
 
       - name: Run test
         run: make
