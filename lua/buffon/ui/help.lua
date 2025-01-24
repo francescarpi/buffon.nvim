@@ -24,7 +24,6 @@ local render_content = function(keymaps)
 
   for _, kb in ipairs(keymaps) do
     local lhs_padded = kb.lhs .. string.rep(" ", max_lhs_length - #kb.lhs)
-    vim.print(kb.help)
     table.insert(lines, string.format("%s  %s", lhs_padded, kb.help))
   end
 
