@@ -112,7 +112,7 @@ local refresh_content = function(buffers, index_buffers_by_name)
   if line_active then
     vim.api.nvim_buf_add_highlight(state.window.buf, -1, "Label", line_active, leader_key_length + 1, -1)
     local icon_col_start = leader_key_length + 2 + #filenames[line_active + 1]
-    vim.api.nvim_buf_add_highlight(state.window.buf, -1, "String", line_active, icon_col_start, icon_col_start + 1) -- icon
+    vim.api.nvim_buf_add_highlight(state.window.buf, -1, "String", line_active, icon_col_start, icon_col_start + 1)
   end
 
   update_dimensions(longest_word_length, #buffers)
