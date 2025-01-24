@@ -1,0 +1,12 @@
+---
+on: [push, pull_request]
+name: default
+
+jobs:
+  stylua:
+    name: stylua
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: MilesChou/lua-action@v0.0.1
+      - uses: JohnnyMorganz/stylua-action@v2
