@@ -57,7 +57,8 @@ end
 ---@param index_buffers_by_name table<string, number> A table mapping buffer names to their indices.
 local refresh_content = function(buffers, index_buffers_by_name)
   local lines = {}
-  local longest_word_length = 7 -- Width minimum for the empty modal
+  local filenames = {}
+  local longest_word_length = 10 -- Width minimum for the empty modal
   local leader_key_length = #state.config.keybindings.buffer_mapping.leader_key + 1
 
   local line_active = nil
@@ -75,6 +76,7 @@ local refresh_content = function(buffers, index_buffers_by_name)
     if api.are_duplicated_filenames() then
       filename = buffer.short_path
     end
+    table.insert(filenames, filename)
 
     local shortcut = state.config.keybindings.buffer_mapping.mapping_chars:sub(index, index)
     if shortcut ~= "" then
@@ -91,7 +93,7 @@ local refresh_content = function(buffers, index_buffers_by_name)
   end
 
   if #lines == 0 then
-    lines = { "No buffers..." }
+    lines = { " No buffers... " }
   end
 
   vim.api.nvim_buf_set_lines(state.window.buf, 0, -1, false, lines)
@@ -107,6 +109,8 @@ local refresh_content = function(buffers, index_buffers_by_name)
 
   if line_active then
     vim.api.nvim_buf_add_highlight(state.window.buf, -1, "Label", line_active, leader_key_length + 1, -1)
+    local icon_col_start = leader_key_length + 2 + #filenames[line_active + 1]
+    vim.api.nvim_buf_add_highlight(state.window.buf, -1, "String", line_active, icon_col_start, icon_col_start + 1) -- icon
   end
 
   update_dimensions(longest_word_length, #buffers)
