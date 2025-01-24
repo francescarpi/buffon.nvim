@@ -14,96 +14,100 @@ local state = {}
 
 --- Returns the list of keybindings based on the current configuration.
 ---@return table<BuffonKeybinding> The list of keybindings.
-local keybindings = function()
+M.keybindings = function()
   return {
     {
       lhs = state.config.keybindings.goto_next_buffer,
       rhs = function()
         actions.next()
       end,
-      help = "Go to next buffer",
+      help = "Next buffer",
     },
     {
       lhs = state.config.keybindings.goto_previous_buffer,
       rhs = function()
         actions.previous()
       end,
-      help = "Go to previous buffer",
+      help = "Previous buffer",
     },
     {
       lhs = state.config.keybindings.move_buffer_up,
       rhs = function()
         actions.buffer_up()
       end,
-      help = "Move buffer to up one position",
+      help = "Move buffer up",
     },
     {
       lhs = state.config.keybindings.move_buffer_down,
       rhs = function()
         actions.buffer_down()
       end,
-      help = "Move buffer to down one position",
+      help = "Move buffer down",
     },
     {
       lhs = state.config.keybindings.move_buffer_top,
       rhs = function()
         actions.buffer_top()
       end,
-      help = "Move buffer to the top position",
+      help = "Move buffer to top",
     },
     {
       lhs = state.config.keybindings.toggle_buffon_window,
       rhs = function()
-        ui.show()
+        if not ui.is_open() then
+          ui.show()
+        else
+          ui.hide()
+        end
       end,
-      help = "Toggle buffon window",
+      help = "Show/hide buffer list",
     },
     {
       lhs = state.config.keybindings.switch_previous_used_buffer,
       rhs = "<cmd>e #<cr>",
-      help = "Switch to previous used buffer",
+      help = "Last used buffer",
     },
     {
       lhs = state.config.keybindings.close_buffer,
       rhs = function()
         actions.close_buffer()
       end,
-      help = "Close current buffer",
+      help = "Close buffer",
     },
     {
       lhs = state.config.keybindings.close_buffers_above,
       rhs = function()
         actions.close_buffers_above()
       end,
-      help = "Close buffers above the current one",
+      help = "Close buffers above",
     },
     {
       lhs = state.config.keybindings.close_buffers_below,
       rhs = function()
         actions.close_buffers_below()
       end,
-      help = "Close buffers below the current one",
+      help = "Close buffers below",
     },
     {
       lhs = state.config.keybindings.close_all_buffers,
       rhs = function()
         actions.close_all_buffers()
       end,
-      help = "Close all buffers",
+      help = "Close all",
     },
     {
       lhs = state.config.keybindings.close_others,
       rhs = function()
         actions.close_others()
       end,
-      help = "Close others buffers",
+      help = "Close others",
     },
     {
       lhs = state.config.keybindings.restore_last_closed_buffer,
       rhs = function()
         actions.restore_last_closed_buffer()
       end,
-      help = "Restore last closed tab",
+      help = "Restore last tab",
     },
   }
 end
@@ -124,7 +128,7 @@ end
 
 --- Registers all the keybindings based on the current configuration.
 M.register = function()
-  for _, keybinding in ipairs(keybindings()) do
+  for _, keybinding in ipairs(M.keybindings()) do
     keymap(keybinding.lhs, keybinding.rhs, keybinding.help)
   end
 
@@ -134,6 +138,15 @@ M.register = function()
       actions.goto_buffer(i)
     end, "Goto to buffer " .. i)
   end
+
+  keymap(state.config.keybindings.show_help, function()
+    local help = require("buffon.ui.help")
+    if not help.is_open() then
+      help.show()
+    else
+      help.close()
+    end
+  end, "Show help")
 end
 
 return M

@@ -12,19 +12,21 @@ local M = {}
 ---@field window BuffonWindow
 local state = {}
 
-local window_options = {
-  title = " Buffon ",
-  title_pos = "right",
-  relative = "editor",
-  width = 1,
-  height = 1,
-  col = 1,
-  row = 0,
-  style = "minimal",
-  border = "single",
-  zindex = 1,
-  focusable = false,
-}
+local window_options = function()
+  return {
+    title = " Buffon (" .. state.config.keybindings.show_help .. ")",
+    title_pos = "right",
+    relative = "editor",
+    width = 1,
+    height = 1,
+    col = 1,
+    row = 0,
+    style = "minimal",
+    border = "single",
+    zindex = 1,
+    focusable = false,
+  }
+end
 
 --- Updates the width of the window.
 ---@param longest_word_length number The new width for the windows.
@@ -136,21 +138,24 @@ end
 M.hide = function()
   vim.api.nvim_win_close(state.window.id, true)
   state.window.id = nil
+
+  local help = require("buffon.ui.help")
+  if help.is_open() then
+    help.close()
+  end
+end
+
+---@return boolean
+M.is_open = function()
+  if state.window.id then
+    return true
+  end
+  return false
 end
 
 --- Shows the window, or hides them if they are already visible.
 M.show = function()
-  if state.window.id and not vim.api.nvim_win_is_valid(state.window.id) then
-    state.window.id = nil
-  end
-
-  if state.window.id then
-    M.hide()
-    return
-  end
-
-  state.window.id = vim.api.nvim_open_win(state.window.buf, false, window_options)
-
+  state.window.id = vim.api.nvim_open_win(state.window.buf, false, window_options())
   M.refresh()
 end
 

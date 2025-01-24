@@ -23,6 +23,7 @@ local M = {}
 ---@field close_others string
 ---@field restore_last_closed_buffer string
 ---@field buffer_mapping BuffonConfigKeyBindingBufferMapping
+---@field show_help string
 
 ---@class BuffonConfig
 ---@field cyclic_navigation boolean -- If true, navigation between buffers will wrap around (cyclic navigation).
@@ -56,6 +57,7 @@ local default = {
       mapping_chars = "qweryuiop",
       leader_key = ";",
     },
+    show_help = ";h",
   },
 }
 

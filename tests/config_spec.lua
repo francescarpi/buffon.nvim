@@ -30,6 +30,7 @@ describe("config", function()
           mapping_chars = "qweryuiop",
           leader_key = ";",
         },
+        show_help = ";h",
       },
     })
   end)
@@ -66,6 +67,7 @@ describe("config", function()
           mapping_chars = "qweryuiop",
           leader_key = ";",
         },
+        show_help = ";h",
       },
     })
   end)
@@ -106,6 +108,7 @@ describe("config", function()
           mapping_chars = "qweryuiop",
           leader_key = "<space>",
         },
+        show_help = ";h",
       },
     })
   end)
