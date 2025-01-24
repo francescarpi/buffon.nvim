@@ -41,4 +41,44 @@ M.slugify = function(str)
   return result:lower()
 end
 
+---@class BuffonLastClosedList
+---@field buffers table<string>
+---@field limit number
+local LastClosedList = {}
+
+--- Constructor
+---@param limit? number
+function LastClosedList:new(limit)
+  local o = {
+    buffers = {},
+    limit = limit or 10,
+  }
+  setmetatable(o, self)
+  self.__index = self
+  return o
+end
+
+---@param buffer string
+function LastClosedList:add(buffer)
+  if #self.buffers > 0 and self.buffers[#self.buffers] == buffer then
+    return
+  end
+
+  table.insert(self.buffers, buffer)
+
+  if #self.buffers > self.limit then
+    table.remove(self.buffers, 1)
+  end
+end
+
+---@return string?
+function LastClosedList:get_last()
+  if #self.buffers == 0 then
+    return nil
+  end
+  return table.remove(self.buffers)
+end
+
+M.LastClosedList = LastClosedList
+
 return M
