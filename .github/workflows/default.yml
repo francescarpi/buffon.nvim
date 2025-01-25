@@ -14,8 +14,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install neovim
 
-      - name: Check out plenary
-        run: git clone https://github.com/nvim-lua/plenary.nvim.git plenary.nvim
+      - name: Check out required packages
+        run: |
+          git clone https://github.com/nvim-lua/plenary.nvim.git packages/plenary.nvim
+          git clone git@github.com:nvim-tree/nvim-web-devicons.git packages/nvim-web-devicons
 
       - name: Run test
         run: make

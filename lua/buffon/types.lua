@@ -49,6 +49,12 @@
 ---@field config? BuffonConfig
 ---@field window? BuffonWindow
 
+---@class BuffonUIGetContent
+---@field lines table<string>
+---@field line_active number
+---@field longest_word_length number
+---@field filenames table<string>
+
 ---@class BuffonApiState
 ---@field index_buffers_by_name table<string, number>
 ---@field buffers table<BuffonBuffer>

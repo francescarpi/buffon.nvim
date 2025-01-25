@@ -48,14 +48,13 @@ local update_dimensions = function(longest_word_length, num_lines)
   vim.api.nvim_win_set_height(state.window.id, height)
 end
 
---- Refreshes the content window with the buffer filenames.
 ---@param buffers table<BuffonBuffer> The list of buffers.
 ---@param index_buffers_by_name table<string, number> A table mapping buffer names to their indices.
-local refresh_content = function(buffers, index_buffers_by_name)
+---@return BuffonUIGetContent
+M.get_content = function(buffers, index_buffers_by_name)
   local lines = {}
   local filenames = {}
   local longest_word_length = 10 -- Width minimum for the empty modal
-  local leader_key_length = #state.config.keybindings.buffer_mapping.leader_key + 1
 
   local line_active = nil
   local current_buf = vim.api.nvim_get_current_buf()
@@ -77,6 +76,8 @@ local refresh_content = function(buffers, index_buffers_by_name)
     local shortcut = state.config.keybindings.buffer_mapping.mapping_chars:sub(index, index)
     if shortcut ~= "" then
       shortcut = state.config.keybindings.buffer_mapping.leader_key .. shortcut
+    else
+      shortcut = string.rep(" ", #state.config.keybindings.buffer_mapping.leader_key + 1)
     end
 
     local icon, _ = devicons.get_icon_color(buffer.filename, buffer.filename:match("%.(%a+)$"))
@@ -87,29 +88,50 @@ local refresh_content = function(buffers, index_buffers_by_name)
       longest_word_length = #filename
     end
   end
+  return {
+    lines = lines,
+    line_active = line_active,
+    longest_word_length = longest_word_length,
+    filenames = filenames,
+  }
+end
 
-  if #lines == 0 then
-    lines = { " No buffers... " }
+--- Refreshes the content window with the buffer filenames.
+---@param buffers table<BuffonBuffer> The list of buffers.
+---@param index_buffers_by_name table<string, number> A table mapping buffer names to their indices.
+local refresh_content = function(buffers, index_buffers_by_name)
+  local content = M.get_content(buffers, index_buffers_by_name)
+  local leader_key_length = #state.config.keybindings.buffer_mapping.leader_key + 1
+
+  if #content.lines == 0 then
+    vim.api.nvim_buf_set_lines(state.window.buf, 0, -1, false, { " No buffers... " })
+    return
   end
 
-  vim.api.nvim_buf_set_lines(state.window.buf, 0, -1, false, lines)
+  vim.api.nvim_buf_set_lines(state.window.buf, 0, -1, false, content.lines)
 
-  -- colors loop
+  -- highlights (color)
   for index, buffer in ipairs(buffers) do
     if buffer.id == nil then -- unloaded buffer
       vim.api.nvim_buf_add_highlight(state.window.buf, -1, "LineNr", index - 1, 0, -1)
     end
-
     vim.api.nvim_buf_add_highlight(state.window.buf, -1, "Constant", index - 1, 0, leader_key_length) -- shortcut
   end
 
-  if line_active then
-    vim.api.nvim_buf_add_highlight(state.window.buf, -1, "Label", line_active, leader_key_length + 1, -1)
-    local icon_col_start = leader_key_length + 2 + #filenames[line_active + 1]
-    vim.api.nvim_buf_add_highlight(state.window.buf, -1, "String", line_active, icon_col_start, icon_col_start + 1)
+  if content.line_active then
+    vim.api.nvim_buf_add_highlight(state.window.buf, -1, "Label", content.line_active, leader_key_length + 1, -1)
+    local icon_col_start = leader_key_length + 2 + #content.filenames[content.line_active + 1]
+    vim.api.nvim_buf_add_highlight(
+      state.window.buf,
+      -1,
+      "String",
+      content.line_active,
+      icon_col_start,
+      icon_col_start + 1
+    )
   end
 
-  update_dimensions(longest_word_length, #buffers)
+  update_dimensions(content.longest_word_length, #buffers)
 end
 
 --- Sets up the UI state with the provided configuration.
