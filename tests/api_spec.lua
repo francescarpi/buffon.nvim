@@ -96,9 +96,15 @@ describe("api", function()
     check_buffer(2, buffer3)
     check_buffer(3, buffer1)
 
-    -- move buffer1 on top
+    -- move buffer1 at top
     api.move_buffer_top("/home/foo/buffer1")
     check_initial_state(buffers)
+
+    --- move buffer1 at bottom
+    api.move_buffer_bottom("/home/foo/buffer1")
+    check_buffer(1, buffer2)
+    check_buffer(2, buffer3)
+    check_buffer(3, buffer1)
   end)
 
   it("prepend buffers", function()

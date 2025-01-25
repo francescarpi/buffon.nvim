@@ -46,6 +46,13 @@ M.keybindings = function()
       help = "Move buffer to top",
     },
     {
+      lhs = state.config.keybindings.move_buffer_bottom,
+      rhs = function()
+        actions.buffer_bottom()
+      end,
+      help = "Move buffer to bottom",
+    },
+    {
       lhs = state.config.keybindings.toggle_buffon_window,
       rhs = function()
         ui.toggle()

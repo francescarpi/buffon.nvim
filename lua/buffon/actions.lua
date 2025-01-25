@@ -93,6 +93,11 @@ M.buffer_top = function()
   move_buffer(api.move_buffer_top)
 end
 
+--- Moves the current buffer to the bottom of the buffer list.
+M.buffer_bottom = function()
+  move_buffer(api.move_buffer_bottom)
+end
+
 --- Close current buffer
 M.close_buffer = function()
   local buffer_id = vim.api.nvim_get_current_buf()

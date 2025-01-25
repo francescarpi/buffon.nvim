@@ -204,6 +204,17 @@ M.move_buffer_top = function(name)
   end)
 end
 
+---@param name string
+---@return number
+M.move_buffer_bottom = function(name)
+  return move_buffer(name, function(index)
+    return index == #state.buffers
+  end, function(index)
+    table.insert(state.buffers, table.remove(state.buffers, index))
+    return #state.buffers
+  end)
+end
+
 ---@return boolean
 M.are_duplicated_filenames = function()
   return state.are_duplicated_filenames

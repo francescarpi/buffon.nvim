@@ -14,6 +14,7 @@ local default = {
     move_buffer_up = "<s-l>",
     move_buffer_down = "<s-h>",
     move_buffer_top = "<s-t>",
+    move_buffer_bottom = "<s-b>",
     toggle_buffon_window = ";a",
     switch_previous_used_buffer = ";;",
     close_buffer = ";d",
