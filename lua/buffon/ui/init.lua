@@ -105,6 +105,7 @@ local refresh_content = function(buffers, index_buffers_by_name)
 
   if #content.lines == 0 then
     vim.api.nvim_buf_set_lines(state.window.buf, 0, -1, false, { " No buffers... " })
+    update_dimensions(content.longest_word_length, #buffers)
     return
   end
 

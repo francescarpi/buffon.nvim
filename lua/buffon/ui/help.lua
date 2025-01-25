@@ -37,8 +37,13 @@ M.update_row = function()
     return
   end
 
+  local buffers = api.get_buffers()
   local wincfg = vim.api.nvim_win_get_config(state.win)
-  wincfg.row = #api.get_buffers() + 2
+  if #buffers == 0 then
+    wincfg.row = #api.get_buffers() + 3
+  else
+    wincfg.row = #api.get_buffers() + 2
+  end
   vim.api.nvim_win_set_config(state.win, wincfg)
 end
 
