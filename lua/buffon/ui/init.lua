@@ -153,6 +153,14 @@ M.show = function()
   M.refresh()
 end
 
+M.toggle = function()
+  if not M.is_open() then
+    M.show()
+  else
+    M.hide()
+  end
+end
+
 M.check_open = function()
   if state.window.id or not vim.bo.filetype then
     return

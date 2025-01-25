@@ -48,11 +48,7 @@ M.keybindings = function()
     {
       lhs = state.config.keybindings.toggle_buffon_window,
       rhs = function()
-        if not ui.is_open() then
-          ui.show()
-        else
-          ui.hide()
-        end
+        ui.toggle()
       end,
       help = "Show/hide buffer list",
     },
@@ -135,11 +131,7 @@ M.register = function()
 
   keymap(state.config.keybindings.show_help, function()
     local help = require("buffon.ui.help")
-    if not help.is_open() then
-      help.show()
-    else
-      help.close()
-    end
+    help.toggle()
   end, "Show help")
 end
 

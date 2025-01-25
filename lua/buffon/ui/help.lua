@@ -79,4 +79,12 @@ M.is_open = function()
   return false
 end
 
+M.toggle = function()
+  if not M.is_open() then
+    M.show()
+  else
+    M.close()
+  end
+end
+
 return M
