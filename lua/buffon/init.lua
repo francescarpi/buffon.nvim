@@ -4,6 +4,7 @@ local keybindings = require("buffon.keybindings")
 local ui = require("buffon.ui")
 local storage = require("buffon.storage")
 local actions = require("buffon.actions")
+local log = require("buffon.log")
 
 local M = {}
 
@@ -51,6 +52,7 @@ end
 --- Registers autocommands for buffer and UI events.
 ---@param opts table The options to configure the Buffon plugin.
 M.setup = function(opts)
+  log.debug("==== initial setup ====")
   config.setup(opts)
   local plugin_opts = config.opts()
 

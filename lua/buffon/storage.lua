@@ -1,5 +1,6 @@
 local utils = require("buffon.utils")
 local Path = require("plenary.path")
+local log = require("buffon.log")
 
 local M = {}
 
@@ -80,6 +81,7 @@ function Storage:load()
     return {}
   end
 
+  log.debug(#buffers, "buffers loaded from disk")
   return buffers
 end
 

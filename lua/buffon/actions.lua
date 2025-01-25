@@ -1,6 +1,7 @@
 local api = require("buffon.api")
 local ui = require("buffon.ui")
 local utils = require("buffon.utils")
+local log = require("buffon.log")
 
 local M = {}
 
@@ -40,6 +41,7 @@ local move_buffer = function(callback)
   if index > -1 then
     ui.refresh()
     vim.notify(string.format("Buffer moved to index: %d", index))
+    log.debug("buffer moved to index", index)
   end
 end
 

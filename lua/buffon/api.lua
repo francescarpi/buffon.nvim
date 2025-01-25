@@ -1,5 +1,6 @@
 local config = require("buffon.config")
 local utils = require("buffon.utils")
+local log = require("buffon.log")
 
 local M = {}
 
@@ -13,6 +14,7 @@ local state = {
 
 local update_storage = function()
   if state.storage then
+    log.debug("buffers saved to disk")
     state.storage:save(state.buffers)
   end
 end
@@ -67,7 +69,7 @@ M.add_buffer = function(name, id)
   if existent_buffer_index then
     local existent_buffer = state.buffers[existent_buffer_index]
     if existent_buffer.id then
-      -- trying to add an existent buffer
+      log.debug("tries to add an existing buffer", name)
       return
     end
     -- it means that there is a buffer in the list, but without buffer id
@@ -85,6 +87,8 @@ M.add_buffer = function(name, id)
     filename = vim.fn.fnamemodify(name, ":t"),
     short_path = utils.abbreviate_path(vim.fn.fnamemodify(name, ":.")),
   }
+
+  log.debug("add buffer", buffer.name, "with id", buffer.id)
 
   if state.config.prepend_buffers then
     table.insert(state.buffers, 1, buffer)
@@ -132,6 +136,7 @@ M.delete_buffer = function(name)
     return
   end
 
+  log.debug("close buffer", name)
   table.remove(state.buffers, buffer_index)
 
   check_duplicated_filenames()
