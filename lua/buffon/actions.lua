@@ -40,7 +40,7 @@ local move_buffer = function(callback)
   local index = callback(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
   if index > -1 then
     ui.refresh()
-    vim.print(string.format("Buffer moved to index: %d", index))
+    vim.notify(string.format("Buffer moved to index: %d", index))
   end
 end
 
