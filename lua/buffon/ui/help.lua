@@ -24,7 +24,7 @@ local render_content = function(keymaps)
 
   for _, kb in ipairs(keymaps) do
     local lhs_padded = kb.lhs .. string.rep(" ", max_lhs_length - #kb.lhs)
-    local line = string.format("%s  %s", lhs_padded, kb.help)
+    local line = string.format("%s %s", lhs_padded, kb.help)
     table.insert(lines, line)
 
     if #line > width then
