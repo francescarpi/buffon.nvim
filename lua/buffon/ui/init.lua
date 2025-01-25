@@ -3,13 +3,7 @@ local devicons = require("nvim-web-devicons")
 
 local M = {}
 
----@class BuffonWindow
----@field buf number
----@field id number | nil
-
----@class BuffonUIState
----@field config BuffonConfig
----@field window BuffonWindow
+---@type BuffonUIState
 local state = {}
 
 local window_options = function()

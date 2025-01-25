@@ -3,9 +3,7 @@ local keybindings = require("buffon.keybindings")
 
 local M = {}
 
----@class BuffonHelpState
----@field buf? number
----@field win? number
+---@type BuffonHelpState
 local state = {
   buf = nil,
   win = nil,

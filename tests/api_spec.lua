@@ -2,12 +2,6 @@ local eq = assert.are.same
 local api = require("buffon.api")
 local config = require("buffon.config")
 
----@class BuffonTestBuffer
----@field path string
----@field id? number
----@field name string
----@field short_path string
-
 ---@param buffer BuffonTestBuffer
 ---@return BuffonBuffer
 local test_buffer_to_buffon_buffer = function(buffer)

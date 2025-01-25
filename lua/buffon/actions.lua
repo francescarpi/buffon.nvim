@@ -4,8 +4,7 @@ local utils = require("buffon.utils")
 
 local M = {}
 
----@class BuffonActionsState
----@field last_closed BuffonLastClosedList
+---@type BuffonActionsState
 local state = {}
 
 ---@param buffer BuffonBuffer

@@ -42,8 +42,8 @@ M.slugify = function(str)
 end
 
 ---@class BuffonLastClosedList
----@field buffers table<string>
----@field limit number
+---@field buffers? table<string>
+---@field limit? number
 local LastClosedList = {}
 
 --- Constructor

@@ -3,19 +3,7 @@ local utils = require("buffon.utils")
 
 local M = {}
 
----@class BuffonBuffer
----@field id number
----@field name string
----@field short_name string
----@field filename string
----@field short_path string
-
----@class BuffonApiState
----@field index_buffers_by_name table<string, number>
----@field buffers table<BuffonBuffer>
----@field config BuffonConfig
----@field are_duplicated_filenames boolean
----@field storage? BuffonStorage
+---@type BuffonApiState
 local state = {
   index_buffers_by_name = {},
   buffers = {},

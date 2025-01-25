@@ -3,14 +3,8 @@ local ui = require("buffon.ui")
 
 local M = {}
 
----@class BuffonKeybindingsState
----@field config BuffonConfig
+---@type BuffonKeybindingsState
 local state = {}
-
----@class BuffonKeybinding
----@field lhs string
----@field rhs function | string
----@field help string
 
 --- Returns the list of keybindings based on the current configuration.
 ---@return table<BuffonKeybinding> The list of keybindings.
