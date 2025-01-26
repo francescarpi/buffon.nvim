@@ -3,9 +3,8 @@ local config = require("buffon.config")
 
 describe("config", function()
   it("defaults options", function()
-    config.setup({})
-    local opts = config.opts()
-    eq(opts, {
+    local cfg = config.setup({})
+    eq(cfg.opts, {
       cyclic_navigation = false,
       prepend_buffers = false,
       open = {
@@ -37,13 +36,12 @@ describe("config", function()
   end)
 
   it("user changes cyclic_navigation and prepend_buffers", function()
-    config.setup({
+    local cfg = config.setup({
       cyclic_navigation = true,
       prepend_buffers = true,
     })
 
-    local opts = config.opts()
-    eq(opts, {
+    eq(cfg.opts, {
       cyclic_navigation = true,
       prepend_buffers = true,
       open = {
@@ -75,7 +73,7 @@ describe("config", function()
   end)
 
   it("user changes some keybinding", function()
-    config.setup({
+    local cfg = config.setup({
       keybindings = {
         move_buffer_down = "aa",
         buffer_mapping = {
@@ -84,8 +82,7 @@ describe("config", function()
       },
     })
 
-    local opts = config.opts()
-    eq(opts, {
+    eq(cfg.opts, {
       cyclic_navigation = false,
       prepend_buffers = false,
       open = {

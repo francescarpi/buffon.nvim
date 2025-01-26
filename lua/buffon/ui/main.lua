@@ -135,13 +135,6 @@ local refresh_content = function(buffers, index_buffers_by_name)
   update_dimensions(content.longest_word_length, #buffers)
 end
 
---- Sets up the UI state with the provided configuration.
----@param config BuffonConfigState The configuration options.
-M.setup = function(config)
-  state.config = config
-  state.window = { buf = vim.api.nvim_create_buf(false, true), id = nil }
-end
-
 --- Refreshes the container and content windows with the current buffer list.
 M.refresh = function()
   if state.window.id then
@@ -188,9 +181,17 @@ M.check_open = function()
   if state.window.id or not vim.bo.filetype then
     return
   end
+
   if state.config.opts.open.by_default and not vim.tbl_contains(state.config.opts.open.ignore_ft, vim.bo.filetype) then
     M.show()
   end
+end
+
+--- Sets up the UI state with the provided configuration.
+---@param config BuffonConfigState The configuration options.
+M.setup = function(config)
+  state.config = config
+  state.window = { buf = vim.api.nvim_create_buf(false, true), id = nil }
 end
 
 return M

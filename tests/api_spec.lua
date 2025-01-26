@@ -217,4 +217,58 @@ describe("api", function()
     api.update_cursor(buffer1.path, { 2, 2 })
     eq(api.get_buffer_by_index(1).cursor, { 2, 2 })
   end)
+
+  it("buffers validation", function()
+    local cfg = config.setup()
+    api.setup(cfg)
+    eq(
+      api.validate_buffers({
+        {
+          name = "foo",
+          short_path = "foo",
+          cursor = { 1, 1 },
+          short_name = "foo",
+          filename = "foo",
+        },
+      }),
+      true
+    )
+    eq(
+      api.validate_buffers({
+        {
+          name = "foo",
+          short_path = "foo",
+          cursor = { 1, 1 },
+          short_name = "foo",
+          filename = "foo",
+          id = 1,
+        },
+      }),
+      true
+    )
+    eq(
+      api.validate_buffers({
+        {
+          name = "foo",
+          short_path = "foo",
+          cursor = { 1, 1 },
+          short_name = "foo",
+          filename = 1,
+        },
+      }),
+      false
+    )
+    eq(
+      api.validate_buffers({
+        {
+          name = "foo",
+          short_path = "foo",
+          short_name = "foo",
+          filename = "foo",
+          id = 1,
+        },
+      }),
+      false
+    )
+  end)
 end)

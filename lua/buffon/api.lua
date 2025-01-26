@@ -312,12 +312,40 @@ M.update_cursor = function(name, position)
   log.debug("cursor position of buffer", name, "updated to", position[1], ",", position[2])
 end
 
+--- Checks if the structure of the buffers is correct. This method makes sense with the data loaded
+--- from the disk, because if some attribute is added in a newer version of the plugin, the stored data
+--- might not be compatible.
+---@param buffers table<BuffonBuffer>
+---@return boolean
+M.validate_buffers = function(buffers)
+  log.debug("starting to validate buffers")
+  for _, buffer in ipairs(buffers) do
+    local success, msg = pcall(vim.validate, {
+      name = { buffer.name, "string" },
+      short_path = { buffer.short_path, "string" },
+      short_name = { buffer.short_name, "string" },
+      filename = { buffer.filename, "string" },
+      cursor = { buffer.cursor, "table" },
+    })
+    if not success then
+      log.debug(buffer.name, ",", msg)
+      return false
+    end
+  end
+  return true
+end
+
 --- Sets up the API state with the provided configuration.
 ---@param config BuffonConfigState The configuration options.
 ---@param initial_buffers? table<BuffonBuffer>
 M.setup = function(config, initial_buffers)
   state.config = config
-  set_buffers(initial_buffers or {})
+
+  if initial_buffers and M.validate_buffers(initial_buffers) then
+    set_buffers(initial_buffers)
+  else
+    set_buffers({})
+  end
 end
 
 return M
