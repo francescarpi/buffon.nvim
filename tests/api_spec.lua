@@ -165,7 +165,7 @@ describe("api", function()
     eq(api.get_previous_buffer(buffer1.path), test_buffer_to_buffon_buffer(buffer3))
   end)
 
-  it("methods usefuls to close buffers", function()
+  it("useful methods to close buffers", function()
     api.setup()
     add_buffers({ buffer1, buffer2, buffer3 })
     eq(api.get_buffers_above(buffer3.path), {
@@ -185,5 +185,14 @@ describe("api", function()
       test_buffer_to_buffon_buffer(buffer3),
     })
     eq(api.get_buffers_below(buffer3.path), {})
+  end)
+
+  it("rename buffers", function()
+    api.setup()
+    add_buffers({ buffer1 })
+    check_buffer(1, buffer1)
+
+    api.rename_buffer("/home/foo/buffer1", "/home/foo/buffer1.1")
+    check_buffer(1, { path = "/home/foo/buffer1.1", id = 98, name = "buffer1.1", short_path = "/h/f/buffer1.1" })
   end)
 end)

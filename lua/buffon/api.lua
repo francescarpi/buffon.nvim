@@ -55,6 +55,19 @@ local set_buffers = function(list)
   check_duplicated_filenames()
 end
 
+---@param name string
+---@param id number
+---@return BuffonBuffer
+local buffer_struct = function(name, id)
+  return {
+    id = id,
+    name = name,
+    short_name = vim.fn.fnamemodify(name, ":."),
+    filename = vim.fn.fnamemodify(name, ":t"),
+    short_path = utils.abbreviate_path(vim.fn.fnamemodify(name, ":.")),
+  }
+end
+
 --- Moves a buffer to the top of the list.
 ---@param name string The name of the buffer to move to the top.
 ---@param id number
@@ -79,14 +92,7 @@ M.add_buffer = function(name, id)
     return
   end
 
-  ---@type BuffonBuffer
-  local buffer = {
-    id = id,
-    name = name,
-    short_name = vim.fn.fnamemodify(name, ":."),
-    filename = vim.fn.fnamemodify(name, ":t"),
-    short_path = utils.abbreviate_path(vim.fn.fnamemodify(name, ":.")),
-  }
+  local buffer = buffer_struct(name, id)
 
   log.debug("add buffer", buffer.name, "with id", buffer.id)
 
@@ -289,6 +295,20 @@ M.get_buffers_below = function(name)
   end, function(_)
     return #state.buffers
   end)
+end
+
+---@param current_name string
+---@param new_name string
+M.rename_buffer = function(current_name, new_name)
+  local buffer_index = state.index_buffers_by_name[current_name]
+  if not buffer_index then
+    log.debug("buffer", current_name, "to rename, does not exist")
+    return
+  end
+  local buffer = state.buffers[buffer_index]
+  state.buffers[buffer_index] = buffer_struct(new_name, state.buffers[buffer_index].id)
+  refresh_indexes()
+  log.debug("buffer", buffer.name, "renamed to", new_name)
 end
 
 --- Sets up the API state with the provided configuration.

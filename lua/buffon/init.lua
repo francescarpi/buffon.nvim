@@ -8,44 +8,38 @@ local log = require("buffon.log")
 
 local M = {}
 
---- Registers autocommands for buffer and UI events.
----@param group any The augroup to which the autocommands will be added.
-local register_autocommands = function(group)
-  vim.api.nvim_create_autocmd("BufAdd", {
-    group = group,
-    callback = function(buf)
-      if buf and buf.match ~= "" then
-        api.add_buffer(buf.match, buf.buf)
-        ui.refresh()
-      end
-    end,
-  })
+---@type string | nil
+local buf_will_rename = nil
 
-  vim.api.nvim_create_autocmd("BufDelete", {
-    group = group,
-    callback = function(buf)
-      if buf and buf.match ~= "" then
-        api.delete_buffer(buf.match)
-        ui.refresh()
-      end
-    end,
-  })
-
-  vim.api.nvim_create_autocmd("BufEnter", {
-    group = group,
-    callback = function()
+---@type table<string, function>
+local events = {
+  BufAdd = function(buf)
+    if buf and buf.match ~= "" then
+      api.add_buffer(buf.match, buf.buf)
       ui.refresh()
-      ui.check_open()
-    end,
-  })
-
-  vim.api.nvim_create_autocmd("VimResized", {
-    group = group,
-    callback = function()
+    end
+  end,
+  BufDelete = function(buf)
+    if buf and buf.match ~= "" then
+      api.delete_buffer(buf.match)
       ui.refresh()
-    end,
-  })
-end
+    end
+  end,
+  BufEnter = function()
+    ui.refresh()
+    ui.check_open()
+  end,
+  VimResized = function()
+    ui.refresh()
+  end,
+  BufFilePre = function(buf)
+    buf_will_rename = buf.match
+  end,
+  BufFilePost = function(buf)
+    assert(buf_will_rename, "new buffer name is required")
+    api.rename_buffer(buf_will_rename, buf.match)
+  end,
+}
 
 --- Sets up the Buffon plugin with the provided options.
 --- Initializes configuration, API, UI, and keybindings.
@@ -65,7 +59,13 @@ M.setup = function(opts)
   keybindings.setup(plugin_opts)
   keybindings.register()
 
-  register_autocommands(vim.api.nvim_create_augroup("Buffon", { clear = true }))
+  local group = vim.api.nvim_create_augroup("Buffon", { clear = true })
+  for event, callback in pairs(events) do
+    vim.api.nvim_create_autocmd(event, {
+      group = group,
+      callback = callback,
+    })
+  end
 end
 
 return M
