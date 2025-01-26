@@ -1,5 +1,5 @@
 local actions = require("buffon.actions")
-local ui = require("buffon.ui")
+local ui = require("buffon.ui.main")
 
 local M = {}
 

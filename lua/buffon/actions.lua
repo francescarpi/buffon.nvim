@@ -1,5 +1,5 @@
 local api = require("buffon.api")
-local ui = require("buffon.ui")
+local ui = require("buffon.ui.main")
 local utils = require("buffon.utils")
 local log = require("buffon.log")
 

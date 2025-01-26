@@ -1,6 +1,6 @@
 local eq = assert.are.same
 local api = require("buffon.api")
-local ui = require("buffon.ui")
+local ui = require("buffon.ui.main")
 local config = require("buffon.config")
 
 describe("ui", function()
