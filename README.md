@@ -1,5 +1,9 @@
 # Buffon
 
+![GitHub Workflow Status](http://img.shields.io/github/actions/workflow/status/francescarpi/buffon.nvim/default.yml?branch=main&style=for-the-badge)
+![Lua](https://img.shields.io/badge/Made%20with%20Lua-blueviolet.svg?style=for-the-badge&logo=lua)
+
+
 *Buffon* is yet another plugin for navigating between buffers in [Neovim](https://neovim.io/). The name *Buffon* comes from the combination of *Buffer* and *Navigation*, creating the amusing word *buffon*, referencing the medieval jester who entertained the king.
 
 This plugin is inspired by [harpoon](https://github.com/ThePrimeagen/harpoon) and [tide](https://github.com/jackMort/tide.nvim). Both are fantastic, but they didn't quite fit my workflow.
@@ -102,6 +106,9 @@ return {
 
 Default configuration:
 
+Take a look at the default shortcuts for navigating between buffers, changing their order, or closing them:
+
+
 ```lua
 {
   cyclic_navigation = false,
@@ -136,7 +143,13 @@ Default configuration:
 
 ## Screenshots
 
-(Add screenshots here)
+Buffon window, showing the buffer list:
+
+![Basic](./imgs/basic.png)
+
+Showing the help window:
+
+![Basic](./imgs/withhelp.png)
 
 ## API
 
