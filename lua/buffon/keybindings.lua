@@ -117,14 +117,8 @@ local keymap = function(lhs, rhs, help)
   vim.keymap.set("n", lhs, rhs, { silent = true, desc = "Buffon: " .. help })
 end
 
---- Sets up the keybindings state with the provided configuration.
----@param opts BuffonConfig The configuration options.
-M.setup = function(opts)
-  state.config = opts
-end
-
 --- Registers all the keybindings based on the current configuration.
-M.register = function()
+local register = function()
   for _, keybinding in ipairs(M.keybindings()) do
     keymap(keybinding.lhs, keybinding.rhs, keybinding.help)
   end
@@ -140,6 +134,13 @@ M.register = function()
     local help = require("buffon.ui.help")
     help.toggle()
   end, "Show help")
+end
+
+--- Sets up the keybindings state with the provided configuration.
+---@param opts BuffonConfig The configuration options.
+M.setup = function(opts)
+  state.config = opts
+  register()
 end
 
 return M

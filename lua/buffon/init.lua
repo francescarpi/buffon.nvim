@@ -59,6 +59,7 @@ local events = {
 ---@param opts table The options to configure the Buffon plugin.
 M.setup = function(opts)
   log.debug("==== initial setup ====")
+
   config.setup(opts)
   local plugin_opts = config.opts()
 
@@ -70,7 +71,6 @@ M.setup = function(opts)
   api.setup(plugin_opts, buffers)
   ui.setup(plugin_opts)
   keybindings.setup(plugin_opts)
-  keybindings.register()
 
   local group = vim.api.nvim_create_augroup("Buffon", { clear = true })
   for event, callback in pairs(events) do
