@@ -194,6 +194,10 @@ I have tried to organize the code in the best way I knew how, although it can su
     * types: Contains all the project types
 * tests: Test code
 
+### Development branch
+
+The integration branch will always be **develop**. All pull requests should be directed to this branch. When the code is stable, the repository owner will merge the changes from *develop* to *main* to release a new version.
+
 > [!NOTE]
 > I don't know the impact this plugin will have, but if it grows a lot or there is a lot of movement, I will be unable to maintain it and will need help from one or two maintainers.
 
