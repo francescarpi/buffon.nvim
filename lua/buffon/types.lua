@@ -37,6 +37,9 @@
 ---@field open BuffonConfigOpen
 ---@field keybindings BuffonConfigKeyBinding
 
+---@class BuffonConfigState
+---@field opts BuffonConfig
+
 ---@class BuffonKeybinding
 ---@field lhs string
 ---@field rhs function | string
@@ -47,7 +50,7 @@
 ---@field id number | nil
 
 ---@class BuffonUIState
----@field config? BuffonConfig
+---@field config? BuffonConfigState
 ---@field window? BuffonWindow
 
 ---@class BuffonUIGetContent
@@ -59,7 +62,7 @@
 ---@class BuffonApiState
 ---@field index_buffers_by_name table<string, number>
 ---@field buffers table<BuffonBuffer>
----@field config? BuffonConfig
+---@field config? BuffonConfigState
 ---@field are_duplicated_filenames boolean
 ---@field storage? BuffonStorage
 
@@ -68,7 +71,7 @@
 ---@field win? number
 
 ---@class BuffonKeybindingsState
----@field config? BuffonConfig
+---@field config? BuffonConfigState
 
 ---@class BuffonActionsState
 ---@field last_closed? BuffonLastClosedList

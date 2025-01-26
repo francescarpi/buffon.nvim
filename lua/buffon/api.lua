@@ -1,4 +1,3 @@
-local config = require("buffon.config")
 local utils = require("buffon.utils")
 local log = require("buffon.log")
 
@@ -89,7 +88,7 @@ M.add_buffer = function(name, id)
 
   log.debug("add buffer", buffer.name, "with id", buffer.id)
 
-  if state.config.prepend_buffers then
+  if state.config.opts.prepend_buffers then
     table.insert(state.buffers, 1, buffer)
   else
     table.insert(state.buffers, buffer)
@@ -227,7 +226,7 @@ local get_next_or_previous_buffer = function(name, operation, fallback)
   end
 
   local buffer = state.buffers[buffer_index + (1 * operation)]
-  if not buffer and state.config.cyclic_navigation then
+  if not buffer and state.config.opts.cyclic_navigation then
     buffer = state.buffers[fallback]
   end
 
@@ -314,10 +313,10 @@ M.update_cursor = function(name, position)
 end
 
 --- Sets up the API state with the provided configuration.
----@param opts? BuffonConfig The configuration options.
+---@param config BuffonConfigState The configuration options.
 ---@param initial_buffers? table<BuffonBuffer>
-M.setup = function(opts, initial_buffers)
-  state.config = opts or config.opts()
+M.setup = function(config, initial_buffers)
+  state.config = config
   set_buffers(initial_buffers or {})
 end
 

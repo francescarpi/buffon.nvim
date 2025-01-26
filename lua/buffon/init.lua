@@ -60,17 +60,16 @@ local events = {
 M.setup = function(opts)
   log.debug("==== initial setup ====")
 
-  config.setup(opts)
-  local plugin_opts = config.opts()
+  local cfg = config.setup(opts)
 
   state.storage = storage.Storage:new(vim.fn.getcwd())
   state.storage:init()
   local buffers = state.storage:load()
 
   actions.setup()
-  api.setup(plugin_opts, buffers)
-  ui.setup(plugin_opts)
-  keybindings.setup(plugin_opts)
+  api.setup(cfg, buffers)
+  ui.setup(cfg)
+  keybindings.setup(cfg)
 
   local group = vim.api.nvim_create_augroup("Buffon", { clear = true })
   for event, callback in pairs(events) do

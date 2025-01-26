@@ -5,10 +5,9 @@ local config = require("buffon.config")
 
 describe("ui", function()
   it("content", function()
-    config.setup()
-    local opts = config.opts()
-    api.setup()
-    ui.setup(opts)
+    local cfg = config.setup()
+    api.setup(cfg)
+    ui.setup(cfg)
 
     for i = 1, 10 do
       api.add_buffer("/foo/buffer" .. i, i)

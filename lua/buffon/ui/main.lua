@@ -8,7 +8,7 @@ local state = {}
 
 local window_options = function()
   return {
-    title = " Buffon (" .. state.config.keybindings.show_help .. ")",
+    title = " Buffon (" .. state.config.opts.keybindings.show_help .. ")",
     title_pos = "right",
     relative = "editor",
     width = 1,
@@ -27,7 +27,7 @@ end
 ---@param num_lines number
 local update_dimensions = function(longest_word_length, num_lines)
   local editor_width = vim.api.nvim_get_option("columns")
-  local leader_key_length = #state.config.keybindings.buffer_mapping.leader_key
+  local leader_key_length = #state.config.opts.keybindings.buffer_mapping.leader_key
   local MAPPING_CHAR_LENGTH = 1
   local SPACE_LENGTH = 1
   local BORDER_LENGTH = 1
@@ -73,11 +73,11 @@ M.get_content = function(buffers, index_buffers_by_name)
     end
     table.insert(filenames, filename)
 
-    local shortcut = state.config.keybindings.buffer_mapping.mapping_chars:sub(index, index)
+    local shortcut = state.config.opts.keybindings.buffer_mapping.mapping_chars:sub(index, index)
     if shortcut ~= "" then
-      shortcut = state.config.keybindings.buffer_mapping.leader_key .. shortcut
+      shortcut = state.config.opts.keybindings.buffer_mapping.leader_key .. shortcut
     else
-      shortcut = string.rep(" ", #state.config.keybindings.buffer_mapping.leader_key + 1)
+      shortcut = string.rep(" ", #state.config.opts.keybindings.buffer_mapping.leader_key + 1)
     end
 
     local icon, _ = devicons.get_icon_color(buffer.filename, buffer.filename:match("%.(%a+)$"))
@@ -101,7 +101,7 @@ end
 ---@param index_buffers_by_name table<string, number> A table mapping buffer names to their indices.
 local refresh_content = function(buffers, index_buffers_by_name)
   local content = M.get_content(buffers, index_buffers_by_name)
-  local leader_key_length = #state.config.keybindings.buffer_mapping.leader_key + 1
+  local leader_key_length = #state.config.opts.keybindings.buffer_mapping.leader_key + 1
 
   if #content.lines == 0 then
     vim.api.nvim_buf_set_lines(state.window.buf, 0, -1, false, { " No buffers... " })
@@ -136,9 +136,9 @@ local refresh_content = function(buffers, index_buffers_by_name)
 end
 
 --- Sets up the UI state with the provided configuration.
----@param opts BuffonConfig The configuration options.
-M.setup = function(opts)
-  state.config = opts
+---@param config BuffonConfigState The configuration options.
+M.setup = function(config)
+  state.config = config
   state.window = { buf = vim.api.nvim_create_buf(false, true), id = nil }
 end
 
@@ -188,7 +188,7 @@ M.check_open = function()
   if state.window.id or not vim.bo.filetype then
     return
   end
-  if state.config.open.by_default and not vim.tbl_contains(state.config.open.ignore_ft, vim.bo.filetype) then
+  if state.config.opts.open.by_default and not vim.tbl_contains(state.config.opts.open.ignore_ft, vim.bo.filetype) then
     M.show()
   end
 end

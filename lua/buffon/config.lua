@@ -31,17 +31,17 @@ local default = {
   },
 }
 
----@type BuffonConfig
-local plugin_config = default
-
----@return BuffonConfig
-M.opts = function()
-  return plugin_config
-end
+---@type BuffonConfigState
+local state = {
+  opts = default,
+}
 
 M.setup = function(opts)
-  opts = opts or {}
-  plugin_config = vim.tbl_deep_extend("force", default, opts)
+  state.opts = vim.tbl_deep_extend("force", default, opts or {})
+  M.opts = state.opts
+  return M
 end
+
+M.opts = state.opts
 
 return M

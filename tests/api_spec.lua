@@ -44,6 +44,9 @@ api.setup()
 
 describe("api", function()
   it("full test", function()
+    local cfg = config.setup()
+    api.setup(cfg)
+
     local buffers = { buffer1, buffer2, buffer3 }
     add_buffers(buffers)
     api.add_buffer("", 100) -- blank buffer
@@ -71,6 +74,9 @@ describe("api", function()
   end)
 
   it("change order", function()
+    local cfg = config.setup()
+    api.setup(cfg)
+
     local buffers = { buffer1, buffer2, buffer3 }
     add_buffers(buffers)
     check_initial_state(buffers)
@@ -109,15 +115,16 @@ describe("api", function()
   end)
 
   it("prepend buffers", function()
-    local opts = config.opts()
-    api.setup(vim.tbl_deep_extend("force", opts, { prepend_buffers = true }))
+    local cfg = config.setup({ prepend_buffers = true })
+    api.setup(cfg)
     add_buffers({ buffer1, buffer2 })
     check_buffer(1, buffer2)
     check_buffer(2, buffer1)
   end)
 
   it("duplicated buffer names", function()
-    api.setup()
+    local cfg = config.setup()
+    api.setup(cfg)
     add_buffers({ buffer1, buffer3 })
     eq(api.are_duplicated_filenames(), false)
     add_buffers({ buffer4 })
@@ -125,7 +132,8 @@ describe("api", function()
   end)
 
   it("prevent add duplicated buffers", function()
-    api.setup()
+    local cfg = config.setup()
+    api.setup(cfg)
     add_buffers({ buffer1, buffer3 })
     eq(#api.get_buffers(), 2)
     check_buffer(1, buffer1)
@@ -137,7 +145,8 @@ describe("api", function()
   end)
 
   it("update buffer id", function()
-    api.setup()
+    local cfg = config.setup()
+    api.setup(cfg)
     add_buffers({ { path = "/foo/bar.json", id = nil } })
     eq(#api.get_buffers(), 1)
     check_buffer(1, { path = "/foo/bar.json", id = nil, name = "bar.json", short_path = "/f/bar.json" })
@@ -149,7 +158,8 @@ describe("api", function()
 
   it("next/prev buffers", function()
     -- no cyclic
-    api.setup()
+    local cfg1 = config.setup()
+    api.setup(cfg1)
     add_buffers({ buffer1, buffer2, buffer3 })
 
     eq(api.get_next_buffer(buffer2.path), test_buffer_to_buffon_buffer(buffer3))
@@ -158,8 +168,8 @@ describe("api", function()
     eq(api.get_previous_buffer(buffer1.path), nil)
 
     -- cyclic
-    local opts = config.opts()
-    api.setup(vim.tbl_deep_extend("force", opts, { cyclic_navigation = true }))
+    local cfg2 = config.setup({ cyclic_navigation = true })
+    api.setup(cfg2)
     add_buffers({ buffer1, buffer2, buffer3 })
 
     eq(api.get_next_buffer(buffer3.path), test_buffer_to_buffon_buffer(buffer1))
@@ -167,7 +177,8 @@ describe("api", function()
   end)
 
   it("useful methods to close buffers", function()
-    api.setup()
+    local cfg = config.setup()
+    api.setup(cfg)
     add_buffers({ buffer1, buffer2, buffer3 })
     eq(api.get_buffers_above(buffer3.path), {
       test_buffer_to_buffon_buffer(buffer1),
@@ -189,7 +200,8 @@ describe("api", function()
   end)
 
   it("rename buffers", function()
-    api.setup()
+    local cfg = config.setup()
+    api.setup(cfg)
     add_buffers({ buffer1 })
     check_buffer(1, buffer1)
 
@@ -198,7 +210,8 @@ describe("api", function()
   end)
 
   it("update cursor", function()
-    api.setup()
+    local cfg = config.setup()
+    api.setup(cfg)
     add_buffers({ buffer1 })
     eq(api.get_buffer_by_index(1).cursor, { 1, 1 })
     api.update_cursor(buffer1.path, { 2, 2 })
