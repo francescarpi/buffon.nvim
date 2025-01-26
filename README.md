@@ -3,7 +3,9 @@
 ![GitHub Workflow Status](http://img.shields.io/github/actions/workflow/status/francescarpi/buffon.nvim/default.yml?branch=main&style=for-the-badge)
 ![Lua](https://img.shields.io/badge/Made%20with%20Lua-blueviolet.svg?style=for-the-badge&logo=lua)
 
+<div align="center">
 ![Logo](./imgs/logo.png)
+</div>
 
 *Buffon* is yet another plugin for navigating between buffers in [Neovim](https://neovim.io/). The name *Buffon* comes from the combination of *Buffer* and *Navigation*, creating the amusing word *buffon*, referencing the medieval jester who entertained the king.
 
