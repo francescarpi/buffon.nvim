@@ -8,8 +8,11 @@ local log = require("buffon.log")
 
 local M = {}
 
----@type string | nil
-local buf_will_rename = nil
+---@type BuffonState
+local state = {
+  buf_will_rename = nil,
+  storage = nil,
+}
 
 ---@type table<string, function>
 local events = {
@@ -33,11 +36,16 @@ local events = {
     ui.refresh()
   end,
   BufFilePre = function(buf)
-    buf_will_rename = buf.match
+    state.buf_will_rename = buf.match
   end,
   BufFilePost = function(buf)
-    assert(buf_will_rename, "new buffer name is required")
-    api.rename_buffer(buf_will_rename, buf.match)
+    assert(state.buf_will_rename, "new buffer name is required")
+    api.rename_buffer(state.buf_will_rename, buf.match)
+  end,
+  ExitPre = function()
+    assert(state.storage, "storage is required")
+    local buffers = api.get_buffers()
+    state.storage:save(buffers)
   end,
 }
 
@@ -50,11 +58,12 @@ M.setup = function(opts)
   config.setup(opts)
   local plugin_opts = config.opts()
 
-  local stg = storage.Storage:new(vim.fn.getcwd())
-  stg:init()
+  state.storage = storage.Storage:new(vim.fn.getcwd())
+  state.storage:init()
+  local buffers = state.storage:load()
 
   actions.setup()
-  api.setup(plugin_opts, stg)
+  api.setup(plugin_opts, buffers)
   ui.setup(plugin_opts)
   keybindings.setup(plugin_opts)
   keybindings.register()

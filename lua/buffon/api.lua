@@ -9,15 +9,7 @@ local state = {
   index_buffers_by_name = {},
   buffers = {},
   are_duplicated_filenames = false,
-  storage = nil,
 }
-
-local update_storage = function()
-  if state.storage then
-    log.debug("buffers saved to disk")
-    state.storage:save(state.buffers)
-  end
-end
 
 --- Refreshes the index_buffers_by_name list based on the current buffers list.
 local refresh_indexes = function()
@@ -88,7 +80,6 @@ M.add_buffer = function(name, id)
     -- it means that there is a buffer in the list, but without buffer id
     -- it only needs to be set
     existent_buffer.id = id
-    update_storage()
     return
   end
 
@@ -104,7 +95,6 @@ M.add_buffer = function(name, id)
 
   check_duplicated_filenames()
   refresh_indexes()
-  update_storage()
 end
 
 --- Gets the index_buffers_by_name list.
@@ -147,7 +137,6 @@ M.delete_buffer = function(name)
 
   check_duplicated_filenames()
   refresh_indexes()
-  update_storage()
 end
 
 --- Swaps two buffers in the list.
@@ -174,7 +163,6 @@ local move_buffer = function(name, validation, callback)
   local new_index = callback(buffer_index)
 
   refresh_indexes()
-  update_storage()
 
   return new_index
 end
@@ -313,16 +301,10 @@ end
 
 --- Sets up the API state with the provided configuration.
 ---@param opts? BuffonConfig The configuration options.
----@param storage? BuffonStorage The instance of the storage class
-M.setup = function(opts, storage)
+---@param initial_buffers? table<BuffonBuffer>
+M.setup = function(opts, initial_buffers)
   state.config = opts or config.opts()
-  set_buffers({})
-
-  if storage then
-    state.storage = storage
-    -- TODO validate buffers before add them
-    set_buffers(state.storage:load())
-  end
+  set_buffers(initial_buffers or {})
 end
 
 return M

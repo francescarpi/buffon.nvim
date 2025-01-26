@@ -77,3 +77,7 @@
 ---@field id? number
 ---@field name string
 ---@field short_path string
+
+---@class BuffonState
+---@field buf_will_rename string | nil
+---@field storage BuffonStorage | nil

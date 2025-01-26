@@ -41,11 +41,13 @@ describe("storage", function()
     local path = "/tmp/buffon-tmp"
     local stg = storage.Storage:new("/foo/boo", path)
     stg:init()
-    api.setup(nil, stg)
+    api.setup()
     eq(api.get_buffers(), {})
 
     api.add_buffer("/foo/bar/sample.py", 1)
     api.add_buffer("/foo/bar/readme.txt", 2)
+
+    stg:save(api.get_buffers())
 
     local buffers = stg:load()
     eq(buffers, {

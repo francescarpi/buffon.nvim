@@ -89,6 +89,7 @@ end
 --- @param buffers table<BuffonBuffer> The list of buffers to save.
 function Storage:save(buffers)
   Path:new(self:filename_path()):write(vim.json.encode(buffers), "w")
+  log.debug(#buffers, "buffers saved to disk")
 end
 
 M.Storage = Storage
