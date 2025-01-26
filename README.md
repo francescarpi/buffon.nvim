@@ -3,6 +3,7 @@
 ![GitHub Workflow Status](http://img.shields.io/github/actions/workflow/status/francescarpi/buffon.nvim/default.yml?branch=main&style=for-the-badge)
 ![Lua](https://img.shields.io/badge/Made%20with%20Lua-blueviolet.svg?style=for-the-badge&logo=lua)
 
+![Logo](./imgs/logo.png)
 
 *Buffon* is yet another plugin for navigating between buffers in [Neovim](https://neovim.io/). The name *Buffon* comes from the combination of *Buffer* and *Navigation*, creating the amusing word *buffon*, referencing the medieval jester who entertained the king.
 
@@ -50,6 +51,9 @@ Based on this, I created *Buffon* with the best of both plugins, perfectly adapt
 > If you like all these features and the plugin also adapts to your needs, I would greatly appreciate it if you **click on the star**.
 
 ## Installation
+
+> [!NOTE]
+> require neovim 0.10.0+
 
 * Using [lazy](https://github.com/folke/lazy.nvim):
 
@@ -149,7 +153,7 @@ Buffon window, showing the buffer list:
 
 Showing the help window:
 
-![Basic](./imgs/withhelp.png)
+![With help](./imgs/withhelp.png)
 
 ## API
 
