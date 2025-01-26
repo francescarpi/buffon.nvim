@@ -57,6 +57,7 @@ describe("storage", function()
         name = "/foo/bar/sample.py",
         short_name = "/foo/bar/sample.py",
         short_path = "/f/b/sample.py",
+        cursor = { 1, 1 },
       },
       {
         filename = "readme.txt",
@@ -64,6 +65,7 @@ describe("storage", function()
         name = "/foo/bar/readme.txt",
         short_name = "/foo/bar/readme.txt",
         short_path = "/f/b/readme.txt",
+        cursor = { 1, 1 },
       },
     })
 

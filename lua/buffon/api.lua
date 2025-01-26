@@ -49,14 +49,16 @@ end
 
 ---@param name string
 ---@param id number
+---@param cursor [number, number]
 ---@return BuffonBuffer
-local buffer_struct = function(name, id)
+local buffer_struct = function(name, id, cursor)
   return {
     id = id,
     name = name,
     short_name = vim.fn.fnamemodify(name, ":."),
     filename = vim.fn.fnamemodify(name, ":t"),
     short_path = utils.abbreviate_path(vim.fn.fnamemodify(name, ":.")),
+    cursor = cursor,
   }
 end
 
@@ -83,7 +85,7 @@ M.add_buffer = function(name, id)
     return
   end
 
-  local buffer = buffer_struct(name, id)
+  local buffer = buffer_struct(name, id, { 1, 1 })
 
   log.debug("add buffer", buffer.name, "with id", buffer.id)
 
@@ -294,9 +296,21 @@ M.rename_buffer = function(current_name, new_name)
     return
   end
   local buffer = state.buffers[buffer_index]
-  state.buffers[buffer_index] = buffer_struct(new_name, state.buffers[buffer_index].id)
+  state.buffers[buffer_index] = buffer_struct(new_name, buffer.id, buffer.cursor)
   refresh_indexes()
   log.debug("buffer", buffer.name, "renamed to", new_name)
+end
+
+---@param name string
+---@param position [number, number]
+M.update_cursor = function(name, position)
+  local buffer_index = state.index_buffers_by_name[name]
+  if not buffer_index then
+    log.debug("buffer", name, "for update position, does not exist")
+    return
+  end
+  state.buffers[buffer_index].cursor = position
+  log.debug("cursor position of buffer", name, "updated to", position[1], ",", position[2])
 end
 
 --- Sets up the API state with the provided configuration.

@@ -4,6 +4,7 @@
 ---@field short_name string
 ---@field filename string
 ---@field short_path string
+---@field cursor [number, number] | nil
 
 ---@class BuffonConfigKeyBindingBufferMapping
 ---@field mapping_chars string -- Each character maps to a buffer ("qwer" maps 'q' to buffer 1, 'w' to buffer 2, etc.)

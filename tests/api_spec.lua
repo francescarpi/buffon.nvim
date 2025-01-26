@@ -11,6 +11,7 @@ local test_buffer_to_buffon_buffer = function(buffer)
     short_name = buffer.path,
     filename = buffer.name,
     short_path = buffer.short_path,
+    cursor = { 1, 1 },
   }
 end
 
@@ -194,5 +195,13 @@ describe("api", function()
 
     api.rename_buffer("/home/foo/buffer1", "/home/foo/buffer1.1")
     check_buffer(1, { path = "/home/foo/buffer1.1", id = 98, name = "buffer1.1", short_path = "/h/f/buffer1.1" })
+  end)
+
+  it("update cursor", function()
+    api.setup()
+    add_buffers({ buffer1 })
+    eq(api.get_buffer_by_index(1).cursor, { 1, 1 })
+    api.update_cursor(buffer1.path, { 2, 2 })
+    eq(api.get_buffer_by_index(1).cursor, { 2, 2 })
   end)
 end)

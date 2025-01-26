@@ -42,10 +42,14 @@ local events = {
     assert(state.buf_will_rename, "new buffer name is required")
     api.rename_buffer(state.buf_will_rename, buf.match)
   end,
-  ExitPre = function()
+  ExitPre = function(buf)
+    api.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
     assert(state.storage, "storage is required")
     local buffers = api.get_buffers()
     state.storage:save(buffers)
+  end,
+  BufLeave = function(buf)
+    api.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
   end,
 }
 
