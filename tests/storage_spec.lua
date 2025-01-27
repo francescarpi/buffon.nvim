@@ -1,7 +1,7 @@
 local eq = assert.are.same
 local storage = require("buffon.storage")
 local Path = require("plenary.path")
-local api = require("buffon.api")
+local buffers = require("buffon.buffers")
 local config = require("buffon.config")
 
 describe("storage", function()
@@ -44,16 +44,16 @@ describe("storage", function()
     stg:init()
 
     local cfg = config.setup()
-    api.setup(cfg)
-    eq(api.get_buffers(), {})
+    buffers.setup(cfg)
+    eq(buffers.get_buffers(), {})
 
-    api.add_buffer("/foo/bar/sample.py", 1)
-    api.add_buffer("/foo/bar/readme.txt", 2)
+    buffers.add_buffer("/foo/bar/sample.py", 1)
+    buffers.add_buffer("/foo/bar/readme.txt", 2)
 
-    stg:save(api.get_buffers())
+    stg:save(buffers.get_buffers())
 
-    local buffers = stg:load()
-    eq(buffers, {
+    local buffers_loaded = stg:load()
+    eq(buffers_loaded, {
       {
         filename = "sample.py",
         id = nil,

@@ -3,7 +3,7 @@ local log = require("buffon.log")
 
 local M = {}
 
----@type BuffonApiState
+---@type BuffonBuffersState
 local state = {
   index_buffers_by_name = {},
   buffers = {},

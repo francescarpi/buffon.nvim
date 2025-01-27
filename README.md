@@ -152,9 +152,9 @@ Showing the help window:
 
 ## API
 
-All the core functionalities in charge of managing the buffer list are located in the *api.lua* file. There are now functions to add elements, remove them, change the order, etc.
+All the core functionalities in charge of managing the buffer list are located in the *buffers.lua* file. There are now functions to add elements, remove them, change the order, etc.
 
-In the *actions.lua* file you can see how the API is used.
+In the *actions.lua* file you can see how the buffers API is used.
 
 ## Contribution
 
@@ -175,7 +175,7 @@ make test
 I have tried to organize the code in the best way I knew how, although it can surely be improved. Below I explain how it is structured:
 
 * lua: Project code
-    * api: Plugin core. Functionalities related to managing the buffer list
+    * buffers: Plugin core. Functionalities related to managing the buffer list
     * keybindings: Registration of the different shortcuts to the plugin actions
     * actions: Buffon actions linked with the keybindings
     * config: Configuration management

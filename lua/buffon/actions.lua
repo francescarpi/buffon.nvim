@@ -1,4 +1,4 @@
-local api = require("buffon.api")
+local buffers = require("buffon.buffers")
 local ui = require("buffon.ui.main")
 local utils = require("buffon.utils")
 local log = require("buffon.log")
@@ -46,13 +46,13 @@ local move_buffer = function(callback)
   end
 end
 
----@param buffers table<BuffonBuffer>
-local close_buffers = function(buffers)
-  for _, buffer in ipairs(buffers) do
+---@param buffers_to_close table<BuffonBuffer>
+local close_buffers = function(buffers_to_close)
+  for _, buffer in ipairs(buffers_to_close) do
     if buffer.id then
       vim.api.nvim_buf_delete(buffer.id, { force = false })
     else
-      api.delete_buffer(buffer.name)
+      buffers.delete_buffer(buffer.name)
       ui.refresh()
     end
     state.last_closed:add(buffer.name)
@@ -61,18 +61,18 @@ end
 
 --- Switches to the next buffer. If cyclic navigation is enabled, wraps around to the first buffer.
 M.next = function()
-  goto_next_or_previous(api.get_next_buffer)
+  goto_next_or_previous(buffers.get_next_buffer)
 end
 
 --- Switches to the previous buffer. If cyclic navigation is enabled, wraps around to the last buffer.
 M.previous = function()
-  goto_next_or_previous(api.get_previous_buffer)
+  goto_next_or_previous(buffers.get_previous_buffer)
 end
 
 --- Goes to the buffer at the specified order.
 ---@param order number The index of the buffer to switch to.
 M.goto_buffer = function(order)
-  local buffer = api.get_buffer_by_index(order)
+  local buffer = buffers.get_buffer_by_index(order)
   if not buffer then
     return
   end
@@ -81,22 +81,22 @@ end
 
 --- Moves the current buffer up in the buffer list.
 M.buffer_up = function()
-  move_buffer(api.move_buffer_up)
+  move_buffer(buffers.move_buffer_up)
 end
 
 --- Moves the current buffer down in the buffer list.
 M.buffer_down = function()
-  move_buffer(api.move_buffer_down)
+  move_buffer(buffers.move_buffer_down)
 end
 
 --- Moves the current buffer to the top of the buffer list.
 M.buffer_top = function()
-  move_buffer(api.move_buffer_top)
+  move_buffer(buffers.move_buffer_top)
 end
 
 --- Moves the current buffer to the bottom of the buffer list.
 M.buffer_bottom = function()
-  move_buffer(api.move_buffer_bottom)
+  move_buffer(buffers.move_buffer_bottom)
 end
 
 --- Close current buffer
@@ -112,19 +112,19 @@ end
 
 --- Close buffers above
 M.close_buffers_above = function()
-  local buffers = api.get_buffers_above(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
-  close_buffers(buffers)
+  local buffers_to_close = buffers.get_buffers_above(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
+  close_buffers(buffers_to_close)
 end
 
 --- Close buffers below
 M.close_buffers_below = function()
-  local buffers = api.get_buffers_below(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
-  close_buffers(buffers)
+  local buffers_to_close = buffers.get_buffers_below(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
+  close_buffers(buffers_to_close)
 end
 
 --- Close all buffers
 M.close_all_buffers = function()
-  close_buffers(utils.table_copy(api.get_buffers()))
+  close_buffers(utils.table_copy(buffers.get_buffers()))
 end
 
 --- Close others buffers
