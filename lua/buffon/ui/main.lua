@@ -8,7 +8,7 @@ local state = {}
 
 local window_options = function()
   return {
-    title = " Buffon (" .. state.config.opts.keybindings.show_help .. ")",
+    title = " Buffon (" .. state.config.opts.keybindings.show_help .. ") ",
     title_pos = "right",
     relative = "editor",
     width = 1,
