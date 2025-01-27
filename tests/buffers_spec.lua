@@ -40,8 +40,6 @@ local buffer2 = { path = "/home/foo/buffer2", id = 97, name = "buffer2", short_p
 local buffer3 = { path = "/home/foo/buffer3", id = 96, name = "buffer3", short_path = "/h/f/buffer3" }
 local buffer4 = { path = "/home/boo/buffer3", id = 96, name = "buffer3", short_path = "/h/b/buffer3" }
 
-buffers.setup()
-
 describe("api", function()
   it("full test", function()
     local cfg = config.setup()
