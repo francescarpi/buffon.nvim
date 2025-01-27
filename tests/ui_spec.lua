@@ -38,7 +38,6 @@ describe("ui", function()
         ";p buffer9 ",
         "   buffer10 ",
       },
-      longest_word_length = 10,
     })
   end)
 end)
