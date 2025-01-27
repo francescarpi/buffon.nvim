@@ -1,4 +1,4 @@
-local api = require("buffon.api")
+local buffers = require("buffon.buffers")
 local config = require("buffon.config")
 local keybindings = require("buffon.keybindings")
 local main_win = require("buffon.ui.main")
@@ -19,13 +19,13 @@ local state = {
 local events = {
   BufAdd = function(buf)
     if buf and buf.match ~= "" then
-      api.add_buffer(buf.match, buf.buf)
+      buffers.add_buffer(buf.match, buf.buf)
       main_win.refresh()
     end
   end,
   BufDelete = function(buf)
     if buf and buf.match ~= "" then
-      api.delete_buffer(buf.match)
+      buffers.delete_buffer(buf.match)
       main_win.refresh()
     end
   end,
@@ -41,16 +41,16 @@ local events = {
   end,
   BufFilePost = function(buf)
     assert(state.buf_will_rename, "new buffer name is required")
-    api.rename_buffer(state.buf_will_rename, buf.match)
+    buffers.rename_buffer(state.buf_will_rename, buf.match)
   end,
   ExitPre = function(buf)
-    api.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
+    buffers.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
     assert(state.storage, "storage is required")
-    local buffers = api.get_buffers()
-    state.storage:save(buffers)
+    local buffers_to_store = buffers.get_buffers()
+    state.storage:save(buffers_to_store)
   end,
   BufLeave = function(buf)
-    api.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
+    buffers.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
   end,
 }
 
@@ -65,10 +65,10 @@ M.setup = function(opts)
 
   state.storage = storage.Storage:new(vim.fn.getcwd())
   state.storage:init()
-  local buffers = state.storage:load()
+  local loaded_buffers = state.storage:load()
 
   actions.setup()
-  api.setup(cfg, buffers)
+  buffers.setup(cfg, loaded_buffers)
   keybindings.setup(cfg)
   main_win.setup(cfg)
   help_win.setup()

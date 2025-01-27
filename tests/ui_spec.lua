@@ -1,19 +1,19 @@
 local eq = assert.are.same
-local api = require("buffon.api")
+local buffers = require("buffon.buffers")
 local ui = require("buffon.ui.main")
 local config = require("buffon.config")
 
 describe("ui", function()
   it("content", function()
     local cfg = config.setup()
-    api.setup(cfg)
+    buffers.setup(cfg)
     ui.setup(cfg)
 
     for i = 1, 10 do
-      api.add_buffer("/foo/buffer" .. i, i)
+      buffers.add_buffer("/foo/buffer" .. i, i)
     end
 
-    eq(ui.get_content(api.get_buffers(), api.get_index_buffers_by_name()), {
+    eq(ui.get_content(buffers.get_buffers(), buffers.get_index_buffers_by_name()), {
       filenames = {
         "buffer1",
         "buffer2",

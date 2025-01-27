@@ -1,4 +1,4 @@
-local api = require("buffon.api")
+local buffers = require("buffon.buffers")
 local devicons = require("nvim-web-devicons")
 local window = require("buffon.ui.window")
 
@@ -23,18 +23,18 @@ local get_line_active = function(index_buffers_by_name)
   return buffer_index - 1
 end
 
----@param buffers table<BuffonBuffer> The list of buffers.
+---@param buffers_list table<BuffonBuffer> The list of buffers.
 ---@param index_buffers_by_name table<string, number> A table mapping buffer names to their indices.
 ---@return BuffonUIGetContent
-M.get_content = function(buffers, index_buffers_by_name)
+M.get_content = function(buffers_list, index_buffers_by_name)
   local lines = {}
   local filenames = {}
 
   local line_active = get_line_active(index_buffers_by_name)
 
-  for index, buffer in ipairs(buffers) do
+  for index, buffer in ipairs(buffers_list) do
     local filename = buffer.filename
-    if api.are_duplicated_filenames() then
+    if buffers.are_duplicated_filenames() then
       filename = buffer.short_path
     end
 
@@ -60,11 +60,11 @@ M.get_content = function(buffers, index_buffers_by_name)
 end
 
 --- Refreshes the content window with the buffer filenames.
----@param buffers table<BuffonBuffer> The list of buffers.
+---@param buffers_list table<BuffonBuffer> The list of buffers.
 ---@param index_buffers_by_name table<string, number> A table mapping buffer names to their indices.
-local refresh_content = function(buffers, index_buffers_by_name)
+local refresh_content = function(buffers_list, index_buffers_by_name)
   local leader_key_length = #state.config.opts.keybindings.buffer_mapping.leader_key + 1
-  local content = M.get_content(buffers, index_buffers_by_name)
+  local content = M.get_content(buffers_list, index_buffers_by_name)
 
   if #content.lines == 0 then
     state.window:set_content({ " No buffers... " })
@@ -88,7 +88,7 @@ local refresh_content = function(buffers, index_buffers_by_name)
     table.insert(highlights.Label, { content.line_active, leader_key_length + 1, -1 })
   end
 
-  for index, buffer in ipairs(buffers) do
+  for index, buffer in ipairs(buffers_list) do
     table.insert(highlights.Constant, { index - 1, 0, leader_key_length })
     if buffer.id == nil then
       table.insert(highlights.LineNr, { index - 1, 0, -1 })
@@ -101,9 +101,7 @@ end
 --- Refreshes the container and content windows with the current buffer list.
 M.refresh = function()
   if state.window then
-    local buffers = api.get_buffers()
-    local buffers_by_name = api.get_index_buffers_by_name()
-    refresh_content(buffers, buffers_by_name)
+    refresh_content(buffers.get_buffers(), buffers.get_index_buffers_by_name())
   end
 end
 

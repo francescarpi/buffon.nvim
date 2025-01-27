@@ -54,7 +54,7 @@
 ---@field line_active number
 ---@field filenames table<string>
 
----@class BuffonApiState
+---@class BuffonBuffersState
 ---@field index_buffers_by_name table<string, number>
 ---@field buffers table<BuffonBuffer>
 ---@field config? BuffonConfigState
