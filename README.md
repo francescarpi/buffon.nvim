@@ -15,24 +15,18 @@ This plugin is inspired by [harpoon](https://github.com/ThePrimeagen/harpoon) an
 
 Things I like and dislike about these plugins:
 
-* Harpoon:
-    * Likes:
-        * Data persistence
-        * Buffers can be sorted
-        * Good API
-        * Tests
-    * Dislikes:
-        * Having to select which buffers to work with
-        * Constantly having to open and close the window to see which buffers are selected, change the order, delete them, etc.
-* Tide:
-    * Likes:
-        * Pleasant and beautiful interface
-        * Shortcuts to access a buffer directly
-        * Always having the buffer list visible
-    * Dislikes:
-        * Having to select which buffers to work with
-        * Buffers cannot be sorted
-        * No persistence
+| `Harpoon` | `Likes`               | `Dislikes` |
+|----      |----                  |----       |
+| | * Data persistence    | * Having to select which buffers to work with |
+|           | * Buffers can be sorted | * Constantly having to open and close the window to see which buffers are selected, change the order, delete them, etc. |
+|           | * Good API | |
+|           | * Tests | |
+
+| `Tide` | `Likes`               | `Dislikes` |
+|----      |----                  |----       |
+| | * Pleasant and beautiful interface | * Having to select which buffers to work with |
+|           | * Shortcuts to access a buffer directly | * Buffers cannot be sorted |
+|           | * Always having the buffer list visible | * No persistence |
 
 Based on this, I created *Buffon* with the best of both plugins, perfectly adapting to my way of working.
 
