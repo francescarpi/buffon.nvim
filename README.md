@@ -15,16 +15,13 @@ This plugin is inspired by [harpoon](https://github.com/ThePrimeagen/harpoon) an
 
 Things I like and dislike about these plugins:
 
-| `Harpoon` | `Likes`               | `Dislikes` |
+|  | `Likes`               | `Dislikes` |
 |----      |----                  |----       |
-| | * Data persistence    | * Having to select which buffers to work with |
+| `Harpoon` | * Data persistence    | * Having to select which buffers to work with |
 |           | * Buffers can be sorted | * Constantly having to open and close the window to see which buffers are selected, change the order, delete them, etc. |
 |           | * Good API | |
 |           | * Tests | |
-
-| `Tide` | `Likes`               | `Dislikes` |
-|----      |----                  |----       |
-| | * Pleasant and beautiful interface | * Having to select which buffers to work with |
+| `Tide` | * Pleasant and beautiful interface | * Having to select which buffers to work with |
 |           | * Shortcuts to access a buffer directly | * Buffers cannot be sorted |
 |           | * Always having the buffer list visible | * No persistence |
 
