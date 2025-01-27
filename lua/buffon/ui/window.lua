@@ -8,45 +8,6 @@ local WIN_POSITION = {
   bottom_right = 1,
 }
 
----@param win_id number
----@param buf_id number
----@param position win_position
-local update_position_and_dimensions = function(win_id, buf_id, position)
-  local editor_columns = vim.api.nvim_get_option("columns")
-  local editor_lines = vim.api.nvim_get_option("lines")
-  local lines = vim.api.nvim_buf_get_lines(buf_id, 0, -1, false)
-  local height = #lines
-  local width = 0
-  local row = 1
-  local col = 0
-
-  for _, line in ipairs(lines) do
-    if #line > width then
-      width = #line
-    end
-  end
-
-  if position == WIN_POSITION.top_right then
-    row = 0
-    col = editor_columns - (1 + width + 1)
-  elseif position == WIN_POSITION.bottom_right then
-    row = editor_lines - (1 + #lines + 1) - 2
-    col = editor_columns - (1 + width + 1)
-  end
-
-  if width == 0 then
-    width = 10
-  end
-
-  local cfg = vim.api.nvim_win_get_config(win_id)
-  cfg.width = width
-  cfg.height = height
-  cfg.col = col
-  cfg.row = row
-
-  vim.api.nvim_win_set_config(win_id, cfg)
-end
-
 ---@class Window
 ---@field title string
 ---@field win_id number | nil
@@ -91,7 +52,7 @@ function Window:show()
     zindex = 1,
     focusable = false,
   })
-  update_position_and_dimensions(self.win_id, self.buf_id, self.position)
+  self:refresh_dimensions()
 end
 
 function Window:hide()
@@ -132,6 +93,46 @@ function Window:set_highlight(highlight)
       vim.api.nvim_buf_add_highlight(self.buf_id, -1, hl_group, line_info[1], line_info[2], line_info[3])
     end
   end
+end
+
+function Window:refresh_dimensions()
+  if not self.win_id then
+    return
+  end
+
+  local editor_columns = vim.api.nvim_get_option("columns")
+  local editor_lines = vim.api.nvim_get_option("lines")
+  local lines = vim.api.nvim_buf_get_lines(self.buf_id, 0, -1, false)
+  local height = #lines
+  local width = 0
+  local row = 1
+  local col = 0
+
+  for _, line in ipairs(lines) do
+    if #line > width then
+      width = #line
+    end
+  end
+
+  if self.position == WIN_POSITION.top_right then
+    row = 0
+    col = editor_columns - (1 + width + 1)
+  elseif self.position == WIN_POSITION.bottom_right then
+    row = editor_lines - (1 + #lines + 1) - 2
+    col = editor_columns - (1 + width + 1)
+  end
+
+  if width == 0 then
+    width = 20
+  end
+
+  local cfg = vim.api.nvim_win_get_config(self.win_id)
+  cfg.width = width
+  cfg.height = height
+  cfg.col = col
+  cfg.row = row
+
+  vim.api.nvim_win_set_config(self.win_id, cfg)
 end
 
 M.Window = Window

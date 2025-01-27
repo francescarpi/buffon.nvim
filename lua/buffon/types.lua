@@ -45,18 +45,13 @@
 ---@field rhs function | string
 ---@field help string
 
----@class BuffonWindow
----@field buf number
----@field id number | nil
-
 ---@class BuffonUIState
 ---@field config? BuffonConfigState
----@field window? BuffonWindow
+---@field window? Window
 
 ---@class BuffonUIGetContent
 ---@field lines table<string>
 ---@field line_active number
----@field longest_word_length number
 ---@field filenames table<string>
 
 ---@class BuffonApiState
