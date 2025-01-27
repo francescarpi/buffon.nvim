@@ -55,8 +55,6 @@ local update_dimensions = function(width, rows)
   wincfg.col = editor_width - (1 + width + 1)
   wincfg.row = editor_lines - (1 + rows + 1) - 2
 
-  vim.print(editor_lines)
-
   vim.api.nvim_win_set_config(state.win, wincfg)
 end
 
