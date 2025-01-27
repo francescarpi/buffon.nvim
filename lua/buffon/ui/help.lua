@@ -1,4 +1,3 @@
-local api = require("buffon.api")
 local keybindings = require("buffon.keybindings")
 
 local M = {}
@@ -10,7 +9,7 @@ local state = {
 }
 
 ---@param keymaps table<BuffonKeybinding>
----@return number
+---@return [number, number] Returns [content width, number of lines]
 local render_content = function(keymaps)
   local lines = {}
   local max_lhs_length = 0
@@ -38,35 +37,34 @@ local render_content = function(keymaps)
     vim.api.nvim_buf_add_highlight(state.buf, -1, "Constant", index - 1, 0, max_lhs_length)
   end
 
-  return width
+  return { width, #lines }
 end
 
+---@param rows number
 ---@param width number
-M.update_row = function(width)
-  local editor_width = vim.api.nvim_get_option("columns")
+local update_dimensions = function(width, rows)
   if not state.win then
     return
   end
 
-  local buffers = api.get_buffers()
+  local editor_width = vim.api.nvim_get_option("columns")
+  local editor_lines = vim.api.nvim_get_option("lines")
   local wincfg = vim.api.nvim_win_get_config(state.win)
 
   wincfg.width = width
   wincfg.col = editor_width - (1 + width + 1)
+  wincfg.row = editor_lines - (1 + rows + 1) - 2
 
-  if #buffers == 0 then
-    wincfg.row = #api.get_buffers() + 3
-  else
-    wincfg.row = #api.get_buffers() + 2
-  end
+  vim.print(editor_lines)
+
   vim.api.nvim_win_set_config(state.win, wincfg)
 end
 
 M.show = function()
   local keymaps = keybindings.keybindings()
   local window_options = {
-    footer = " Buffon Help ",
-    footer_pos = "right",
+    title = " Buffon Help ",
+    title_pos = "right",
     relative = "editor",
     width = 1,
     height = #keymaps,
@@ -79,8 +77,8 @@ M.show = function()
   }
   state.buf = vim.api.nvim_create_buf(false, true)
   state.win = vim.api.nvim_open_win(state.buf, false, window_options)
-  local width = render_content(keymaps)
-  M.update_row(width)
+  local render_response = render_content(keymaps)
+  update_dimensions(render_response[1], render_response[2])
 end
 
 M.close = function()
