@@ -34,6 +34,10 @@ local update_position_and_dimensions = function(win_id, buf_id, position)
     col = editor_columns - (1 + width + 1)
   end
 
+  if width == 0 then
+    width = 10
+  end
+
   local cfg = vim.api.nvim_win_get_config(win_id)
   cfg.width = width
   cfg.height = height

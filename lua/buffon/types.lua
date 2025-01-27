@@ -67,8 +67,8 @@
 ---@field storage? BuffonStorage
 
 ---@class BuffonHelpState
----@field buf? number
----@field win? number
+---@field window? Window
+---@field content_rendered boolean
 
 ---@class BuffonKeybindingsState
 ---@field config? BuffonConfigState

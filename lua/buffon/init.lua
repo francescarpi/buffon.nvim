@@ -5,6 +5,7 @@ local ui = require("buffon.ui.main")
 local storage = require("buffon.storage")
 local actions = require("buffon.actions")
 local log = require("buffon.log")
+local help = require("buffon.ui.help")
 
 local M = {}
 
@@ -70,6 +71,7 @@ M.setup = function(opts)
   api.setup(cfg, buffers)
   ui.setup(cfg)
   keybindings.setup(cfg)
+  help.setup()
 
   local group = vim.api.nvim_create_augroup("Buffon", { clear = true })
   for event, callback in pairs(events) do
@@ -78,22 +80,6 @@ M.setup = function(opts)
       callback = callback,
     })
   end
-
-  local window = require("buffon.ui.window")
-  local win = window.Window:new("Cesc", window.WIN_POSITIONS.bottom_right)
-  win:set_content({
-    "Linia      1",
-    "Linia      2",
-    "Linia      3",
-    "Linia      4",
-    "Linia      5",
-    "Linia      6",
-  })
-  win:set_highlight({
-    Constant = { { 0, 0, 5 } },
-    String = { { 0, 11, 12 } },
-  })
-  win:show()
 end
 
 return M
