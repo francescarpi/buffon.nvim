@@ -115,8 +115,9 @@ function Window:set_content(content)
   vim.api.nvim_buf_set_lines(self.buf_id, 0, -1, false, content)
 end
 
----@param highlight table<string, table<[number, number, number]>> Dictionary where the key is hl_group and the value a
----                                                                table of tuples with the values [line, col_start, col_end]
+--- The highlight parameter is a dictionary where the key is hl_group and the
+--- value a table of tuples with the values [line, col_start, col_end]
+---@param highlight table<string, table<[number, number, number]>>
 function Window:set_highlight(highlight)
   if not self.buf_id then
     log.debug("set_highlight aborted because there is not a buffer")
