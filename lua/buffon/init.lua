@@ -78,6 +78,22 @@ M.setup = function(opts)
       callback = callback,
     })
   end
+
+  local window = require("buffon.ui.window")
+  local win = window.Window:new("Cesc", window.WIN_POSITIONS.bottom_right)
+  win:set_content({
+    "Linia      1",
+    "Linia      2",
+    "Linia      3",
+    "Linia      4",
+    "Linia      5",
+    "Linia      6",
+  })
+  win:set_highlight({
+    Constant = { { 0, 0, 5 } },
+    String = { { 0, 11, 12 } },
+  })
+  win:show()
 end
 
 return M
