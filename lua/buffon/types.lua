@@ -58,7 +58,6 @@
 ---@field index_buffers_by_name table<string, number>
 ---@field buffers table<BuffonBuffer>
 ---@field config? BuffonConfigState
----@field are_duplicated_filenames boolean
 ---@field storage? BuffonStorage
 
 ---@class BuffonHelpState
