@@ -15,24 +15,15 @@ This plugin is inspired by [harpoon](https://github.com/ThePrimeagen/harpoon) an
 
 Things I like and dislike about these plugins:
 
-* Harpoon:
-    * Likes:
-        * Data persistence
-        * Buffers can be sorted
-        * Good API
-        * Tests
-    * Dislikes:
-        * Having to select which buffers to work with
-        * Constantly having to open and close the window to see which buffers are selected, change the order, delete them, etc.
-* Tide:
-    * Likes:
-        * Pleasant and beautiful interface
-        * Shortcuts to access a buffer directly
-        * Always having the buffer list visible
-    * Dislikes:
-        * Having to select which buffers to work with
-        * Buffers cannot be sorted
-        * No persistence
+|  | `Likes`               | `Dislikes` |
+|----      |----                  |----       |
+| `Harpoon` | * Data persistence    | * Having to select which buffers to work with |
+|           | * Buffers can be sorted | * Constantly having to open and close the window to see which buffers are selected, change the order, delete them, etc. |
+|           | * Good API | |
+|           | * Tests | |
+| `Tide` | * Pleasant and beautiful interface | * Having to select which buffers to work with |
+|           | * Shortcuts to access a buffer directly | * Buffers cannot be sorted |
+|           | * Always having the buffer list visible | * No persistence |
 
 Based on this, I created *Buffon* with the best of both plugins, perfectly adapting to my way of working.
 
@@ -161,9 +152,9 @@ Showing the help window:
 
 ## API
 
-All the core functionalities in charge of managing the buffer list are located in the *api.lua* file. There are now functions to add elements, remove them, change the order, etc.
+All the core functionalities in charge of managing the buffer list are located in the *buffers.lua* file. There are now functions to add elements, remove them, change the order, etc.
 
-In the *actions.lua* file you can see how the API is used.
+In the *actions.lua* file you can see how the buffers API is used.
 
 ## Contribution
 
@@ -184,7 +175,7 @@ make test
 I have tried to organize the code in the best way I knew how, although it can surely be improved. Below I explain how it is structured:
 
 * lua: Project code
-    * api: Plugin core. Functionalities related to managing the buffer list
+    * buffers: Plugin core. Functionalities related to managing the buffer list
     * keybindings: Registration of the different shortcuts to the plugin actions
     * actions: Buffon actions linked with the keybindings
     * config: Configuration management

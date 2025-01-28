@@ -45,30 +45,24 @@
 ---@field rhs function | string
 ---@field help string
 
----@class BuffonWindow
----@field buf number
----@field id number | nil
-
 ---@class BuffonUIState
 ---@field config? BuffonConfigState
----@field window? BuffonWindow
+---@field window? Window
 
 ---@class BuffonUIGetContent
 ---@field lines table<string>
 ---@field line_active number
----@field longest_word_length number
 ---@field filenames table<string>
 
----@class BuffonApiState
+---@class BuffonBuffersState
 ---@field index_buffers_by_name table<string, number>
 ---@field buffers table<BuffonBuffer>
 ---@field config? BuffonConfigState
----@field are_duplicated_filenames boolean
 ---@field storage? BuffonStorage
 
 ---@class BuffonHelpState
----@field buf? number
----@field win? number
+---@field window? Window
+---@field content_rendered boolean
 
 ---@class BuffonKeybindingsState
 ---@field config? BuffonConfigState

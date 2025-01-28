@@ -1,7 +1,8 @@
-local api = require("buffon.api")
+local buffers = require("buffon.buffers")
 local config = require("buffon.config")
 local keybindings = require("buffon.keybindings")
-local ui = require("buffon.ui.main")
+local main_win = require("buffon.ui.main")
+local help_win = require("buffon.ui.help")
 local storage = require("buffon.storage")
 local actions = require("buffon.actions")
 local log = require("buffon.log")
@@ -18,38 +19,38 @@ local state = {
 local events = {
   BufAdd = function(buf)
     if buf and buf.match ~= "" then
-      api.add_buffer(buf.match, buf.buf)
-      ui.refresh()
+      buffers.add_buffer(buf.match, buf.buf)
+      main_win.refresh()
     end
   end,
   BufDelete = function(buf)
     if buf and buf.match ~= "" then
-      api.delete_buffer(buf.match)
-      ui.refresh()
+      buffers.delete_buffer(buf.match)
+      main_win.refresh()
     end
   end,
   BufEnter = function()
-    ui.refresh()
-    ui.check_open()
+    main_win.refresh()
+    main_win.check_open()
   end,
   VimResized = function()
-    ui.refresh()
+    main_win.refresh()
   end,
   BufFilePre = function(buf)
     state.buf_will_rename = buf.match
   end,
   BufFilePost = function(buf)
     assert(state.buf_will_rename, "new buffer name is required")
-    api.rename_buffer(state.buf_will_rename, buf.match)
+    buffers.rename_buffer(state.buf_will_rename, buf.match)
   end,
   ExitPre = function(buf)
-    api.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
+    buffers.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
     assert(state.storage, "storage is required")
-    local buffers = api.get_buffers()
-    state.storage:save(buffers)
+    local buffers_to_store = buffers.get_buffers()
+    state.storage:save(buffers_to_store)
   end,
   BufLeave = function(buf)
-    api.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
+    buffers.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
   end,
 }
 
@@ -64,12 +65,13 @@ M.setup = function(opts)
 
   state.storage = storage.Storage:new(vim.fn.getcwd())
   state.storage:init()
-  local buffers = state.storage:load()
+  local loaded_buffers = state.storage:load()
 
   actions.setup()
-  api.setup(cfg, buffers)
-  ui.setup(cfg)
+  buffers.setup(cfg, loaded_buffers)
   keybindings.setup(cfg)
+  main_win.setup(cfg)
+  help_win.setup()
 
   local group = vim.api.nvim_create_augroup("Buffon", { clear = true })
   for event, callback in pairs(events) do

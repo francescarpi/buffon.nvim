@@ -3,11 +3,10 @@ local log = require("buffon.log")
 
 local M = {}
 
----@type BuffonApiState
+---@type BuffonBuffersState
 local state = {
   index_buffers_by_name = {},
   buffers = {},
-  are_duplicated_filenames = false,
 }
 
 --- Refreshes the index_buffers_by_name list based on the current buffers list.
@@ -23,27 +22,11 @@ local refresh_indexes = function()
   state.index_buffers_by_name = buffers
 end
 
---- Check if buffers list have repeated filenames and update the are_duplicated_filenames state flag
----@return nil
-local check_duplicated_filenames = function()
-  local filenames = {}
-  state.are_duplicated_filenames = false
-
-  for _, buffer in ipairs(state.buffers) do
-    if filenames[buffer.filename] then
-      state.are_duplicated_filenames = true
-      return
-    end
-    filenames[buffer.filename] = true
-  end
-end
-
 --- Sets the buffers list and refreshes the indexes.
 ---@param list table<BuffonBuffer> The list of buffers to set.
 local set_buffers = function(list)
   state.buffers = list
   refresh_indexes()
-  check_duplicated_filenames()
 end
 
 ---@param name string
@@ -94,7 +77,6 @@ M.add_buffer = function(name, id)
     table.insert(state.buffers, buffer)
   end
 
-  check_duplicated_filenames()
   refresh_indexes()
 end
 
@@ -136,7 +118,6 @@ M.delete_buffer = function(name)
   log.debug("close buffer", name)
   table.remove(state.buffers, buffer_index)
 
-  check_duplicated_filenames()
   refresh_indexes()
 end
 
@@ -208,11 +189,6 @@ M.move_buffer_bottom = function(name)
     table.insert(state.buffers, table.remove(state.buffers, index))
     return #state.buffers
   end)
-end
-
----@return boolean
-M.are_duplicated_filenames = function()
-  return state.are_duplicated_filenames
 end
 
 ---@param name string
