@@ -24,22 +24,35 @@ local get_line_active = function(index_buffers_by_name)
 end
 
 ---@param buffers_list table<BuffonBuffer> The list of buffers.
+---@return table<string>
+M.ger_buffer_names = function(buffers_list)
+  local filenames = {}
+  local filenames_done = {}
+  for index, buffer in ipairs(buffers_list) do
+    if filenames_done[buffer.filename] then
+      table.insert(filenames, buffer.short_path)
+      filenames[filenames_done[buffer.filename].index] = filenames_done[buffer.filename].short_path
+    else
+      table.insert(filenames, buffer.filename)
+    end
+    filenames_done[buffer.filename] = {
+      index = index,
+      short_path = buffer.short_path,
+    }
+  end
+  return filenames
+end
+
+---@param buffers_list table<BuffonBuffer> The list of buffers.
 ---@param index_buffers_by_name table<string, number> A table mapping buffer names to their indices.
 ---@return BuffonUIGetContent
 M.get_content = function(buffers_list, index_buffers_by_name)
   local lines = {}
-  local filenames = {}
-
+  local filenames = M.ger_buffer_names(buffers_list)
   local line_active = get_line_active(index_buffers_by_name)
 
   for index, buffer in ipairs(buffers_list) do
-    local filename = buffer.filename
-    if buffers.are_duplicated_filenames() then
-      filename = buffer.short_path
-    end
-
-    table.insert(filenames, filename)
-
+    local filename = filenames[index]
     local shortcut = state.config.opts.keybindings.buffer_mapping.mapping_chars:sub(index, index)
     if shortcut ~= "" then
       shortcut = state.config.opts.keybindings.buffer_mapping.leader_key .. shortcut

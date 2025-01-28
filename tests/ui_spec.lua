@@ -40,4 +40,17 @@ describe("ui", function()
       },
     })
   end)
+
+  it("repeated buffer names", function()
+    local cfg = config.setup()
+    buffers.setup(cfg)
+    ui.setup(cfg)
+
+    buffers.add_buffer("/foo/boo/buffer1", 1)
+    buffers.add_buffer("/foo/boo/buffer2", 2)
+    eq(ui.ger_buffer_names(buffers.get_buffers()), { "buffer1", "buffer2" })
+
+    buffers.add_buffer("/foo/zoo/buffer2", 3)
+    eq(ui.ger_buffer_names(buffers.get_buffers()), { "buffer1", "/f/b/buffer2", "/f/z/buffer2" })
+  end)
 end)
