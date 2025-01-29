@@ -50,7 +50,7 @@ Based on this, I created *Buffon* with the best of both plugins, perfectly adapt
 > [!NOTE]
 > require neovim 0.10.0+
 
-* Using [lazy](https://github.com/folke/lazy.nvim):
+### Using [lazy](https://github.com/folke/lazy.nvim):
 
 Option 1:
 
