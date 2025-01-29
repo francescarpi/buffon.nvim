@@ -9,7 +9,10 @@ describe("config", function()
       prepend_buffers = false,
       open = {
         by_default = false,
-        ignore_ft = { "gitcommit" },
+        ignore_ft = {
+          "gitcommit",
+          "gitrebase",
+        },
       },
       keybindings = {
         goto_next_buffer = "<s-j>",
@@ -46,7 +49,10 @@ describe("config", function()
       prepend_buffers = true,
       open = {
         by_default = false,
-        ignore_ft = { "gitcommit" },
+        ignore_ft = {
+          "gitcommit",
+          "gitrebase",
+        },
       },
       keybindings = {
         goto_next_buffer = "<s-j>",
@@ -87,7 +93,10 @@ describe("config", function()
       prepend_buffers = false,
       open = {
         by_default = false,
-        ignore_ft = { "gitcommit" },
+        ignore_ft = {
+          "gitcommit",
+          "gitrebase",
+        },
       },
       keybindings = {
         goto_next_buffer = "<s-j>",

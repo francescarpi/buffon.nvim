@@ -52,5 +52,15 @@ describe("ui", function()
 
     buffers.add_buffer("/foo/zoo/buffer2", 3)
     eq(ui.ger_buffer_names(buffers.get_buffers()), { "buffer1", "/f/b/buffer2", "/f/z/buffer2" })
+
+    buffers.add_buffer("/foo/roo/buffer2", 4)
+    buffers.add_buffer("/foo/boo/buffer3", 5)
+    eq(ui.ger_buffer_names(buffers.get_buffers()), {
+      "buffer1",
+      "/f/b/buffer2",
+      "/f/z/buffer2",
+      "/f/r/buffer2",
+      "buffer3",
+    })
   end)
 end)

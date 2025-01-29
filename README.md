@@ -50,7 +50,7 @@ Based on this, I created *Buffon* with the best of both plugins, perfectly adapt
 > [!NOTE]
 > require neovim 0.10.0+
 
-* Using [lazy](https://github.com/folke/lazy.nvim):
+### Using [lazy](https://github.com/folke/lazy.nvim):
 
 Option 1:
 
@@ -139,6 +139,12 @@ Take a look at the default shortcuts for navigating between buffers, changing th
   },
 }
 ```
+> [!TIP]
+> If you use `nvim-lspconfig`, the `s-k` shortcut (goto previous) may collide with the `lsp` one to view the documentation. In my case, I have this shortcut remapped to:
+>
+> ```lua
+> vim.keymap.set("n", "c-l", vim.lsp.buf.hover)
+> ````
 
 ## Screenshots
 
