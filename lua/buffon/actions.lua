@@ -13,6 +13,7 @@ local open_buffer = function(buffer)
   vim.api.nvim_command("edit " .. buffer.name)
   buffer.id = vim.api.nvim_get_current_buf()
   vim.api.nvim_win_set_cursor(0, buffer.cursor)
+  vim.cmd("normal! zz")
 end
 
 ---@param buffer BuffonBuffer
