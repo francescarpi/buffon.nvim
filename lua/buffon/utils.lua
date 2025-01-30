@@ -17,12 +17,12 @@ M.abbreviate_path = function(path)
   for part in string.gmatch(path, "[^/]+") do
     table.insert(parts, part)
   end
+
   local start_index = math.max(1, #parts - 3)
   for i = start_index, #parts - 1 do
-    if not parts[i]:match("%W") then
-      parts[i] = parts[i]:sub(1, 1)
-    end
+    parts[i] = parts[i]:gsub("[%[%]]", ""):gsub("-", ""):sub(1, 1)
   end
+
   return "/" .. table.concat(parts, "/", start_index)
 end
 
