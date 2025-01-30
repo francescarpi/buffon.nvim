@@ -40,6 +40,7 @@ Based on this, I created *Buffon* with the best of both plugins, perfectly adapt
   * Access a specific buffer
   * Toggle between the last used buffer
   * Reopen closed buffer
+  * Shows modified buffer indicator
 * Help window to see the shortcuts
 
 > [!NOTE]
