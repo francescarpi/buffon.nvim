@@ -71,7 +71,7 @@ M.get_content = function(buffers_list, index_buffers_by_name)
 
     local icon, _ = devicons.get_icon_color(buffer.filename, buffer.filename:match("%.(%a+)$"))
 
-    table.insert(lines, string.format("%s %s%s %s", shortcut, filename, modified, icon or ""))
+    table.insert(lines, string.format("%s %s %s %s", shortcut, filename, icon or "", modified))
   end
 
   return {
@@ -98,10 +98,11 @@ local refresh_content = function(buffers_list, index_buffers_by_name)
   state.window:refresh_dimensions()
 
   local highlights = {
-    LineNr = {},
-    Constant = {},
-    String = {},
-    Label = {},
+    LineNr = {}, -- unloaded buffers
+    Constant = {}, -- shortcut
+    String = {}, -- icon
+    Label = {}, -- line active
+    ErrorMsg = {}, -- modified indicator
   }
 
   if content.line_active then
@@ -111,6 +112,8 @@ local refresh_content = function(buffers_list, index_buffers_by_name)
   end
 
   for index, buffer in ipairs(buffers_list) do
+    local modified_col_start = leader_key_length + 2 + #content.filenames[index] + 4
+    table.insert(highlights.ErrorMsg, { index - 1, modified_col_start, modified_col_start + 4 })
     table.insert(highlights.Constant, { index - 1, 0, leader_key_length })
     if buffer.id == nil then
       table.insert(highlights.LineNr, { index - 1, 0, -1 })
