@@ -60,9 +60,18 @@ M.get_content = function(buffers_list, index_buffers_by_name)
       shortcut = string.rep(" ", #state.config.opts.keybindings.buffer_mapping.leader_key + 1)
     end
 
+    local modified = "   "
+    if
+      buffer.id
+      and vim.api.nvim_buf_is_valid(buffer.id)
+      and vim.api.nvim_get_option_value("modified", { buf = buffer.id })
+    then
+      modified = "[+]"
+    end
+
     local icon, _ = devicons.get_icon_color(buffer.filename, buffer.filename:match("%.(%a+)$"))
 
-    table.insert(lines, string.format("%s %s %s", shortcut, filename, icon or ""))
+    table.insert(lines, string.format("%s %s%s %s", shortcut, filename, modified, icon or ""))
   end
 
   return {
