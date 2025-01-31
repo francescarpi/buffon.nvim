@@ -52,6 +52,9 @@ local events = {
   BufLeave = function(buf)
     buffers.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
   end,
+  BufModifiedSet = function()
+    main_win.refresh()
+  end,
 }
 
 --- Sets up the Buffon plugin with the provided options.
