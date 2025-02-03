@@ -104,30 +104,33 @@ function Window:refresh_dimensions()
   local editor_lines = vim.api.nvim_get_option("lines")
   local lines = vim.api.nvim_buf_get_lines(self.buf_id, 0, -1, false)
   local height = #lines
-  local width = 0
+  local max_width = 0
   local row = 1
   local col = 0
 
   for _, line in ipairs(lines) do
-    if #line > width then
-      width = #line
+    if #line > max_width then
+      max_width = #line
     end
   end
 
+  -- fix utf-8 length of icons
+  max_width = max_width - 2
+
   if self.position == WIN_POSITION.top_right then
     row = 0
-    col = editor_columns - (1 + width + 1)
+    col = editor_columns - (1 + max_width + 1)
   elseif self.position == WIN_POSITION.bottom_right then
     row = editor_lines - (1 + #lines + 1) - 2
-    col = editor_columns - (1 + width + 1)
+    col = editor_columns - (1 + max_width + 1)
   end
 
-  if width == 0 then
-    width = 20
+  if max_width == 0 then
+    max_width = 20
   end
 
   local cfg = vim.api.nvim_win_get_config(self.win_id)
-  cfg.width = width
+  cfg.width = max_width
   cfg.height = height
   cfg.col = col
   cfg.row = row

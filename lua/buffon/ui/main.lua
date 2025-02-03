@@ -69,9 +69,10 @@ M.get_content = function(buffers_list, index_buffers_by_name)
       modified = " [+]"
     end
 
-    local icon, _ = devicons.get_icon_color(buffer.filename, buffer.filename:match("%.(%a+)$"))
+    local icon, _ = devicons.get_icon(buffer.filename, buffer.filename:match("%.(%a+)$"), { default = true })
+    local line = string.format("%s %s %s%s", shortcut, filename, icon, modified)
 
-    table.insert(lines, string.format("%s %s %s%s", shortcut, filename, icon or "", modified))
+    table.insert(lines, line)
   end
 
   return {
