@@ -31,6 +31,8 @@ local events = {
   end,
   BufEnter = function()
     main_win.refresh()
+  end,
+  VimEnter = function()
     main_win.check_open()
   end,
   VimResized = function()
