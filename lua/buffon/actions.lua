@@ -152,7 +152,7 @@ M.save_last_used = function(name)
 end
 
 M.last_used = function()
-  if state.last_used then
+  if state.last_used and vim.api.nvim_buf_is_valid(state.last_used.id) then
     activate_or_open(state.last_used)
   end
 end
