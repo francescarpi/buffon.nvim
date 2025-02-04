@@ -61,7 +61,9 @@ M.keybindings = function()
     },
     {
       lhs = state.config.opts.keybindings.switch_previous_used_buffer,
-      rhs = "<cmd>e #<cr>",
+      rhs = function()
+        actions.last_used()
+      end,
       help = "Last used buffer",
     },
     {

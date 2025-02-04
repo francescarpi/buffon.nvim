@@ -69,6 +69,7 @@
 
 ---@class BuffonActionsState
 ---@field last_closed? BuffonLastClosedList
+---@field last_used? BuffonBuffer
 
 ---@class BuffonTestBuffer
 ---@field path string
@@ -77,5 +78,5 @@
 ---@field short_path string
 
 ---@class BuffonState
----@field buf_will_rename string | nil
----@field storage BuffonStorage | nil
+---@field buf_will_rename? string
+---@field storage? BuffonStorage

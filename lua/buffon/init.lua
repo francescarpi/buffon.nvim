@@ -53,6 +53,7 @@ local events = {
   end,
   BufLeave = function(buf)
     buffers.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
+    actions.save_last_used(buf.match)
   end,
   BufModifiedSet = function()
     main_win.refresh()
