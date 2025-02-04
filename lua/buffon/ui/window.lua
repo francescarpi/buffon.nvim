@@ -109,13 +109,11 @@ function Window:refresh_dimensions()
   local col = 0
 
   for _, line in ipairs(lines) do
-    if #line > max_width then
-      max_width = #line
+    local line_length = vim.fn.strdisplaywidth(line)
+    if line_length > max_width then
+      max_width = line_length
     end
   end
-
-  -- fix utf-8 length of icons
-  max_width = max_width - 2
 
   if self.position == WIN_POSITION.top_right then
     row = 0
