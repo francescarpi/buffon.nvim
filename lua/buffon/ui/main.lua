@@ -150,12 +150,17 @@ M.check_open = function()
   end
 end
 
+---@return number
+M.buf_id = function()
+  return state.window.buf_id
+end
+
 --- Sets up the UI state with the provided configuration.
 ---@param config BuffonConfigState The configuration options.
 M.setup = function(config)
   state.config = config
   local title = " Buffon (" .. config.opts.keybindings.show_help .. ") "
-  state.window = window.Window:new(title, window.WIN_POSITIONS.top_right)
+  state.window = window.Window:new(title, window.WIN_POSITIONS.top_right, true)
 end
 
 return M

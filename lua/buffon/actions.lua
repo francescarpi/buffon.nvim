@@ -1,5 +1,5 @@
 local buffers = require("buffon.buffers")
-local ui = require("buffon.ui.main")
+local main_win = require("buffon.ui.main")
 local utils = require("buffon.utils")
 local log = require("buffon.log")
 
@@ -22,7 +22,7 @@ local activate_or_open = function(buffer)
     vim.api.nvim_set_current_buf(buffer.id)
   else
     open_buffer(buffer)
-    ui.refresh()
+    main_win.refresh()
   end
 end
 
@@ -41,7 +41,7 @@ end
 local move_buffer = function(callback)
   local index = callback(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
   if index > -1 then
-    ui.refresh()
+    main_win.refresh()
     vim.notify(string.format("Buffer moved to index: %d", index))
     log.debug("buffer moved to index", index)
   end
@@ -54,7 +54,7 @@ local close_buffers = function(buffers_to_close)
       vim.api.nvim_buf_delete(buffer.id, { force = false })
     else
       buffers.delete_buffer(buffer.name)
-      ui.refresh()
+      main_win.refresh()
     end
     state.last_closed:add(buffer.name)
   end
@@ -159,6 +159,14 @@ end
 
 M.setup = function()
   state.last_closed = utils.LastClosedList:new(10)
+
+  vim.keymap.set("n", "<LeftMouse>", function()
+    local line = vim.fn.line(".")
+    local buffer = buffers.get_buffer_by_index(line)
+    if buffer then
+      activate_or_open(buffer)
+    end
+  end, { silent = true, buffer = main_win.buf_id() })
 end
 
 return M

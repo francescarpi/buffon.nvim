@@ -73,11 +73,11 @@ M.setup = function(opts)
   state.storage:init()
   local loaded_buffers = state.storage:load()
 
+  main_win.setup(cfg)
+  help_win.setup()
   actions.setup()
   buffers.setup(cfg, loaded_buffers)
   keybindings.setup(cfg)
-  main_win.setup(cfg)
-  help_win.setup()
 
   local group = vim.api.nvim_create_augroup("Buffon", { clear = true })
   for event, callback in pairs(events) do

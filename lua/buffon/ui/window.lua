@@ -13,22 +13,26 @@ local WIN_POSITION = {
 ---@field win_id number | nil
 ---@field buf_id number | nil
 ---@field position win_position
+---@field focusable boolean
 local Window = {
   title = "",
   win_id = nil,
   buf_id = nil,
   position = WIN_POSITION.top_right,
+  focusable = false,
 }
 
 ---@param title string
 ---@param position win_position
+---@param focusable? boolean
 ---@return Window
-function Window:new(title, position)
+function Window:new(title, position, focusable)
   local o = {
     title = title,
     win_id = nil,
     buf_id = vim.api.nvim_create_buf(false, true),
     position = position,
+    focusable = focusable or false,
   }
   setmetatable(o, self)
   self.__index = self
@@ -50,7 +54,7 @@ function Window:show()
     style = "minimal",
     border = "single",
     zindex = 1,
-    focusable = false,
+    focusable = self.focusable,
   })
   self:refresh_dimensions()
 end
