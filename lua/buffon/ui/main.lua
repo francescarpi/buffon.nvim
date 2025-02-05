@@ -69,9 +69,10 @@ M.get_content = function(buffers_list, index_buffers_by_name)
       modified = " [+]"
     end
 
-    local icon, _ = devicons.get_icon_color(buffer.filename, buffer.filename:match("%.(%a+)$"))
+    local icon, _ = devicons.get_icon(buffer.filename, buffer.filename:match("%.(%a+)$"), { default = true })
+    local line = string.format("%s %s %s%s", shortcut, filename, icon, modified)
 
-    table.insert(lines, string.format("%s %s %s%s", shortcut, filename, icon or "", modified))
+    table.insert(lines, line)
   end
 
   return {
@@ -97,30 +98,36 @@ local refresh_content = function(buffers_list, index_buffers_by_name)
   state.window:set_content(content.lines)
   state.window:refresh_dimensions()
 
-  local highlights = {
-    LineNr = {}, -- unloaded buffers
-    Constant = {}, -- shortcut
-    String = {}, -- icon
-    Label = {}, -- line active
-    ErrorMsg = {}, -- modified indicator
+  local theme = {
+    UnloadedBuffers = {},
+    Shortcut = {},
+    Icon = {},
+    LineActive = {},
+    ModifiedIndicator = {},
   }
 
   if content.line_active then
     local icon_col_start = leader_key_length + 2 + #content.filenames[content.line_active + 1]
-    table.insert(highlights.String, { content.line_active, icon_col_start, icon_col_start + 1 })
-    table.insert(highlights.Label, { content.line_active, leader_key_length + 1, -1 })
+    table.insert(theme.Icon, { content.line_active, icon_col_start, icon_col_start + 1 })
+    table.insert(theme.LineActive, { content.line_active, leader_key_length + 1, -1 })
   end
 
   for index, buffer in ipairs(buffers_list) do
     local modified_col_start = leader_key_length + 2 + #content.filenames[index] + 4
-    table.insert(highlights.ErrorMsg, { index - 1, modified_col_start, modified_col_start + 4 })
-    table.insert(highlights.Constant, { index - 1, 0, leader_key_length })
+    table.insert(theme.ModifiedIndicator, { index - 1, modified_col_start, modified_col_start + 4 })
+    table.insert(theme.Shortcut, { index - 1, 0, leader_key_length })
     if buffer.id == nil then
-      table.insert(highlights.LineNr, { index - 1, 0, -1 })
+      table.insert(theme.UnloadedBuffers, { index - 1, 0, -1 })
     end
   end
 
-  state.window:set_highlight(highlights)
+  state.window:set_highlight({
+    LineNr = theme.UnloadedBuffers,
+    Constant = theme.Shortcut,
+    String = theme.Icon,
+    Label = theme.LineActive,
+    ErrorMsg = theme.ModifiedIndicator,
+  })
 end
 
 --- Refreshes the container and content windows with the current buffer list.

@@ -142,6 +142,21 @@ M.restore_last_closed_buffer = function()
   end
 end
 
+---@param name string
+M.save_last_used = function(name)
+  local buffer_index = buffers.get_index_by_name(name)
+  if buffer_index ~= nil then
+    local buffer = buffers.get_buffer_by_index(buffer_index)
+    state.last_used = buffer
+  end
+end
+
+M.last_used = function()
+  if state.last_used and vim.api.nvim_buf_is_valid(state.last_used.id) then
+    activate_or_open(state.last_used)
+  end
+end
+
 M.setup = function()
   state.last_closed = utils.LastClosedList:new(10)
 end

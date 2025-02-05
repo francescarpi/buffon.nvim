@@ -1,5 +1,7 @@
 -- This log file was getting it from the tjdevries repo
 -- https://github.com/tjdevries/express_line.nvim/blob/master/lua/el/log.lua
+local date = os.date("%Y-%m-%d")
+
 return require("plenary.log").new({
   -- Name of the plugin. Prepended to log messages
   plugin = "buffon",
@@ -27,8 +29,5 @@ return require("plenary.log").new({
     { name = "fatal", hl = "ErrorMsg" },
   },
 
-  -- Can limit the number of decimals displayed for floats
-  float_precision = 0.01,
-
-  outfile = "/tmp/buffon.log",
+  outfile = "/tmp/buffon-" .. date .. ".log",
 })

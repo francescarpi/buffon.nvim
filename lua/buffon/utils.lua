@@ -20,7 +20,7 @@ M.abbreviate_path = function(path)
 
   local start_index = math.max(1, #parts - 3)
   for i = start_index, #parts - 1 do
-    parts[i] = parts[i]:gsub("[%[%]]", ""):gsub("-", ""):sub(1, 1)
+    parts[i] = parts[i]:gsub("(%w)%w+", "%1")
   end
 
   return "/" .. table.concat(parts, "/", start_index)
