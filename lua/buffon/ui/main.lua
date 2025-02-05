@@ -1,4 +1,4 @@
-local buffers = require("buffon.buffers")
+local api_buffers = require("buffon.api.buffers")
 local devicons = require("nvim-web-devicons")
 local window = require("buffon.ui.window")
 
@@ -7,20 +7,24 @@ local M = {}
 ---@type BuffonUIState
 local state = {}
 
----@param index_buffers_by_name table<string, number> A table mapping buffer names to their indices.
+---@param index_buffers_by_name table<string, BuffonIndexBuffersByName> A table mapping buffer names to their indices.
 ---@return number | nil
 local get_line_active = function(index_buffers_by_name)
-  local current_buf = vim.api.nvim_get_current_buf()
-  if not current_buf then
+  local buffer_name = vim.api.nvim_get_current_buf()
+  if not buffer_name then
     return
   end
 
-  local buffer_index = index_buffers_by_name[vim.api.nvim_buf_get_name(current_buf)]
-  if buffer_index == nil then
+  local buffer_group_index = index_buffers_by_name[vim.api.nvim_buf_get_name(buffer_name)]
+  if
+    not buffer_group_index
+    or not buffer_group_index.index
+    or buffer_group_index.group ~= api_buffers.groups.get_active_group()
+  then
     return
   end
 
-  return buffer_index - 1
+  return buffer_group_index.index - 1
 end
 
 ---@param buffers_list table<BuffonBuffer> The list of buffers.
@@ -44,8 +48,8 @@ M.ger_buffer_names = function(buffers_list)
 end
 
 ---@param buffers_list table<BuffonBuffer> The list of buffers.
----@param index_buffers_by_name table<string, number> A table mapping buffer names to their indices.
----@return BuffonUIGetContent
+---@param index_buffers_by_name table<string, BuffonIndexBuffersByName> A table mapping buffer names to their indices.
+---@return BuffonMainWindowContent
 M.get_content = function(buffers_list, index_buffers_by_name)
   local lines = {}
   local filenames = M.ger_buffer_names(buffers_list)
@@ -82,20 +86,35 @@ M.get_content = function(buffers_list, index_buffers_by_name)
   }
 end
 
+---@return string
+local footer = function()
+  local footer = ""
+  for i = 1, api_buffers.get_max_groups() do
+    if i == api_buffers.groups.get_active_group() then
+      footer = footer .. "●"
+    else
+      footer = footer .. "○"
+    end
+  end
+  return footer
+end
+
 --- Refreshes the content window with the buffer filenames.
 ---@param buffers_list table<BuffonBuffer> The list of buffers.
----@param index_buffers_by_name table<string, number> A table mapping buffer names to their indices.
+---@param index_buffers_by_name table<string, BuffonIndexBuffersByName> A table mapping buffer names to their indices.
 local refresh_content = function(buffers_list, index_buffers_by_name)
   local leader_key_length = #state.config.opts.keybindings.buffer_mapping.leader_key + 1
   local content = M.get_content(buffers_list, index_buffers_by_name)
 
   if #content.lines == 0 then
     state.window:set_content({ " No buffers... " })
+    state.window:set_footer(footer())
     state.window:refresh_dimensions()
     return
   end
 
   state.window:set_content(content.lines)
+  state.window:set_footer(footer())
   state.window:refresh_dimensions()
 
   local theme = {
@@ -113,11 +132,12 @@ local refresh_content = function(buffers_list, index_buffers_by_name)
   end
 
   for index, buffer in ipairs(buffers_list) do
-    local modified_col_start = leader_key_length + 2 + #content.filenames[index] + 4
-    table.insert(theme.ModifiedIndicator, { index - 1, modified_col_start, modified_col_start + 4 })
-    table.insert(theme.Shortcut, { index - 1, 0, leader_key_length })
     if buffer.id == nil then
       table.insert(theme.UnloadedBuffers, { index - 1, 0, -1 })
+    else
+      local modified_col_start = leader_key_length + 2 + #content.filenames[index] + 4
+      table.insert(theme.ModifiedIndicator, { index - 1, modified_col_start, modified_col_start + 4 })
+      table.insert(theme.Shortcut, { index - 1, 0, leader_key_length })
     end
   end
 
@@ -133,7 +153,7 @@ end
 --- Refreshes the container and content windows with the current buffer list.
 M.refresh = function()
   if state.window then
-    refresh_content(buffers.get_buffers(), buffers.get_index_buffers_by_name())
+    refresh_content(api_buffers.get_buffers_active_group(), api_buffers.get_index_buffers_by_name())
   end
 end
 

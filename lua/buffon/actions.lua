@@ -1,5 +1,5 @@
-local buffers = require("buffon.buffers")
-local ui = require("buffon.ui.main")
+local api_buffers = require("buffon.api.buffers")
+local main_win = require("buffon.ui.main")
 local utils = require("buffon.utils")
 local log = require("buffon.log")
 
@@ -20,10 +20,16 @@ end
 local activate_or_open = function(buffer)
   if buffer.id then
     vim.api.nvim_set_current_buf(buffer.id)
+    local index_group = api_buffers.get_index_and_group_by_name(buffer.name)
+    assert(index_group ~= nil, "index group should be present")
+
+    if index_group.group ~= api_buffers.groups.get_active_group() then
+      api_buffers.groups.activate_group(index_group.group)
+    end
   else
     open_buffer(buffer)
-    ui.refresh()
   end
+  main_win.refresh()
 end
 
 ---@param callback function
@@ -41,8 +47,7 @@ end
 local move_buffer = function(callback)
   local index = callback(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
   if index > -1 then
-    ui.refresh()
-    vim.notify(string.format("Buffer moved to index: %d", index))
+    main_win.refresh()
     log.debug("buffer moved to index", index)
   end
 end
@@ -53,8 +58,8 @@ local close_buffers = function(buffers_to_close)
     if buffer.id then
       vim.api.nvim_buf_delete(buffer.id, { force = false })
     else
-      buffers.delete_buffer(buffer.name)
-      ui.refresh()
+      api_buffers.del.delete_buffer(buffer.name)
+      main_win.refresh()
     end
     state.last_closed:add(buffer.name)
   end
@@ -62,18 +67,18 @@ end
 
 --- Switches to the next buffer. If cyclic navigation is enabled, wraps around to the first buffer.
 M.next = function()
-  goto_next_or_previous(buffers.get_next_buffer)
+  goto_next_or_previous(api_buffers.nav.get_next_buffer)
 end
 
 --- Switches to the previous buffer. If cyclic navigation is enabled, wraps around to the last buffer.
 M.previous = function()
-  goto_next_or_previous(buffers.get_previous_buffer)
+  goto_next_or_previous(api_buffers.nav.get_previous_buffer)
 end
 
 --- Goes to the buffer at the specified order.
 ---@param order number The index of the buffer to switch to.
 M.goto_buffer = function(order)
-  local buffer = buffers.get_buffer_by_index(order)
+  local buffer = api_buffers.get_buffer_by_group_and_index(api_buffers.groups.get_active_group(), order)
   if not buffer then
     return
   end
@@ -82,22 +87,22 @@ end
 
 --- Moves the current buffer up in the buffer list.
 M.buffer_up = function()
-  move_buffer(buffers.move_buffer_up)
+  move_buffer(api_buffers.move.move_buffer_up)
 end
 
 --- Moves the current buffer down in the buffer list.
 M.buffer_down = function()
-  move_buffer(buffers.move_buffer_down)
+  move_buffer(api_buffers.move.move_buffer_down)
 end
 
 --- Moves the current buffer to the top of the buffer list.
 M.buffer_top = function()
-  move_buffer(buffers.move_buffer_top)
+  move_buffer(api_buffers.move.move_buffer_top)
 end
 
 --- Moves the current buffer to the bottom of the buffer list.
 M.buffer_bottom = function()
-  move_buffer(buffers.move_buffer_bottom)
+  move_buffer(api_buffers.move.move_buffer_bottom)
 end
 
 --- Close current buffer
@@ -113,19 +118,19 @@ end
 
 --- Close buffers above
 M.close_buffers_above = function()
-  local buffers_to_close = buffers.get_buffers_above(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
+  local buffers_to_close = api_buffers.del.get_buffers_above(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
   close_buffers(buffers_to_close)
 end
 
 --- Close buffers below
 M.close_buffers_below = function()
-  local buffers_to_close = buffers.get_buffers_below(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
+  local buffers_to_close = api_buffers.del.get_buffers_below(vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
   close_buffers(buffers_to_close)
 end
 
 --- Close all buffers
 M.close_all_buffers = function()
-  close_buffers(utils.table_copy(buffers.get_buffers()))
+  close_buffers(utils.table_copy(api_buffers.get_buffers_active_group()))
 end
 
 --- Close others buffers
@@ -144,9 +149,9 @@ end
 
 ---@param name string
 M.save_last_used = function(name)
-  local buffer_index = buffers.get_index_by_name(name)
-  if buffer_index ~= nil then
-    local buffer = buffers.get_buffer_by_index(buffer_index)
+  local buffer_index = api_buffers.get_index_and_group_by_name(name)
+  if buffer_index and buffer_index.index then
+    local buffer = api_buffers.get_buffer_by_group_and_index(buffer_index.group, buffer_index.index)
     state.last_used = buffer
   end
 end
@@ -155,6 +160,39 @@ M.last_used = function()
   if state.last_used and vim.api.nvim_buf_is_valid(state.last_used.id) then
     activate_or_open(state.last_used)
   end
+end
+
+local select_first_buffer_of_group = function()
+  local group_buffers = api_buffers.get_buffers_active_group()
+  if #group_buffers > 0 then
+    activate_or_open(group_buffers[1])
+  end
+end
+
+M.next_group = function()
+  api_buffers.groups.next_group()
+  main_win.refresh()
+  select_first_buffer_of_group()
+end
+
+M.previous_group = function()
+  api_buffers.groups.previous_group()
+  main_win.refresh()
+  select_first_buffer_of_group()
+end
+
+M.move_to_next_group = function()
+  local name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+  local group = api_buffers.groups.move_to_next_group(name)
+  api_buffers.groups.activate_group(group)
+  main_win.refresh()
+end
+
+M.move_to_previous_group = function()
+  local name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+  local group = api_buffers.groups.move_to_previous_group(name)
+  api_buffers.groups.activate_group(group)
+  main_win.refresh()
 end
 
 M.setup = function()

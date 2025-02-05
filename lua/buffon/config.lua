@@ -3,7 +3,11 @@ local M = {}
 ---@type BuffonConfig
 local default = {
   cyclic_navigation = false,
-  prepend_buffers = false,
+  --- possible values:
+  ---   "start": buffers are added at the begginning of the buffers list
+  ---   "end": buffers are added at the end of the list
+  ---   "after": are added after the active buffer
+  new_buffer_position = "end",
   open = {
     by_default = false,
     ignore_ft = {
@@ -18,7 +22,7 @@ local default = {
     move_buffer_down = "<s-h>",
     move_buffer_top = "<s-t>",
     move_buffer_bottom = "<s-b>",
-    toggle_buffon_window = ";a",
+    toggle_buffon_window = ";n",
     switch_previous_used_buffer = ";;",
     close_buffer = ";d",
     close_buffers_above = ";v",
@@ -31,6 +35,10 @@ local default = {
       leader_key = ";",
     },
     show_help = ";h",
+    previous_group = "<s-tab>",
+    next_group = "<tab>",
+    move_to_previous_group = ";a",
+    move_to_next_group = ";s",
   },
 }
 
