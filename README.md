@@ -41,6 +41,7 @@ Based on this, I created *Buffon* with the best of both plugins, perfectly adapt
   * Toggle between the last used buffer
   * Reopen closed buffer
   * Shows modified buffer indicator
+  * Organize buffers into groups (for now, only 3)
 * Help window to see the shortcuts
 
 > [!NOTE]
@@ -112,10 +113,17 @@ Take a look at the default shortcuts for navigating between buffers, changing th
 ```lua
 {
   cyclic_navigation = false,
-  prepend_buffers = false,
+  --- possible values:
+  ---   "start": buffers are added at the begginning of the buffers list
+  ---   "end": buffers are added at the end of the list
+  ---   "after": are added after the active buffer
+  new_buffer_position = "end",
   open = {
     by_default = false,
-    ignore_ft = { "gitcommit" },
+    ignore_ft = {
+      "gitcommit",
+      "gitrebase",
+    },
   },
   keybindings = {
     goto_next_buffer = "<s-j>",
@@ -124,7 +132,7 @@ Take a look at the default shortcuts for navigating between buffers, changing th
     move_buffer_down = "<s-h>",
     move_buffer_top = "<s-t>",
     move_buffer_bottom = "<s-b>",
-    toggle_buffon_window = ";a",
+    toggle_buffon_window = ";n",
     switch_previous_used_buffer = ";;",
     close_buffer = ";d",
     close_buffers_above = ";v",
@@ -133,10 +141,14 @@ Take a look at the default shortcuts for navigating between buffers, changing th
     close_others = ";cd",
     restore_last_closed_buffer = ";t",
     buffer_mapping = {
-        mapping_chars = "qweryuiop",
-        leader_key = ";",
+      mapping_chars = "qweryuiop",
+      leader_key = ";",
     },
     show_help = ";h",
+    previous_group = "<s-tab>",
+    next_group = "<tab>",
+    move_to_previous_group = ";a",
+    move_to_next_group = ";s",
   },
 }
 ```
@@ -159,7 +171,7 @@ Showing the help window:
 
 ## API
 
-All the core functionalities in charge of managing the buffer list are located in the *buffers.lua* file. There are now functions to add elements, remove them, change the order, etc.
+All the core functionalities in charge of managing the buffer list are located in the *api* folder. There are now functions to add elements, remove them, change the order, etc.
 
 In the *actions.lua* file you can see how the buffers API is used.
 

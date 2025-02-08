@@ -15,6 +15,7 @@ local WIN_POSITION = {
 ---@field position win_position
 local Window = {
   title = "",
+  footer = "",
   win_id = nil,
   buf_id = nil,
   position = WIN_POSITION.top_right,
@@ -42,6 +43,8 @@ function Window:show()
   self.win_id = vim.api.nvim_open_win(self.buf_id, false, {
     title = self.title,
     title_pos = "right",
+    footer = self.footer,
+    footer_pos = "center",
     relative = "editor",
     width = 10,
     height = 2,
@@ -80,6 +83,11 @@ function Window:set_content(content)
   vim.api.nvim_buf_set_lines(self.buf_id, 0, -1, false, content)
 end
 
+---@param text string
+function Window:set_footer(text)
+  self.footer = " " .. text .. " "
+end
+
 --- The highlight parameter is a dictionary where the key is hl_group and the
 --- value a table of tuples with the values [line, col_start, col_end]
 ---@param highlight table<string, table<[number, number, number]>>
@@ -95,6 +103,19 @@ function Window:set_highlight(highlight)
   end
 end
 
+---@return number
+function Window:get_max_width()
+  local lines = vim.api.nvim_buf_get_lines(self.buf_id, 0, -1, false)
+  local max_width = 0
+  for _, line in ipairs(lines) do
+    local line_length = vim.fn.strdisplaywidth(line)
+    if line_length > max_width then
+      max_width = line_length
+    end
+  end
+  return max_width
+end
+
 function Window:refresh_dimensions()
   if not self.win_id then
     return
@@ -104,16 +125,9 @@ function Window:refresh_dimensions()
   local editor_lines = vim.api.nvim_get_option("lines")
   local lines = vim.api.nvim_buf_get_lines(self.buf_id, 0, -1, false)
   local height = #lines
-  local max_width = 0
+  local max_width = self:get_max_width()
   local row = 1
   local col = 0
-
-  for _, line in ipairs(lines) do
-    local line_length = vim.fn.strdisplaywidth(line)
-    if line_length > max_width then
-      max_width = line_length
-    end
-  end
 
   if self.position == WIN_POSITION.top_right then
     row = 0
@@ -132,6 +146,7 @@ function Window:refresh_dimensions()
   cfg.height = height
   cfg.col = col
   cfg.row = row
+  cfg.footer = self.footer
 
   vim.api.nvim_win_set_config(self.win_id, cfg)
 end
