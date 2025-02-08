@@ -118,6 +118,7 @@ Take a look at the default shortcuts for navigating between buffers, changing th
   ---   "end": buffers are added at the end of the list
   ---   "after": are added after the active buffer
   new_buffer_position = "end",
+  max_groups = 3,
   open = {
     by_default = false,
     ignore_ft = {
@@ -194,7 +195,7 @@ make test
 I have tried to organize the code in the best way I knew how, although it can surely be improved. Below I explain how it is structured:
 
 * lua: Project code
-    * buffers: Plugin core. Functionalities related to managing the buffer list
+    * api: Core folder. Functionalities related to managing the buffer list
     * keybindings: Registration of the different shortcuts to the plugin actions
     * actions: Buffon actions linked with the keybindings
     * config: Configuration management
