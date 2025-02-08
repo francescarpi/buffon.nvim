@@ -66,8 +66,10 @@ local load_data = function(filename_path)
 
   -- The buffer ID must be set to nil because, by default, all buffers will be loaded
   -- within the buffers list but not in Neovim.
-  for _, buffer in ipairs(buffers) do
-    buffer.id = nil
+  for _, group in ipairs(buffers) do
+    for _, buffer in ipairs(group) do
+      buffer.id = nil
+    end
   end
   return buffers
 end

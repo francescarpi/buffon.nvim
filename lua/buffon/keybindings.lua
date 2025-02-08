@@ -108,6 +108,34 @@ M.keybindings = function()
       end,
       help = "Restore last tab",
     },
+    {
+      lhs = state.config.opts.keybindings.next_group,
+      rhs = function()
+        actions.next_group()
+      end,
+      help = "Next group",
+    },
+    {
+      lhs = state.config.opts.keybindings.previous_group,
+      rhs = function()
+        actions.previous_group()
+      end,
+      help = "Previous group",
+    },
+    {
+      lhs = state.config.opts.keybindings.move_to_next_group,
+      rhs = function()
+        actions.move_to_next_group()
+      end,
+      help = "Buffer to next group",
+    },
+    {
+      lhs = state.config.opts.keybindings.move_to_previous_group,
+      rhs = function()
+        actions.move_to_previous_group()
+      end,
+      help = "Buffer to prvious group",
+    },
   }
 end
 

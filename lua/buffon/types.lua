@@ -30,10 +30,15 @@
 ---@field restore_last_closed_buffer string
 ---@field buffer_mapping BuffonConfigKeyBindingBufferMapping
 ---@field show_help string
+---@field next_group string
+---@field previous_group string
+---@field move_to_previous_group string
+---@field move_to_next_group string
 
 ---@class BuffonConfig
 ---@field cyclic_navigation boolean -- If true, navigation between buffers will wrap around (cyclic navigation).
----@field prepend_buffers boolean -- If true, new buffers are added at the first position, shifting existing buffers.
+---@field max_groups number
+---@field new_buffer_position "start" | "end" | "after"
 ---@field open BuffonConfigOpen
 ---@field keybindings BuffonConfigKeyBinding
 
@@ -49,16 +54,21 @@
 ---@field config? BuffonConfigState
 ---@field window? Window
 
----@class BuffonUIGetContent
+---@class BuffonMainWindowContent
 ---@field lines table<string>
 ---@field line_active number
 ---@field filenames table<string>
 
+---@class BuffonIndexBuffersByName
+---@field index number
+---@field group number
+
 ---@class BuffonBuffersState
----@field index_buffers_by_name table<string, number>
----@field buffers table<BuffonBuffer>
+---@field index_buffers_by_name table<string, BuffonIndexBuffersByName>
+---@field buffers table<table<BuffonBuffer>>
 ---@field config? BuffonConfigState
 ---@field storage? BuffonStorage
+---@field active_group number
 
 ---@class BuffonHelpState
 ---@field window? Window
@@ -70,6 +80,7 @@
 ---@class BuffonActionsState
 ---@field last_closed? BuffonLastClosedList
 ---@field last_used? BuffonBuffer
+---@field active_buffer_by_group table<number>
 
 ---@class BuffonTestBuffer
 ---@field path string
@@ -80,3 +91,4 @@
 ---@class BuffonState
 ---@field buf_will_rename? string
 ---@field storage? BuffonStorage
+---@field buffer_activea? number

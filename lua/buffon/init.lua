@@ -1,4 +1,4 @@
-local buffers = require("buffon.buffers")
+local api_buffers = require("buffon.api.buffers")
 local config = require("buffon.config")
 local keybindings = require("buffon.keybindings")
 local main_win = require("buffon.ui.main")
@@ -13,19 +13,20 @@ local M = {}
 local state = {
   buf_will_rename = nil,
   storage = nil,
+  buffer_active = nil,
 }
 
 ---@type table<string, function>
 local events = {
   BufAdd = function(buf)
     if buf and buf.match ~= "" then
-      buffers.add_buffer(buf.match, buf.buf)
+      api_buffers.add_buffer(buf.match, buf.buf, state.buffer_active)
       main_win.refresh()
     end
   end,
   BufDelete = function(buf)
     if buf and buf.match ~= "" then
-      buffers.delete_buffer(buf.match)
+      api_buffers.del.delete_buffer(buf.match)
       main_win.refresh()
     end
   end,
@@ -43,17 +44,18 @@ local events = {
   end,
   BufFilePost = function(buf)
     assert(state.buf_will_rename, "new buffer name is required")
-    buffers.rename_buffer(state.buf_will_rename, buf.match)
+    api_buffers.rename_buffer(state.buf_will_rename, buf.match)
   end,
   ExitPre = function(buf)
-    buffers.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
+    api_buffers.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
     assert(state.storage, "storage is required")
-    local buffers_to_store = buffers.get_buffers()
+    local buffers_to_store = api_buffers.get_groups()
     state.storage:save(buffers_to_store)
   end,
   BufLeave = function(buf)
-    buffers.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
+    api_buffers.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
     actions.save_last_used(buf.match)
+    state.buffer_active = actions.get_index_of_active_buffer()
   end,
   BufModifiedSet = function()
     main_win.refresh()
@@ -73,8 +75,8 @@ M.setup = function(opts)
   state.storage:init()
   local loaded_buffers = state.storage:load()
 
-  actions.setup()
-  buffers.setup(cfg, loaded_buffers)
+  actions.setup(cfg)
+  api_buffers.setup(cfg, loaded_buffers)
   keybindings.setup(cfg)
   main_win.setup(cfg)
   help_win.setup()

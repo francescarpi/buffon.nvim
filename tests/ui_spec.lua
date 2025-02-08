@@ -1,19 +1,19 @@
 local eq = assert.are.same
-local buffers = require("buffon.buffers")
+local api_buffers = require("buffon.api.buffers")
 local ui = require("buffon.ui.main")
 local config = require("buffon.config")
 
 describe("ui", function()
   it("content", function()
     local cfg = config.setup()
-    buffers.setup(cfg)
+    api_buffers.setup(cfg)
     ui.setup(cfg)
 
     for i = 1, 10 do
-      buffers.add_buffer("/foo/buffer" .. i, i)
+      api_buffers.add_buffer("/foo/buffer" .. i, i)
     end
 
-    eq(ui.get_content(buffers.get_buffers(), buffers.get_index_buffers_by_name()), {
+    eq(ui.get_content(api_buffers.get_buffers_of_group(1), api_buffers.get_index_buffers_by_name()), {
       filenames = {
         "buffer1",
         "buffer2",
@@ -43,19 +43,19 @@ describe("ui", function()
 
   it("repeated buffer names", function()
     local cfg = config.setup()
-    buffers.setup(cfg)
+    api_buffers.setup(cfg)
     ui.setup(cfg)
 
-    buffers.add_buffer("/foo/boo/buffer1", 1)
-    buffers.add_buffer("/foo/boo/buffer2", 2)
-    eq(ui.ger_buffer_names(buffers.get_buffers()), { "buffer1", "buffer2" })
+    api_buffers.add_buffer("/foo/boo/buffer1", 1)
+    api_buffers.add_buffer("/foo/boo/buffer2", 2)
+    eq(ui.ger_buffer_names(api_buffers.get_buffers_of_group(1)), { "buffer1", "buffer2" })
 
-    buffers.add_buffer("/foo/zoo/buffer2", 3)
-    eq(ui.ger_buffer_names(buffers.get_buffers()), { "buffer1", "/f/b/buffer2", "/f/z/buffer2" })
+    api_buffers.add_buffer("/foo/zoo/buffer2", 3)
+    eq(ui.ger_buffer_names(api_buffers.get_buffers_of_group(1)), { "buffer1", "/f/b/buffer2", "/f/z/buffer2" })
 
-    buffers.add_buffer("/foo/roo/buffer2", 4)
-    buffers.add_buffer("/foo/boo/buffer3", 5)
-    eq(ui.ger_buffer_names(buffers.get_buffers()), {
+    api_buffers.add_buffer("/foo/roo/buffer2", 4)
+    api_buffers.add_buffer("/foo/boo/buffer3", 5)
+    eq(ui.ger_buffer_names(api_buffers.get_buffers_of_group(1)), {
       "buffer1",
       "/f/b/buffer2",
       "/f/z/buffer2",

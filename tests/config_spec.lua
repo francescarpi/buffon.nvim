@@ -6,7 +6,8 @@ describe("config", function()
     local cfg = config.setup({})
     eq(cfg.opts, {
       cyclic_navigation = false,
-      prepend_buffers = false,
+      new_buffer_position = "end",
+      max_groups = 3,
       open = {
         by_default = false,
         ignore_ft = {
@@ -21,7 +22,7 @@ describe("config", function()
         move_buffer_down = "<s-h>",
         move_buffer_top = "<s-t>",
         move_buffer_bottom = "<s-b>",
-        toggle_buffon_window = ";a",
+        toggle_buffon_window = ";n",
         switch_previous_used_buffer = ";;",
         close_buffer = ";d",
         close_buffers_above = ";v",
@@ -34,19 +35,24 @@ describe("config", function()
           leader_key = ";",
         },
         show_help = ";h",
+        previous_group = "<s-tab>",
+        next_group = "<tab>",
+        move_to_previous_group = ";a",
+        move_to_next_group = ";s",
       },
     })
   end)
 
-  it("user changes cyclic_navigation and prepend_buffers", function()
+  it("user changes cyclic_navigation and new_buffer_position", function()
     local cfg = config.setup({
       cyclic_navigation = true,
-      prepend_buffers = true,
+      new_buffer_position = "start",
     })
 
     eq(cfg.opts, {
       cyclic_navigation = true,
-      prepend_buffers = true,
+      new_buffer_position = "start",
+      max_groups = 3,
       open = {
         by_default = false,
         ignore_ft = {
@@ -61,7 +67,7 @@ describe("config", function()
         move_buffer_down = "<s-h>",
         move_buffer_top = "<s-t>",
         move_buffer_bottom = "<s-b>",
-        toggle_buffon_window = ";a",
+        toggle_buffon_window = ";n",
         switch_previous_used_buffer = ";;",
         close_buffer = ";d",
         close_buffers_above = ";v",
@@ -74,6 +80,10 @@ describe("config", function()
           leader_key = ";",
         },
         show_help = ";h",
+        previous_group = "<s-tab>",
+        next_group = "<tab>",
+        move_to_previous_group = ";a",
+        move_to_next_group = ";s",
       },
     })
   end)
@@ -90,7 +100,8 @@ describe("config", function()
 
     eq(cfg.opts, {
       cyclic_navigation = false,
-      prepend_buffers = false,
+      new_buffer_position = "end",
+      max_groups = 3,
       open = {
         by_default = false,
         ignore_ft = {
@@ -105,7 +116,7 @@ describe("config", function()
         move_buffer_down = "aa",
         move_buffer_top = "<s-t>",
         move_buffer_bottom = "<s-b>",
-        toggle_buffon_window = ";a",
+        toggle_buffon_window = ";n",
         switch_previous_used_buffer = ";;",
         close_buffer = ";d",
         close_buffers_above = ";v",
@@ -118,6 +129,10 @@ describe("config", function()
           leader_key = "<space>",
         },
         show_help = ";h",
+        previous_group = "<s-tab>",
+        next_group = "<tab>",
+        move_to_previous_group = ";a",
+        move_to_next_group = ";s",
       },
     })
   end)
