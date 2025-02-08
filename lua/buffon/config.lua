@@ -8,6 +8,7 @@ local default = {
   ---   "end": buffers are added at the end of the list
   ---   "after": are added after the active buffer
   new_buffer_position = "end",
+  max_groups = 3,
   open = {
     by_default = false,
     ignore_ft = {

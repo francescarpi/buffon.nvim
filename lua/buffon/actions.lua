@@ -6,7 +6,9 @@ local log = require("buffon.log")
 local M = {}
 
 ---@type BuffonActionsState
-local state = {}
+local state = {
+  active_buffer_by_group = {},
+}
 
 ---@param buffer BuffonBuffer
 local open_buffer = function(buffer)
@@ -162,23 +164,53 @@ M.last_used = function()
   end
 end
 
-local select_first_buffer_of_group = function()
+---@return number | nil
+M.get_index_of_active_buffer = function()
+  local buffer_name = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
+  local index_group = api_buffers.get_index_and_group_by_name(buffer_name)
+  local active_group = api_buffers.groups.get_active_group()
+
+  if index_group and index_group.group == active_group then
+    log.debug("index of active buffer in group", active_group, "is:", index_group.index)
+    return index_group.index
+  end
+  log.debug("index of active buffer in group", active_group, "is: nil")
+  return nil
+end
+
+---@param buffer_index? number
+local select_buffer_of_group = function(buffer_index)
   local group_buffers = api_buffers.get_buffers_active_group()
+  if not buffer_index or buffer_index == 0 then
+    buffer_index = 1
+  end
+
   if #group_buffers > 0 then
-    activate_or_open(group_buffers[1])
+    log.debug("selecting buffer with index", buffer_index)
+    activate_or_open(group_buffers[buffer_index])
   end
 end
 
 M.next_group = function()
+  local active_index = M.get_index_of_active_buffer()
+  state.active_buffer_by_group[api_buffers.groups.get_active_group()] = active_index
+
   api_buffers.groups.next_group()
   main_win.refresh()
-  select_first_buffer_of_group()
+  log.debug("activated group is:", api_buffers.groups.get_active_group())
+
+  select_buffer_of_group(state.active_buffer_by_group[api_buffers.groups.get_active_group()])
 end
 
 M.previous_group = function()
+  local active_index = M.get_index_of_active_buffer()
+  state.active_buffer_by_group[api_buffers.groups.get_active_group()] = active_index
+
   api_buffers.groups.previous_group()
   main_win.refresh()
-  select_first_buffer_of_group()
+  log.debug("activated group is:", api_buffers.groups.get_active_group())
+
+  select_buffer_of_group(state.active_buffer_by_group[api_buffers.groups.get_active_group()])
 end
 
 M.move_to_next_group = function()
@@ -195,8 +227,13 @@ M.move_to_previous_group = function()
   main_win.refresh()
 end
 
-M.setup = function()
+---@param config BuffonConfigState The configuration options.
+M.setup = function(config)
   state.last_closed = utils.LastClosedList:new(10)
+  for _ = 1, config.opts.max_groups do
+    table.insert(state.active_buffer_by_group, 0)
+  end
+  log.debug("active_buffer_by_group initialized", state.active_buffer_by_group)
 end
 
 return M

@@ -7,6 +7,7 @@ describe("config", function()
     eq(cfg.opts, {
       cyclic_navigation = false,
       new_buffer_position = "end",
+      max_groups = 3,
       open = {
         by_default = false,
         ignore_ft = {
@@ -51,6 +52,7 @@ describe("config", function()
     eq(cfg.opts, {
       cyclic_navigation = true,
       new_buffer_position = "start",
+      max_groups = 3,
       open = {
         by_default = false,
         ignore_ft = {
@@ -99,6 +101,7 @@ describe("config", function()
     eq(cfg.opts, {
       cyclic_navigation = false,
       new_buffer_position = "end",
+      max_groups = 3,
       open = {
         by_default = false,
         ignore_ft = {

@@ -4,18 +4,13 @@ local state
 local refresh_indexes
 
 ---@return number
-M.get_max_groups = function()
-  return state.max_groups
-end
-
----@return number
 M.get_active_group = function()
   return state.active_group
 end
 
 M.next_group = function()
   local next_group = state.active_group + 1
-  if next_group > state.max_groups then
+  if next_group > state.config.opts.max_groups then
     next_group = 1
   end
   state.active_group = next_group
@@ -24,7 +19,7 @@ end
 M.previous_group = function()
   local previous_group = state.active_group - 1
   if previous_group < 1 then
-    previous_group = state.max_groups
+    previous_group = state.config.opts.max_groups
   end
   state.active_group = previous_group
 end
@@ -45,7 +40,7 @@ local move_to_next_prev_group = function(name, operation, set_default)
   end
 
   local next_or_previous = buffer_group_index.group + (1 * operation)
-  if next_or_previous < 1 or next_or_previous > state.max_groups then
+  if next_or_previous < 1 or next_or_previous > state.config.opts.max_groups then
     next_or_previous = set_default()
   end
 
@@ -74,7 +69,7 @@ end
 ---@return number
 M.move_to_previous_group = function(name)
   return move_to_next_prev_group(name, -1, function()
-    return state.max_groups
+    return state.config.opts.max_groups
   end)
 end
 

@@ -16,16 +16,6 @@ local state = {
   buffer_active = nil,
 }
 
----@return number | nil
-local buffer_active_index = function()
-  local buffer_id = vim.api.nvim_get_current_buf()
-  local buffer_name = vim.api.nvim_buf_get_name(buffer_id)
-  local index_group = api_buffers.get_index_and_group_by_name(buffer_name)
-  if index_group then
-    return index_group.index
-  end
-end
-
 ---@type table<string, function>
 local events = {
   BufAdd = function(buf)
@@ -65,7 +55,7 @@ local events = {
   BufLeave = function(buf)
     api_buffers.update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
     actions.save_last_used(buf.match)
-    state.buffer_active = buffer_active_index()
+    state.buffer_active = actions.get_index_of_active_buffer()
   end,
   BufModifiedSet = function()
     main_win.refresh()
@@ -85,7 +75,7 @@ M.setup = function(opts)
   state.storage:init()
   local loaded_buffers = state.storage:load()
 
-  actions.setup()
+  actions.setup(cfg)
   api_buffers.setup(cfg, loaded_buffers)
   keybindings.setup(cfg)
   main_win.setup(cfg)

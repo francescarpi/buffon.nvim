@@ -37,6 +37,7 @@
 
 ---@class BuffonConfig
 ---@field cyclic_navigation boolean -- If true, navigation between buffers will wrap around (cyclic navigation).
+---@field max_groups number
 ---@field new_buffer_position "start" | "end" | "after"
 ---@field open BuffonConfigOpen
 ---@field keybindings BuffonConfigKeyBinding
@@ -68,7 +69,6 @@
 ---@field config? BuffonConfigState
 ---@field storage? BuffonStorage
 ---@field active_group number
----@field max_groups number
 
 ---@class BuffonHelpState
 ---@field window? Window
@@ -80,6 +80,7 @@
 ---@class BuffonActionsState
 ---@field last_closed? BuffonLastClosedList
 ---@field last_used? BuffonBuffer
+---@field active_buffer_by_group table<number>
 
 ---@class BuffonTestBuffer
 ---@field path string

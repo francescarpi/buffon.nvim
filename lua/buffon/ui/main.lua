@@ -89,7 +89,7 @@ end
 ---@return string
 local footer = function()
   local footer = ""
-  for i = 1, api_buffers.get_max_groups() do
+  for i = 1, state.config.opts.max_groups do
     if i == api_buffers.groups.get_active_group() then
       footer = footer .. "●"
     else

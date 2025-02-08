@@ -17,7 +17,6 @@ local state = {
   -- a specific buffer searching by name
   index_buffers_by_name = {},
   active_group = 1,
-  max_groups = 3,
 }
 
 --- Refreshes the index_buffers_by_name list based on the current buffers list.
@@ -48,7 +47,7 @@ end
 
 local initialize_buffers = function()
   local groups = {}
-  for _ = 1, state.max_groups do
+  for _ = 1, state.config.opts.max_groups do
     table.insert(groups, {})
   end
   set_buffers(groups)
@@ -124,11 +123,6 @@ M.get_groups = function()
   return state.buffers
 end
 
----@return number
-M.get_max_groups = function()
-  return state.max_groups
-end
-
 ---@return table<BuffonBuffer>
 M.get_buffers_active_group = function()
   return M.get_buffers_of_group(state.active_group)
@@ -196,8 +190,7 @@ end
 --- might not be compatible.
 ---@param buffers table<BuffonBuffer>
 M.validate_buffers = function(buffers)
-  log.debug("starting to validate buffers")
-  assert(#buffers == state.max_groups, "invalid groups length")
+  assert(#buffers == state.config.opts.max_groups, "invalid groups length")
   for _, group in ipairs(buffers) do
     for _, buffer in ipairs(group) do
       vim.validate({
@@ -221,10 +214,10 @@ M.setup = function(config, initial_buffers)
     local success, msg = pcall(M.validate_buffers, initial_buffers)
     if success then
       set_buffers(initial_buffers)
-      log.debug("buffers list is valid")
+      log.debug("initial buffers is valid")
     else
       initialize_buffers()
-      log.debug("buffers list is not valid", msg)
+      log.debug("initial buffers is not valid", msg)
     end
   else
     initialize_buffers()
