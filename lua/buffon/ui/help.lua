@@ -1,47 +1,53 @@
-local keybindings = require("buffon.keybindings")
 local window = require("buffon.ui.window")
 
 local M = {}
 
----@type BuffonHelpState
-local state = {
-  content_rendered = false,
-}
+---@class BuffonHelpWindow
+---@field window BuffonWindow
+---@field content_set boolean
+local HelpWindow = {}
 
----@param win Window
-local set_content = function(win)
-  local lines = {}
-  local max_lhs_length = 0
-  local bindings = keybindings.keybindings()
-  local highlight = { Constant = {} }
+function HelpWindow:new()
+  local o = {
+    window = window.Window:new(" Buffon Help ", window.WIN_POSITIONS.BOTTOM_RIGHT),
+    content_set = false,
+  }
 
-  for _, kb in ipairs(bindings) do
-    if #kb.lhs > max_lhs_length then
-      max_lhs_length = #kb.lhs
+  setmetatable(o, self)
+  self.__index = self
+
+  return o
+end
+
+---@param actions table<BuffonAction>
+function HelpWindow:toggle(actions)
+  if not self.content_set then
+    self.content_set = true
+
+    local max_length = 0
+    local highlight = { Constant = {} }
+
+    for _, action in ipairs(actions) do
+      if #action.shortcut > max_length then
+        max_length = #action.shortcut
+      end
     end
+
+    local content = {}
+    for idx, action in ipairs(actions) do
+      local shortcut_padded = action.shortcut .. string.rep(" ", max_length - #action.shortcut)
+      local line = string.format("%s %s", shortcut_padded, action.help)
+      table.insert(content, line)
+      table.insert(highlight.Constant, { line = idx - 1, col_start = 0, col_end = max_length })
+    end
+
+    self.window:set_content(content)
+    self.window:set_highlight(highlight)
   end
 
-  for index, kb in ipairs(bindings) do
-    local lhs_padded = kb.lhs .. string.rep(" ", max_lhs_length - #kb.lhs)
-    local line = string.format("%s %s", lhs_padded, kb.help)
-    table.insert(lines, line)
-    table.insert(highlight.Constant, { index - 1, 0, max_lhs_length })
-  end
-
-  win:set_content(lines)
-  win:set_highlight(highlight)
+  self.window:toggle()
 end
 
-M.setup = function()
-  state.window = window.Window:new(" Buffon Help ", window.WIN_POSITIONS.bottom_right)
-end
-
-M.toggle = function()
-  if not state.content_rendered then
-    set_content(state.window)
-    state.content_rendered = true
-  end
-  state.window:toggle()
-end
+M.HelpWindow = HelpWindow
 
 return M

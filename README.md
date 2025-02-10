@@ -41,7 +41,7 @@ Based on this, I created *Buffon* with the best of both plugins, perfectly adapt
   * Toggle between the last used buffer
   * Reopen closed buffer
   * Shows modified buffer indicator
-  * Organize buffers into groups (for now, only 3)
+  * Organize buffers into pages
 * Help window to see the shortcuts
 
 > [!NOTE]
@@ -112,15 +112,15 @@ Take a look at the default shortcuts for navigating between buffers, changing th
 
 ```lua
 {
-  cyclic_navigation = false,
+  cyclic_navigation = true,
   --- possible values:
   ---   "start": buffers are added at the begginning of the buffers list
   ---   "end": buffers are added at the end of the list
   ---   "after": are added after the active buffer
-  new_buffer_position = "end",
-  max_groups = 3,
+  new_buffer_position = "after",
+  num_pages = 2,
   open = {
-    by_default = false,
+    by_default = true,
     ignore_ft = {
       "gitcommit",
       "gitrebase",
@@ -140,16 +140,16 @@ Take a look at the default shortcuts for navigating between buffers, changing th
     close_buffers_below = ";b",
     close_all_buffers = ";cc",
     close_others = ";cd",
-    restore_last_closed_buffer = ";t",
+    reopen_recent_closed_buffer = ";t",
     buffer_mapping = {
       mapping_chars = "qweryuiop",
       leader_key = ";",
     },
     show_help = ";h",
-    previous_group = "<s-tab>",
-    next_group = "<tab>",
-    move_to_previous_group = ";a",
-    move_to_next_group = ";s",
+    previous_page = "<s-tab>",
+    next_page = "<tab>",
+    move_to_previous_page = ";a",
+    move_to_next_page = ";s",
   },
 }
 ```
@@ -172,9 +172,7 @@ Showing the help window:
 
 ## API
 
-All the core functionalities in charge of managing the buffer list are located in the *api* folder. There are now functions to add elements, remove them, change the order, etc.
-
-In the *actions.lua* file you can see how the buffers API is used.
+All the code has been developed using objects (OOP), facilitating maintenance, debugging, and readability. In the [Project Structure](./?tab=readme-ov-file#project-structure) section, the functionality of each file is detailed. If you want to start analyzing the code, start with `init.lua`, which is where the plugin is configured and the different objects are instantiated, and continue with `maincontroller.lua`, which is responsible for orchestrating user actions and neovim events with the plugin logic.
 
 ## Contribution
 
@@ -194,16 +192,22 @@ make test
 
 I have tried to organize the code in the best way I knew how, although it can surely be improved. Below I explain how it is structured:
 
-* lua: Project code
-    * api: Core folder. Functionalities related to managing the buffer list
-    * keybindings: Registration of the different shortcuts to the plugin actions
-    * actions: Buffon actions linked with the keybindings
-    * config: Configuration management
-    * log: Log handling
-    * storage: Responsible for persisting the buffer list to disk
-    * ui: Folder with the two interface views, the main one and the help one
-    * types: Contains all the project types
-* tests: Test code
+* buffer.lua: Buffer object, where the properties of each buffer shown in the list are stored.
+* bufferslist.lua: Manages the buffer list
+* config.lua: Manages the configuration
+* init.lua: Configures and starts the plugin.
+* log.lua: Manages the logs (uses [plenary](https://github.com/nvim-lua/plenary.nvim))
+* maincontroller.lua: Orchestrates user actions and events with the plugin logic
+* page.lua: Manages a page
+* pagecontroller.lua: Manages all pages
+* storage.lua: Manages data persistence
+* ui
+  * mainwindow.lua: Buffon's main window
+  * help.lua: Help window
+  * window.lua: Object to display windows
+* utils.lua: Various utilities
+
+The `tests` folder includes the entire battery of tests for the plugin.
 
 ### Development branch
 

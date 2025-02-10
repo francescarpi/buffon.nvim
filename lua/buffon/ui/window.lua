@@ -4,11 +4,11 @@ local M = {}
 
 ---@enum win_position
 local WIN_POSITION = {
-  top_right = 0,
-  bottom_right = 1,
+  TOP_RIGHT = 0,
+  BOTTOM_RIGHT = 1,
 }
 
----@class Window
+---@class BuffonWindow
 ---@field title string
 ---@field win_id number | nil
 ---@field buf_id number | nil
@@ -18,12 +18,12 @@ local Window = {
   footer = "",
   win_id = nil,
   buf_id = nil,
-  position = WIN_POSITION.top_right,
+  position = WIN_POSITION.TOP_RIGHT,
 }
 
 ---@param title string
 ---@param position win_position
----@return Window
+---@return BuffonWindow
 function Window:new(title, position)
   local o = {
     title = title,
@@ -88,17 +88,24 @@ function Window:set_footer(text)
   self.footer = " " .. text .. " "
 end
 
+---@class BuffonWindowHighlight
+---@field line number
+---@field col_start number
+---@field col_end number
+
+---@alias BuffonWindowHighlights table<string, table<BuffonWindowHighlight>>
+
 --- The highlight parameter is a dictionary where the key is hl_group and the
 --- value a table of tuples with the values [line, col_start, col_end]
----@param highlight table<string, table<[number, number, number]>>
-function Window:set_highlight(highlight)
+---@param highlights BuffonWindowHighlights
+function Window:set_highlight(highlights)
   if not self.buf_id then
     log.debug("set_highlight aborted because there is not a buffer")
     return
   end
-  for hl_group, lines_info in pairs(highlight) do
+  for hl_group, lines_info in pairs(highlights) do
     for _, line_info in ipairs(lines_info) do
-      vim.api.nvim_buf_add_highlight(self.buf_id, -1, hl_group, line_info[1], line_info[2], line_info[3])
+      vim.api.nvim_buf_add_highlight(self.buf_id, -1, hl_group, line_info.line, line_info.col_start, line_info.col_end)
     end
   end
 end
@@ -129,10 +136,10 @@ function Window:refresh_dimensions()
   local row = 1
   local col = 0
 
-  if self.position == WIN_POSITION.top_right then
+  if self.position == WIN_POSITION.TOP_RIGHT then
     row = 0
     col = editor_columns - (1 + max_width + 1)
-  elseif self.position == WIN_POSITION.bottom_right then
+  elseif self.position == WIN_POSITION.BOTTOM_RIGHT then
     row = editor_lines - (1 + #lines + 1) - 2
     col = editor_columns - (1 + max_width + 1)
   end
@@ -147,6 +154,7 @@ function Window:refresh_dimensions()
   cfg.col = col
   cfg.row = row
   cfg.footer = self.footer
+  cfg.footer_pos = "center"
 
   vim.api.nvim_win_set_config(self.win_id, cfg)
 end
