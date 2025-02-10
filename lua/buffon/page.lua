@@ -2,7 +2,6 @@
 
 local bufferslist = require("buffon.bufferslist")
 local devicons = require("nvim-web-devicons")
-local log = require("buffon.log")
 local utils = require("buffon.utils")
 
 local M = {}
@@ -136,7 +135,6 @@ function Page:render(active_buffer)
     local modified_start = filename_end + WHITESPACE
     local modified_end = modified_start + MODIFIED
 
-    log.debug("check active - buffer name", buffer.name, " active:", active_buffer)
     if buffer.name == active_buffer then -- line active
       table.insert(response.highlights[THEME.LineActive], {
         line = idx - 1,

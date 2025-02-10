@@ -1,5 +1,4 @@
 local window = require("buffon.ui.window")
-local log = require("buffon.log")
 
 local M = {}
 
@@ -51,7 +50,6 @@ function MainWindow:refresh()
   self.window:set_highlight(render.highlights)
   self.window:set_footer(self:footer())
   self.window:refresh_dimensions()
-  log.debug("main window refreshed")
 end
 
 M.MainWindow = MainWindow
