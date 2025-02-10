@@ -24,7 +24,7 @@ end
 ---@field page_controller BuffonPageController
 ---@field storage BuffonStorage
 ---@field index_buffer_active number | nil
----@field previous_used BuffonBuffer | nil
+---@field previous_used string | nil
 ---@field buffer_will_be_renamed string | nil
 ---@field active_buffer_by_page table<number>
 ---@field recently_closed BuffonRecentlyClosed
@@ -251,12 +251,21 @@ function MainController:dispatch(action, buf)
   if buf and buf.event then
     log.debug("call method for event:", buf.event)
   end
-  action.method(self, buf)
+
+  if action.method then
+    action.method(self, buf)
+  end
+
   self.main_window:refresh()
+
   if action.method_post_refresh then
     action.method_post_refresh(self, buf)
   end
 end
+
+--------------------------------------------------------------------------------------------
+--- ↓ Actions starts here ↓
+--------------------------------------------------------------------------------------------
 
 function MainController:action_show_hide_buffon_window()
   self.main_window:toggle()
@@ -274,8 +283,6 @@ function MainController:action_buffon_window_needs_open()
     self.main_window:open()
   end
 end
-
-function MainController:action_blank() end
 
 function MainController:action_before_exit(buf)
   self.page_controller:get_active_page().bufferslist:update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
