@@ -17,7 +17,7 @@ return require("plenary.log").new({
 
   -- Any messages above this level will be logged.
   -- Log more stuff for me, everyone else can just get warnings :)
-  level = (vim.loop.os_getenv("USER") == "farpi" and "debug") or "warn",
+  level = (vim.loop.os_getenv("BUFFON_LOGS") == "debug" and "debug") or "warn",
 
   -- Level configuration
   modes = {

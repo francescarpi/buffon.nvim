@@ -128,6 +128,11 @@ function PageController:previous_page()
   self.active = previous
 end
 
+---@param page_number number
+function PageController:set_page(page_number)
+  self.active = page_number
+end
+
 ---@param name string
 function PageController:move_to_next_page(name)
   local buf = self:get_active_page().bufferslist:get_by_name(name)
@@ -146,6 +151,18 @@ function PageController:move_to_previous_page(name)
     local previous = ((self.active - 2) % self.config.num_pages) + 1
     self:add_buffer(previous, buf)
   end
+end
+
+---@param name string
+---@return BuffonBuffer?, number?
+function PageController:get_buffer_and_page(name)
+  for page_num, pageobj in ipairs(self.pages) do
+    local buf = pageobj.bufferslist:get_by_name(name)
+    if buf then
+      return buf, page_num
+    end
+  end
+  return nil, nil
 end
 
 M.PageController = PageController

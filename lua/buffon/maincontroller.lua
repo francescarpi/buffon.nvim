@@ -24,7 +24,7 @@ end
 ---@field page_controller BuffonPageController
 ---@field storage BuffonStorage
 ---@field index_buffer_active number | nil
----@field previous_used BuffonBuffer | nil
+---@field previous_used string | nil
 ---@field buffer_will_be_renamed string | nil
 ---@field active_buffer_by_page table<number>
 ---@field recently_closed BuffonRecentlyClosed
@@ -57,7 +57,7 @@ end
 ---@field shortcut? string
 ---@field vimevent? string
 ---@field help? string
----@field method function
+---@field method? function
 ---@field method_post_refresh? function
 ---@field require_match? boolean
 
@@ -178,12 +178,10 @@ function MainController:get_events()
     },
     {
       vimevent = "BufEnter",
-      method = self.action_blank,
       require_match = true,
     },
     {
       vimevent = "VimResized",
-      method = self.action_blank,
     },
     {
       vimevent = "ExitPre",
@@ -196,7 +194,6 @@ function MainController:get_events()
     },
     {
       vimevent = "BufModifiedSet",
-      method = self.action_blank,
     },
     {
       vimevent = "BufFilePre",
@@ -251,12 +248,21 @@ function MainController:dispatch(action, buf)
   if buf and buf.event then
     log.debug("call method for event:", buf.event)
   end
-  action.method(self, buf)
+
+  if action.method then
+    action.method(self, buf)
+  end
+
   self.main_window:refresh()
+
   if action.method_post_refresh then
     action.method_post_refresh(self, buf)
   end
 end
+
+--------------------------------------------------------------------------------------------
+--- ↓ Actions starts here ↓
+--------------------------------------------------------------------------------------------
 
 function MainController:action_show_hide_buffon_window()
   self.main_window:toggle()
@@ -275,8 +281,6 @@ function MainController:action_buffon_window_needs_open()
   end
 end
 
-function MainController:action_blank() end
-
 function MainController:action_before_exit(buf)
   self.page_controller:get_active_page().bufferslist:update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
   self.storage:save(self.page_controller:get_data())
@@ -284,7 +288,7 @@ end
 
 function MainController:action_before_buf_leave(buf)
   self.page_controller:get_active_page().bufferslist:update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
-  self.previous_used = self.page_controller:get_active_page().bufferslist:get_by_name(buf.match)
+  self.previous_used = buf.match
   self.index_buffer_active = self.page_controller:get_active_page().bufferslist:get_index(buf.match)
 end
 
@@ -402,7 +406,11 @@ end
 
 function MainController:action_switch_previous_used()
   if self.previous_used then
-    self:action_open_or_activate_buffer(self.previous_used)
+    local buf, num_page = self.page_controller:get_buffer_and_page(self.previous_used)
+    if buf and num_page then
+      self.page_controller:set_page(num_page)
+      self:action_open_or_activate_buffer(buf)
+    end
   end
 end
 
