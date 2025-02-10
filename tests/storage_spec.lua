@@ -1,8 +1,9 @@
 local eq = assert.are.same
 local storage = require("buffon.storage")
 local Path = require("plenary.path")
-local api_buffers = require("buffon.api.buffers")
 local config = require("buffon.config")
+local pagecontroller = require("buffon.pagecontroller")
+local buffer = require("buffon.buffer")
 
 describe("storage", function()
   it("filenames", function()
@@ -32,49 +33,38 @@ describe("storage", function()
     local stg = storage.Storage:new("/foo/boo", path)
     local p = Path:new(path)
     eq(p:exists(), false)
-    stg:init()
+    local success = stg:init()
+    eq(success, true)
     eq(p:exists(), true)
     p:rmdir()
     eq(p:exists(), false)
   end)
 
-  it("save and load data", function()
+  it("save & load", function()
     local path = "/tmp/buffon-tmp"
     local stg = storage.Storage:new("/foo/boo", path)
-    stg:init()
+    local success = stg:init()
+    eq(success, true)
 
-    local cfg = config.setup()
-    api_buffers.setup(cfg)
-    eq(api_buffers.get_buffers_of_group(1), {})
+    local cfg = config.Config:new()
+    local pagectrl = pagecontroller.PageController:new(cfg)
+    pagectrl:add_buffer(2, buffer.Buffer:new(1, "/foo/boo/buffer1.json"))
 
-    api_buffers.add_buffer("/foo/bar/sample.py", 1)
-    api_buffers.add_buffer("/foo/bar/readme.txt", 2)
+    stg:save(pagectrl:get_data())
 
-    stg:save(api_buffers.get_groups())
-
-    local buffers_loaded = stg:load()
-
-    eq(buffers_loaded, {
+    local loaded_data = stg:load()
+    eq(loaded_data, {
+      {},
       {
         {
-          filename = "sample.py",
           id = nil,
-          name = "/foo/bar/sample.py",
-          short_name = "/foo/bar/sample.py",
-          short_path = "/f/b/sample.py",
-          cursor = { 1, 1 },
-        },
-        {
-          filename = "readme.txt",
-          id = nil,
-          name = "/foo/bar/readme.txt",
-          short_name = "/foo/bar/readme.txt",
-          short_path = "/f/b/readme.txt",
+          name = "/foo/boo/buffer1.json",
+          short_name = "/foo/boo/buffer1.json",
+          short_path = "/f/b/buffer1.json",
+          filename = "buffer1.json",
           cursor = { 1, 1 },
         },
       },
-      {},
-      {},
     })
 
     Path:new(path):rm({ recursive = true })
