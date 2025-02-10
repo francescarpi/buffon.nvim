@@ -1,56 +1,19 @@
 local M = {}
 
-M.table_copy = function(t)
-  local u = {}
-  for k, v in pairs(t) do
-    u[k] = v
-  end
-  return setmetatable(u, getmetatable(t))
+---@return string
+M.get_buffer_name = function()
+  return vim.fn.expand("%:p")
 end
 
---- Abbreviates a file path by taking the first letter of each directory, but keeps the file name intact.
---- Only considers the last three levels of the path.
----@param path string The original file path.
----@return string The abbreviated file path.
-M.abbreviate_path = function(path)
-  local parts = {}
-  for part in string.gmatch(path, "[^/]+") do
-    table.insert(parts, part)
-  end
-
-  local start_index = math.max(1, #parts - 3)
-  for i = start_index, #parts - 1 do
-    parts[i] = parts[i]:gsub("(%w)%w+", "%1")
-  end
-
-  return "/" .. table.concat(parts, "/", start_index)
-end
-
---- Converts a string into a URL-friendly "slug" by replacing spaces and non-alphanumeric characters with hyphens.
----@param str string The original string to be slugified.
----@return string The slugified string.
-M.slugify = function(str)
-  local replacement = "-"
-  local result = ""
-  -- loop through each word or number
-  for word in string.gmatch(str, "(%w+)") do
-    result = result .. word .. replacement
-  end
-  -- remove trailing separator
-  result = string.gsub(result, replacement .. "$", "")
-  return result:lower()
-end
-
----@class BuffonLastClosedList
----@field buffers? table<string>
+---@class BuffonRecentlyClosed
+---@field filenames? table<string>
 ---@field limit? number
-local LastClosedList = {}
+local RecentlyClosed = {}
 
---- Constructor
 ---@param limit? number
-function LastClosedList:new(limit)
+function RecentlyClosed:new(limit)
   local o = {
-    buffers = {},
+    filenames = {},
     limit = limit or 10,
   }
   setmetatable(o, self)
@@ -58,27 +21,27 @@ function LastClosedList:new(limit)
   return o
 end
 
----@param buffer string
-function LastClosedList:add(buffer)
-  if #self.buffers > 0 and self.buffers[#self.buffers] == buffer then
+---@param filename string
+function RecentlyClosed:add(filename)
+  if #self.filenames > 0 and self.filenames[#self.filenames] == filename then
     return
   end
 
-  table.insert(self.buffers, buffer)
+  table.insert(self.filenames, filename)
 
-  if #self.buffers > self.limit then
-    table.remove(self.buffers, 1)
+  if #self.filenames > self.limit then
+    table.remove(self.filenames, 1)
   end
 end
 
 ---@return string?
-function LastClosedList:get_last()
-  if #self.buffers == 0 then
+function RecentlyClosed:get_last()
+  if #self.filenames == 0 then
     return nil
   end
-  return table.remove(self.buffers)
+  return table.remove(self.filenames)
 end
 
-M.LastClosedList = LastClosedList
+M.RecentlyClosed = RecentlyClosed
 
 return M
