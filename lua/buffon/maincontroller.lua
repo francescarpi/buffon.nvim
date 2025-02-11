@@ -179,6 +179,12 @@ function MainController:get_events()
     {
       vimevent = "BufEnter",
       require_match = true,
+      method = self.action_check_activate_page,
+    },
+    {
+      vimevent = "BufNew",
+      require_match = true,
+      method = self.action_check_activate_page,
     },
     {
       vimevent = "VimResized",
@@ -245,8 +251,8 @@ function MainController:dispatch(action, buf)
     return
   end
 
-  if buf and buf.event then
-    log.debug("call method for event:", buf.event)
+  if buf and buf.event and buf.match ~= "" then
+    log.debug(buf.event, ":", buf.match)
   end
 
   if action.method then
@@ -269,7 +275,16 @@ function MainController:action_show_hide_buffon_window()
 end
 
 function MainController:action_add_buffer(buf)
-  self.page_controller:add_buffer_to_active_page(buffer.Buffer:new(buf.buf, buf.match), self.index_buffer_active)
+  local existent_buf, num_page = self.page_controller:get_buffer_and_page(buf.match)
+  log.debug("adding ", buf.match, ", this buffer is in page:", num_page)
+
+  -- if num_page is not nil, it means the buffer already exists. in that case, it should be activated
+  if num_page and existent_buf then
+    self.page_controller:set_page(num_page)
+    existent_buf.id = buf.buf
+  else
+    self.page_controller:add_buffer_to_active_page(buffer.Buffer:new(buf.buf, buf.match), self.index_buffer_active)
+  end
 end
 
 function MainController:action_buffon_window_needs_open()
@@ -306,6 +321,7 @@ end
 
 ---@param buf BuffonBuffer
 function MainController:action_open_or_activate_buffer(buf)
+  log.debug("open", buf.name, "with id", buf.id)
   if buf.id then
     vim.api.nvim_set_current_buf(buf.id)
   else
@@ -361,12 +377,19 @@ end
 
 ---@param buffers_to_close table<BuffonBuffer>
 function MainController:close_buffers(buffers_to_close)
+  log.debug(#buffers_to_close, "buffers will be deleted")
   for _, buf in ipairs(buffers_to_close) do
+    log.debug("deleting", buf.name, "with id", buf.id)
     if buf.id then
-      vim.api.nvim_buf_delete(buf.id, { force = false })
+      vim.schedule(function()
+        if vim.api.nvim_buf_is_valid(buf.id) then
+          vim.api.nvim_buf_delete(buf.id, { force = false })
+        end
+      end)
     else
       self.page_controller:get_active_page().bufferslist:remove(buf.name)
     end
+    log.debug("buffer", buf.name, "was deleted")
     self.recently_closed:add(buf.name)
   end
 end
@@ -442,6 +465,16 @@ end
 
 function MainController:action_show_help()
   self.help_window:toggle(self:get_shortcuts())
+end
+
+--- When a buffer is activated, it is necessary to check if the user has
+--- the buffer's page activated; if not, it needs to be activated.
+function MainController:action_check_activate_page(buf)
+  local _, num_page = self.page_controller:get_buffer_and_page(buf.match)
+  log.debug("bufer", buf.match, "exists in page", num_page, "and active page is", self.page_controller.active)
+  if num_page and num_page ~= self.page_controller.active then
+    self.page_controller:set_page(num_page)
+  end
 end
 
 M.MainController = MainController
