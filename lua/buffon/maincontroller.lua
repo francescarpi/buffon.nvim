@@ -273,7 +273,8 @@ function MainController:action_add_buffer(buf)
   local existent_buf, num_page = self.page_controller:get_buffer_and_page(buf.match)
   -- if num_page is not nil, it means the buffer already exists. in that case, it should be activated
   if num_page and existent_buf then
-    self:action_open_or_activate_buffer(existent_buf)
+    self.page_controller:set_page(num_page)
+    existent_buf.id = buf.buf
   else
     self.page_controller:add_buffer_to_active_page(buffer.Buffer:new(buf.buf, buf.match), self.index_buffer_active)
   end
