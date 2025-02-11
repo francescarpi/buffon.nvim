@@ -23,6 +23,7 @@ end
 
 ---@class BuffonBuffersList
 ---@field buffers table<BuffonBuffer>
+---@field index_by_name table<string, number>
 ---@field config BuffonConfig
 local BuffersList = {}
 
@@ -31,6 +32,7 @@ function BuffersList:new(config)
   local o = {
     buffers = {},
     config = config,
+    index_by_name = {},
   }
   setmetatable(o, self)
   self.__index = self
@@ -61,16 +63,21 @@ function BuffersList:add(buffer, index_of_active_buffer)
     index_of_active_buffer = index_of_active_buffer or 0
     table.insert(self.buffers, index_of_active_buffer + 1, buffer)
   end
+  self:reindex()
 end
 
 ---@param name string
 ---@return number | nil
 function BuffersList:get_index(name)
-  for idx = 1, #self.buffers do
-    if self.buffers[idx].name == name then
-      return idx
-    end
+  return self.index_by_name[name]
+end
+
+function BuffersList:reindex()
+  local index_by_name = {}
+  for idx, buf in ipairs(self.buffers) do
+    index_by_name[buf.name] = idx
   end
+  self.index_by_name = index_by_name
 end
 
 ---@param name string
@@ -88,6 +95,7 @@ function BuffersList:remove(name)
   if idx then
     table.remove(self.buffers, idx)
   end
+  self:reindex()
 end
 
 ---@param name string
@@ -134,6 +142,7 @@ function BuffersList:move_up(name)
   if idx and idx > 1 then
     swap_buffers(self.buffers, idx, idx - 1)
   end
+  self:reindex()
 end
 
 ---@param name string
@@ -142,6 +151,7 @@ function BuffersList:move_down(name)
   if idx and idx < #self.buffers then
     swap_buffers(self.buffers, idx, idx + 1)
   end
+  self:reindex()
 end
 
 ---@param name string
@@ -150,6 +160,7 @@ function BuffersList:move_top(name)
   if idx then
     swap_buffers(self.buffers, idx, 1)
   end
+  self:reindex()
 end
 
 ---@param name string
@@ -158,11 +169,13 @@ function BuffersList:move_bottom(name)
   if idx then
     swap_buffers(self.buffers, idx, #self.buffers)
   end
+  self:reindex()
 end
 
 ---@param buffers table<BuffonBuffer>
 function BuffersList:set_buffers(buffers)
   self.buffers = buffers
+  self:reindex()
 end
 
 ---@param name string
