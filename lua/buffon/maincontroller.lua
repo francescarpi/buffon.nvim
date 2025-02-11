@@ -381,7 +381,11 @@ function MainController:close_buffers(buffers_to_close)
   for _, buf in ipairs(buffers_to_close) do
     log.debug("deleting", buf.name, "with id", buf.id)
     if buf.id then
-      vim.api.nvim_buf_delete(buf.id, { force = false })
+      vim.schedule(function()
+        if vim.api.nvim_buf_is_valid(buf.id) then
+          vim.api.nvim_buf_delete(buf.id, { force = false })
+        end
+      end)
     else
       self.page_controller:get_active_page().bufferslist:remove(buf.name)
     end
