@@ -377,12 +377,19 @@ end
 
 ---@param buffers_to_close table<BuffonBuffer>
 function MainController:close_buffers(buffers_to_close)
+  log.debug(#buffers_to_close, "buffers will be deleted")
   for _, buf in ipairs(buffers_to_close) do
+    log.debug("deleting", buf.name, "with id", buf.id)
     if buf.id then
-      vim.api.nvim_buf_delete(buf.id, { force = false })
+      vim.schedule(function()
+        if vim.api.nvim_buf_is_valid(buf.id) then
+          vim.api.nvim_buf_delete(buf.id, { force = false })
+        end
+      end)
     else
       self.page_controller:get_active_page().bufferslist:remove(buf.name)
     end
+    log.debug("buffer", buf.name, "was deleted")
     self.recently_closed:add(buf.name)
   end
 end
