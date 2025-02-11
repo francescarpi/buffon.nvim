@@ -182,6 +182,11 @@ function MainController:get_events()
       method = self.action_check_activate_page,
     },
     {
+      vimevent = "BufNew",
+      require_match = true,
+      method = self.action_check_activate_page,
+    },
+    {
       vimevent = "VimResized",
     },
     {
