@@ -238,7 +238,9 @@ function MainController:register_events()
     vim.api.nvim_create_autocmd(action.vimevent, {
       group = self.group,
       callback = function(buf)
-        self:dispatch(action, buf)
+        vim.schedule(function()
+          self:dispatch(action, buf)
+        end)
       end,
     })
   end
