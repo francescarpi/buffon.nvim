@@ -246,8 +246,8 @@ function MainController:dispatch(action, buf)
     return
   end
 
-  if buf and buf.event then
-    log.debug("call method for event:", buf.event)
+  if buf and buf.event and buf.match ~= "" then
+    log.debug(buf.event, ":", buf.match)
   end
 
   if action.method then
@@ -271,6 +271,8 @@ end
 
 function MainController:action_add_buffer(buf)
   local existent_buf, num_page = self.page_controller:get_buffer_and_page(buf.match)
+  log.debug("adding ", buf.match, ", this buffer is in page:", num_page)
+
   -- if num_page is not nil, it means the buffer already exists. in that case, it should be activated
   if num_page and existent_buf then
     self.page_controller:set_page(num_page)
@@ -314,6 +316,7 @@ end
 
 ---@param buf BuffonBuffer
 function MainController:action_open_or_activate_buffer(buf)
+  log.debug("open", buf.name, "with id", buf.id)
   if buf.id then
     vim.api.nvim_set_current_buf(buf.id)
   else
@@ -456,6 +459,7 @@ end
 --- the buffer's page activated; if not, it needs to be activated.
 function MainController:action_check_activate_page(buf)
   local _, num_page = self.page_controller:get_buffer_and_page(buf.match)
+  log.debug("bufer", buf.match, "exists in page", num_page, "and active page is", self.page_controller.active)
   if num_page and num_page ~= self.page_controller.active then
     self.page_controller:set_page(num_page)
   end
