@@ -158,7 +158,9 @@ end
 function BuffersList:move_top(name)
   local idx = self:get_index(name)
   if idx then
-    swap_buffers(self.buffers, idx, 1)
+    local buf = self.buffers[idx]
+    table.remove(self.buffers, idx)
+    table.insert(self.buffers, 1, buf)
   end
   self:reindex()
 end
@@ -167,7 +169,9 @@ end
 function BuffersList:move_bottom(name)
   local idx = self:get_index(name)
   if idx then
-    swap_buffers(self.buffers, idx, #self.buffers)
+    local buf = self.buffers[idx]
+    table.remove(self.buffers, idx)
+    table.insert(self.buffers, buf)
   end
   self:reindex()
 end
