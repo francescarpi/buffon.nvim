@@ -179,12 +179,6 @@ function MainController:get_events()
     {
       vimevent = "BufEnter",
       require_match = true,
-      method = self.action_check_activate_page,
-    },
-    {
-      vimevent = "BufNew",
-      require_match = true,
-      method = self.action_check_activate_page,
     },
     {
       vimevent = "VimResized",
@@ -467,16 +461,6 @@ end
 
 function MainController:action_show_help()
   self.help_window:toggle(self:get_shortcuts())
-end
-
---- When a buffer is activated, it is necessary to check if the user has
---- the buffer's page activated; if not, it needs to be activated.
-function MainController:action_check_activate_page(buf)
-  local _, num_page = self.page_controller:get_buffer_and_page(buf.match)
-  log.debug("bufer", buf.match, "exists in page", num_page, "and active page is", self.page_controller.active)
-  if num_page and num_page ~= self.page_controller.active then
-    self.page_controller:set_page(num_page)
-  end
 end
 
 M.MainController = MainController
