@@ -61,7 +61,12 @@ function BuffersList:add(buffer, index_of_active_buffer)
     table.insert(self.buffers, buffer)
   else
     index_of_active_buffer = index_of_active_buffer or 0
-    table.insert(self.buffers, index_of_active_buffer + 1, buffer)
+    local position = index_of_active_buffer + 1
+    if position > #self.buffers then
+      table.insert(self.buffers, buffer)
+    else
+      table.insert(self.buffers, position, buffer)
+    end
   end
   self:reindex()
 end
