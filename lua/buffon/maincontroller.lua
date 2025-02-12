@@ -319,7 +319,7 @@ end
 function MainController:action_open_or_activate_buffer(buf)
   log.debug("open", buf.name, "with id", buf.id)
   if buf.id then
-    vim.api.nvim_set_current_buf(buf.id)
+    pcall(vim.api.nvim_set_current_buf, buf.id)
   else
     vim.api.nvim_command("edit " .. buf.name)
     buf.id = vim.api.nvim_get_current_buf()
