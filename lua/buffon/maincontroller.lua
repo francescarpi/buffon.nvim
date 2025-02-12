@@ -324,7 +324,12 @@ function MainController:action_open_or_activate_buffer(buf)
   else
     vim.api.nvim_command("edit " .. buf.name)
     buf.id = vim.api.nvim_get_current_buf()
-    vim.api.nvim_win_set_cursor(0, buf.cursor)
+
+    local set_cursor_success = pcall(vim.api.nvim_win_set_cursor, 0, buf.cursor)
+    if not set_cursor_success then
+      vim.api.nvim_win_set_cursor(0, { 1, 1 })
+    end
+
     vim.cmd("normal! zz")
   end
 end
