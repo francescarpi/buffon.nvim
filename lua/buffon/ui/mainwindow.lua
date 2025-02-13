@@ -45,6 +45,10 @@ function MainWindow:footer()
 end
 
 function MainWindow:refresh()
+  if not self.window:is_open() then
+    return
+  end
+
   local render = self.page_controller:get_active_page():render()
   self.window:set_content(render.content)
   self.window:set_highlight(render.highlights)
