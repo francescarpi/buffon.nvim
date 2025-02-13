@@ -58,6 +58,10 @@ function Window:show()
   self:refresh_dimensions()
 end
 
+function Window:is_open()
+  return self.win_id ~= nil
+end
+
 function Window:hide()
   if not self.win_id then
     return

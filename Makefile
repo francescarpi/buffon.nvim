@@ -5,11 +5,11 @@ test:
 		-c "PlenaryBustedDirectory tests/ {minimal_init = 'tests/nvim_config.vim'}"
 
 fmt:
-	echo "===> Formatting"
+	@echo "===> Formatting"
 	stylua lua/ --config-path=.stylua.toml
 
 lint:
-	echo "===> Linting"
+	@echo "===> Linting"
 	luacheck lua/ --globals vim
 
 
