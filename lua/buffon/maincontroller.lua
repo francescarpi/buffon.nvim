@@ -299,7 +299,6 @@ end
 
 function MainController:action_before_buf_leave(buf)
   self.page_controller:get_active_page().bufferslist:update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
-  self.previous_used = buf.match
   self.index_buffer_active = self.page_controller:get_active_page().bufferslist:get_index(buf.match)
 end
 
@@ -318,12 +317,19 @@ end
 ---@param buf BuffonBuffer
 function MainController:action_open_or_activate_buffer(buf)
   log.debug("open", buf.name, "with id", buf.id)
+  self.previous_used = utils.get_buffer_name()
+  log.debug("saved as previous used", self.previous_used)
   if buf.id then
     pcall(vim.api.nvim_set_current_buf, buf.id)
   else
     vim.api.nvim_command("edit " .. buf.name)
     buf.id = vim.api.nvim_get_current_buf()
-    vim.api.nvim_win_set_cursor(0, buf.cursor)
+
+    local set_cursor_success = pcall(vim.api.nvim_win_set_cursor, 0, buf.cursor)
+    if not set_cursor_success then
+      vim.api.nvim_win_set_cursor(0, { 1, 1 })
+    end
+
     vim.cmd("normal! zz")
   end
 end
