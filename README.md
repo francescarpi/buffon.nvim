@@ -15,15 +15,22 @@ This plugin is inspired by [harpoon](https://github.com/ThePrimeagen/harpoon) an
 
 Things I like and dislike about these plugins:
 
-|  | `Likes`               | `Dislikes` |
-|----      |----                  |----       |
-| `Harpoon` | * Data persistence    | * Having to select which buffers to work with |
-|           | * Buffers can be sorted | * Constantly having to open and close the window to see which buffers are selected, change the order, delete them, etc. |
-|           | * Good API | |
-|           | * Tests | |
-| `Tide` | * Pleasant and beautiful interface | * Having to select which buffers to work with |
-|           | * Shortcuts to access a buffer directly | * Buffers cannot be sorted |
-|           | * Always having the buffer list visible | * No persistence |
+**Harpoon**
+
+| `Likes`               | `Dislikes` |
+|----                  |----       |
+| * Data persistence    | * Having to select which buffers to work with |
+| * Buffers can be sorted | * Constantly having to open and close the window to see which buffers are selected, change the order, delete them, etc. |
+| * Good API | |
+| * Tests | |
+
+**Tide**
+
+| `Likes`               | `Dislikes` |
+|----                  |----       |
+| * Pleasant and beautiful interface | * Having to select which buffers to work with |
+| * Shortcuts to access a buffer directly | * Buffers cannot be sorted |
+| * Always having the buffer list visible | * No persistence |
 
 Based on this, I created *Buffon* with the best of both plugins, perfectly adapting to my way of working.
 
@@ -54,34 +61,17 @@ Based on this, I created *Buffon* with the best of both plugins, perfectly adapt
 
 ### Using [lazy](https://github.com/folke/lazy.nvim):
 
-Option 1:
-
 ```lua
 return {
   {
     "francescarpi/buffon.nvim",
-    opts = {},
+    opts = {
+      --- Add your config here
+    },
     dependencies = {
       "nvim-tree/nvim-web-devicons",
       "nvim-lua/plenary.nvim",
     },
-  },
-}
-```
-
-Option 2:
-
-```lua
-return {
-  {
-    "francescarpi/buffon.nvim",
-    dependencies = {
-      "nvim-tree/nvim-web-devicons",
-      "nvim-lua/plenary.nvim",
-    },
-    config = function()
-      require("buffon").setup()
-    end
   },
 }
 ```
