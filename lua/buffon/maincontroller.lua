@@ -410,33 +410,25 @@ end
 
 function MainController:action_close_buffers_above()
   local buffers = self.page_controller:get_active_page().bufferslist:get_buffers_above(utils.get_buffer_name())
-  for _, buf in ipairs(buffers) do
-    table.insert(self.buffers_will_close, buf)
-  end
+  utils.table_add(self.buffers_will_close, buffers)
   self:close_buffer()
 end
 
 function MainController:action_close_buffers_below()
   local buffers = self.page_controller:get_active_page().bufferslist:get_buffers_below(utils.get_buffer_name())
-  for _, buf in ipairs(buffers) do
-    table.insert(self.buffers_will_close, buf)
-  end
+  utils.table_add(self.buffers_will_close, buffers)
   self:close_buffer()
 end
 
 function MainController:action_close_buffers_all()
   local buffers = self.page_controller:get_active_page():get_buffers()
-  for _, buf in ipairs(buffers) do
-    table.insert(self.buffers_will_close, buf)
-  end
+  utils.table_add(self.buffers_will_close, buffers)
   self:close_buffer()
 end
 
 function MainController:action_close_buffers_other()
   local buffers = self.page_controller:get_active_page().bufferslist:get_other_buffers(utils.get_buffer_name())
-  for _, buf in ipairs(buffers) do
-    table.insert(self.buffers_will_close, buf)
-  end
+  utils.table_add(self.buffers_will_close, buffers)
   self:close_buffer()
 end
 

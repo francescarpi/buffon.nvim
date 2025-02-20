@@ -5,6 +5,12 @@ M.get_buffer_name = function()
   return vim.fn.expand("%:p")
 end
 
+M.table_add = function(tbl1, tbl2)
+  for _, item in ipairs(tbl2) do
+    table.insert(tbl1, item)
+  end
+end
+
 ---@class BuffonRecentlyClosed
 ---@field filenames? table<string>
 ---@field limit? number
