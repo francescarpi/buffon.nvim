@@ -6,7 +6,7 @@ describe("config", function()
     local cfg = config.Config:new()
     eq(cfg, {
       cyclic_navigation = true,
-      new_buffer_position = "after",
+      new_buffer_position = "end",
       num_pages = 2,
       open = {
         by_default = true,
