@@ -28,6 +28,7 @@ end
 ---@field buffer_will_be_renamed string | nil
 ---@field active_buffer_by_page table<number>
 ---@field recently_closed BuffonRecentlyClosed
+---@field buffers_will_close table<BuffonBuffer>
 local MainController = {}
 
 ---@param cfg BuffonConfig
@@ -45,6 +46,7 @@ function MainController:new(cfg, page_controller, stg)
     buffer_will_be_renamed = nil,
     active_buffer_by_page = {},
     recently_closed = utils.RecentlyClosed:new(),
+    buffers_will_close = {},
   }
 
   setmetatable(o, self)
@@ -232,9 +234,7 @@ function MainController:register_events()
     vim.api.nvim_create_autocmd(action.vimevent, {
       group = self.group,
       callback = function(buf)
-        vim.schedule(function()
-          self:dispatch(action, buf)
-        end)
+        self:dispatch(action, buf)
       end,
     })
   end
@@ -377,48 +377,67 @@ function MainController:action_move_buffer_bottom()
   self.page_controller:get_active_page().bufferslist:move_bottom(utils.get_buffer_name())
 end
 
----@param buffers_to_close table<BuffonBuffer>
-function MainController:close_buffers(buffers_to_close)
-  log.debug(#buffers_to_close, "buffers will be deleted")
-  for _, buf in ipairs(buffers_to_close) do
-    log.debug("deleting", buf.name, "with id", buf.id)
-    if buf.id then
-      vim.schedule(function()
-        if vim.api.nvim_buf_is_valid(buf.id) then
-          vim.api.nvim_buf_delete(buf.id, { force = false })
-        end
-      end)
-    else
-      self.page_controller:get_active_page().bufferslist:remove(buf.name)
+function MainController:close_buffer()
+  log.debug(#self.buffers_will_close, "buffers will be deleted")
+
+  local buf = table.remove(self.buffers_will_close)
+  if not buf then
+    return
+  end
+
+  log.debug("deleting", buf.name, "with id", buf.id)
+  if buf.id then
+    if vim.api.nvim_buf_is_valid(buf.id) then
+      vim.api.nvim_buf_delete(buf.id, { force = false })
     end
-    log.debug("buffer", buf.name, "was deleted")
-    self.recently_closed:add(buf.name)
+  else
+    self.page_controller:get_active_page().bufferslist:remove(buf.name)
+  end
+
+  log.debug("buffer", buf.name, "was deleted")
+  self.recently_closed:add(buf.name)
+
+  if #self.buffers_will_close > 0 then
+    self:close_buffer()
   end
 end
 
 function MainController:action_close_buffer()
   local buf = self.page_controller:get_active_page().bufferslist:get_by_name(utils.get_buffer_name())
-  self:close_buffers({ buf })
+  table.insert(self.buffers_will_close, buf)
+  self:close_buffer()
 end
 
 function MainController:action_close_buffers_above()
   local buffers = self.page_controller:get_active_page().bufferslist:get_buffers_above(utils.get_buffer_name())
-  self:close_buffers(buffers)
+  for _, buf in ipairs(buffers) do
+    table.insert(self.buffers_will_close, buf)
+  end
+  self:close_buffer()
 end
 
 function MainController:action_close_buffers_below()
   local buffers = self.page_controller:get_active_page().bufferslist:get_buffers_below(utils.get_buffer_name())
-  self:close_buffers(buffers)
+  for _, buf in ipairs(buffers) do
+    table.insert(self.buffers_will_close, buf)
+  end
+  self:close_buffer()
 end
 
 function MainController:action_close_buffers_all()
   local buffers = self.page_controller:get_active_page():get_buffers()
-  self:close_buffers(buffers)
+  for _, buf in ipairs(buffers) do
+    table.insert(self.buffers_will_close, buf)
+  end
+  self:close_buffer()
 end
 
 function MainController:action_close_buffers_other()
   local buffers = self.page_controller:get_active_page().bufferslist:get_other_buffers(utils.get_buffer_name())
-  self:close_buffers(buffers)
+  for _, buf in ipairs(buffers) do
+    table.insert(self.buffers_will_close, buf)
+  end
+  self:close_buffer()
 end
 
 function MainController:action_buffer_to_next_page()
