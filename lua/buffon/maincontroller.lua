@@ -262,9 +262,9 @@ function MainController:dispatch(action, buf)
   end
 end
 
---------------------------------------------------------------------------------------------
+---=========================================================================================
 --- ↓ Actions starts here ↓
---------------------------------------------------------------------------------------------
+---=========================================================================================
 
 function MainController:action_show_hide_buffon_window()
   self.main_window:toggle()
@@ -339,6 +339,10 @@ function MainController:action_open_or_activate_buffer(buf)
   end
 end
 
+--------------------------------------------------------------------------------------------
+--- ↓ Actions related with the navigation ↓
+--------------------------------------------------------------------------------------------
+
 function MainController:action_goto_next()
   local next_buffer = self.page_controller:get_active_page().bufferslist:get_next_buffer(utils.get_buffer_name())
   if next_buffer then
@@ -366,6 +370,20 @@ function MainController:action_previous_page()
   self.page_controller:previous_page()
 end
 
+function MainController:action_switch_previous_used()
+  if self.previous_used then
+    local buf, num_page = self.page_controller:get_buffer_and_page(self.previous_used)
+    if buf and num_page then
+      self.page_controller:set_page(num_page)
+      self:action_open_or_activate_buffer(buf)
+    end
+  end
+end
+
+--------------------------------------------------------------------------------------------
+--- ↓ Actions related with buffers movement  ↓
+--------------------------------------------------------------------------------------------
+
 function MainController:action_move_buffer_up()
   self.page_controller:get_active_page().bufferslist:move_up(utils.get_buffer_name())
 end
@@ -381,6 +399,18 @@ end
 function MainController:action_move_buffer_bottom()
   self.page_controller:get_active_page().bufferslist:move_bottom(utils.get_buffer_name())
 end
+
+function MainController:action_buffer_to_next_page()
+  self.page_controller:move_to_next_page(utils.get_buffer_name())
+end
+
+function MainController:action_buffer_to_previous_page()
+  self.page_controller:move_to_previous_page(utils.get_buffer_name())
+end
+
+--------------------------------------------------------------------------------------------
+--- ↓ Actions related with close buffers  ↓
+--------------------------------------------------------------------------------------------
 
 function MainController:close_buffer()
   log.debug(#self.buffers_will_close, "buffers will be deleted")
@@ -437,23 +467,9 @@ function MainController:action_close_buffers_other()
   self:close_buffer()
 end
 
-function MainController:action_buffer_to_next_page()
-  self.page_controller:move_to_next_page(utils.get_buffer_name())
-end
-
-function MainController:action_buffer_to_previous_page()
-  self.page_controller:move_to_previous_page(utils.get_buffer_name())
-end
-
-function MainController:action_switch_previous_used()
-  if self.previous_used then
-    local buf, num_page = self.page_controller:get_buffer_and_page(self.previous_used)
-    if buf and num_page then
-      self.page_controller:set_page(num_page)
-      self:action_open_or_activate_buffer(buf)
-    end
-  end
-end
+--------------------------------------------------------------------------------------------
+--- ↓ Other actions  ↓
+--------------------------------------------------------------------------------------------
 
 function MainController:action_buffer_will_rename(buf)
   self.buffer_will_be_renamed = buf.match
