@@ -317,8 +317,13 @@ end
 ---@param buf BuffonBuffer
 function MainController:action_open_or_activate_buffer(buf)
   log.debug("open", buf.name, "with id", buf.id)
+
   self.previous_used = utils.get_buffer_name()
-  log.debug("saved as previous used", self.previous_used)
+  if self.previous_used == "" then
+    self.previous_used = buf.name
+  end
+  log.debug(self.previous_used, "saved as previous used")
+
   if buf.id then
     pcall(vim.api.nvim_set_current_buf, buf.id)
   else
