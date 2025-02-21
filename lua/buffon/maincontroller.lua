@@ -24,7 +24,6 @@ end
 ---@field page_controller BuffonPageController
 ---@field storage BuffonStorage
 ---@field index_buffer_active number | nil
----@field previous_used string | nil
 ---@field buffer_will_be_renamed string | nil
 ---@field active_buffer_by_page table<number>
 ---@field recently_closed BuffonRecentlyClosed
@@ -42,7 +41,6 @@ function MainController:new(cfg, page_controller, stg)
     page_controller = page_controller,
     storage = stg,
     index_buffer_active = nil,
-    previous_used = nil,
     buffer_will_be_renamed = nil,
     active_buffer_by_page = {},
     recently_closed = utils.RecentlyClosed:new(),
@@ -318,12 +316,6 @@ end
 function MainController:action_open_or_activate_buffer(buf)
   log.debug("open", buf.filename, "with id", buf.id)
 
-  self.previous_used = utils.get_buffer_name()
-  if self.previous_used == "" then
-    self.previous_used = buf.name
-  end
-  log.debug("previous_used", vim.fn.fnamemodify(self.previous_used, ":t"))
-
   if buf.id then
     pcall(vim.api.nvim_set_current_buf, buf.id)
   else
@@ -370,13 +362,34 @@ function MainController:action_previous_page()
   self.page_controller:previous_page()
 end
 
+--- Jump to previous used buffer
 function MainController:action_switch_previous_used()
-  if self.previous_used then
-    local buf, num_page = self.page_controller:get_buffer_and_page(self.previous_used)
-    if buf and num_page then
-      self.page_controller:set_page(num_page)
-      self:action_open_or_activate_buffer(buf)
+  local buffers = {}
+  local current_name = utils.get_buffer_name()
+
+  -- Add in buffers table the opened ones, ignoring invalids or current buffer
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    local name = vim.api.nvim_buf_get_name(buf)
+    if name ~= "" and name ~= current_name then
+      table.insert(buffers, { lastused = vim.fn.getbufinfo(buf)[1].lastused, name = vim.api.nvim_buf_get_name(buf) })
     end
+  end
+
+  -- Sort buffers by lastused
+  table.sort(buffers, function(a, b)
+    return a.lastused > b.lastused
+  end)
+
+  -- Get the buffer and page and activate it
+  local previous_used = buffers[1]
+  if not previous_used then
+    return
+  end
+
+  local buf, num_page = self.page_controller:get_buffer_and_page(previous_used.name)
+  if buf and num_page then
+    self.page_controller:set_page(num_page)
+    self:action_open_or_activate_buffer(buf)
   end
 end
 
