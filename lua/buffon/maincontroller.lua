@@ -248,7 +248,7 @@ function MainController:dispatch(action, buf)
   end
 
   if buf and buf.event and buf.match ~= "" then
-    log.debug(buf.event, ":", buf.match)
+    log.debug("event:", buf.event, "on", vim.fn.fnamemodify(buf.match, ":t"))
   end
 
   if action.method then
@@ -272,7 +272,7 @@ end
 
 function MainController:action_add_buffer(buf)
   local existent_buf, num_page = self.page_controller:get_buffer_and_page(buf.match)
-  log.debug("adding ", buf.match, ", this buffer is in page:", num_page)
+  log.debug("add", vim.fn.fnamemodify(buf.match, ":t"), "in page", num_page)
 
   -- if num_page is not nil, it means the buffer already exists. in that case, it should be activated
   if num_page and existent_buf then
@@ -316,13 +316,13 @@ end
 
 ---@param buf BuffonBuffer
 function MainController:action_open_or_activate_buffer(buf)
-  log.debug("open", buf.name, "with id", buf.id)
+  log.debug("open", buf.filename, "with id", buf.id)
 
   self.previous_used = utils.get_buffer_name()
   if self.previous_used == "" then
     self.previous_used = buf.name
   end
-  log.debug(self.previous_used, "saved as previous used")
+  log.debug("previous_used", vim.fn.fnamemodify(self.previous_used, ":t"))
 
   if buf.id then
     pcall(vim.api.nvim_set_current_buf, buf.id)
@@ -420,7 +420,7 @@ function MainController:close_buffer()
     return
   end
 
-  log.debug("deleting", buf.name, "with id", buf.id)
+  log.debug("deleting", buf.filename, "with id", buf.id)
   if buf.id then
     if vim.api.nvim_buf_is_valid(buf.id) then
       vim.api.nvim_buf_delete(buf.id, { force = false })
@@ -429,7 +429,7 @@ function MainController:close_buffer()
     self.page_controller:get_active_page().bufferslist:remove(buf.name)
   end
 
-  log.debug("buffer", buf.name, "was deleted")
+  log.debug("buffer", buf.filename, "was deleted")
   self.recently_closed:add(buf.name)
 
   if #self.buffers_will_close > 0 then

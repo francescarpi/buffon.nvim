@@ -53,7 +53,7 @@ function BuffersList:add(buffer, index_of_active_buffer)
     return
   end
 
-  log.debug("add buffer", buffer.name, "with id", buffer.id)
+  log.debug("inserting", buffer.filename, "with id", buffer.id)
 
   if self.config.new_buffer_position == "start" then
     table.insert(self.buffers, 1, buffer)
