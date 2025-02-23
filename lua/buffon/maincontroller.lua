@@ -439,15 +439,12 @@ function MainController:close_buffer()
       vim.api.nvim_buf_delete(buf.id, { force = false })
     end
   else
-    self.page_controller:get_active_page().bufferslist:remove(buf.name)
+    self.page_controller:remove_buffer_from_active_page(buf.name)
   end
 
   log.debug("buffer", buf.filename, "was deleted")
   self.recently_closed:add(buf.name)
-
-  if #self.buffers_will_close > 0 then
-    self:close_buffer()
-  end
+  self:close_buffer()
 end
 
 function MainController:action_close_buffer()
