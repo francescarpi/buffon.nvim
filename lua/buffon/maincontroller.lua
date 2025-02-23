@@ -164,17 +164,17 @@ function MainController:get_events()
   return {
     {
       vimevent = "BufAdd",
-      method = self.action_add_buffer,
+      method = self.event_add_buffer,
       require_match = true,
     },
     {
       vimevent = "BufDelete",
-      method = self.action_remove_buffer,
+      method = self.event_remove_buffer,
       require_match = true,
     },
     {
       vimevent = "VimEnter",
-      method = self.action_buffon_window_needs_open,
+      method = self.event_buffon_window_needs_open,
     },
     {
       vimevent = "BufEnter",
@@ -185,11 +185,11 @@ function MainController:get_events()
     },
     {
       vimevent = "ExitPre",
-      method = self.action_before_exit,
+      method = self.event_before_exit,
     },
     {
       vimevent = "BufLeave",
-      method = self.action_before_buf_leave,
+      method = self.event_before_buf_leave,
       require_match = true,
     },
     {
@@ -197,11 +197,11 @@ function MainController:get_events()
     },
     {
       vimevent = "BufFilePre",
-      method = self.action_buffer_will_rename,
+      method = self.event_buffer_will_rename,
     },
     {
       vimevent = "BufFilePost",
-      method = self.action_rename_buffer,
+      method = self.event_rename_buffer,
     },
   }
 end
@@ -268,7 +268,7 @@ function MainController:action_show_hide_buffon_window()
   self.main_window:toggle()
 end
 
-function MainController:action_add_buffer(buf)
+function MainController:event_add_buffer(buf)
   local existent_buf, num_page = self.page_controller:get_buffer_and_page(buf.match)
   log.debug("add", vim.fn.fnamemodify(buf.match, ":t"), "in page", num_page)
 
@@ -281,7 +281,7 @@ function MainController:action_add_buffer(buf)
   end
 end
 
-function MainController:action_buffon_window_needs_open()
+function MainController:event_buffon_window_needs_open()
   local should_open = self.config.open.by_default
   local buffer_ignored = vim.tbl_contains(self.config.open.ignore_ft, vim.bo.filetype)
 
@@ -290,18 +290,14 @@ function MainController:action_buffon_window_needs_open()
   end
 end
 
-function MainController:action_before_exit(buf)
+function MainController:event_before_exit(buf)
   self.page_controller:get_active_page().bufferslist:update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
   self.storage:save(self.page_controller:get_data())
 end
 
-function MainController:action_before_buf_leave(buf)
+function MainController:event_before_buf_leave(buf)
   self.page_controller:get_active_page().bufferslist:update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
   self.index_buffer_active = self.page_controller:get_active_page().bufferslist:get_index(buf.match)
-end
-
-function MainController:action_remove_buffer(buf)
-  self.page_controller:remove_buffer_from_active_page(buf.match)
 end
 
 ---@param index number
@@ -425,6 +421,10 @@ end
 --- ↓ Actions related with close buffers  ↓
 --------------------------------------------------------------------------------------------
 
+function MainController:event_remove_buffer(buf)
+  self.page_controller:remove_buffer_from_active_page(buf.match)
+end
+
 function MainController:close_buffer()
   log.debug(#self.buffers_will_close, "buffers will be deleted")
 
@@ -484,11 +484,11 @@ end
 --- ↓ Other actions  ↓
 --------------------------------------------------------------------------------------------
 
-function MainController:action_buffer_will_rename(buf)
+function MainController:event_buffer_will_rename(buf)
   self.buffer_will_be_renamed = buf.match
 end
 
-function MainController:action_rename_buffer(buf)
+function MainController:event_rename_buffer(buf)
   assert(self.buffer_will_be_renamed, "new buffer name is required")
   for _, page in ipairs(self.page_controller.pages) do
     page.bufferslist:rename(self.buffer_will_be_renamed, buf.match)
