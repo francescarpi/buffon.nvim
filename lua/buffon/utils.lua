@@ -15,7 +15,8 @@ end
 ---@param shortcut string
 ---@return string
 M.replace_leader = function(cfg, shortcut)
-  return shortcut:gsub("<buffonleader>", cfg.leader_key)
+  local replaced_string = shortcut:gsub("<buffonleader>", cfg.leader_key)
+  return replaced_string
 end
 
 ---@class BuffonRecentlyClosed
