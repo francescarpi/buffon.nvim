@@ -36,7 +36,7 @@ function MainController:new(cfg, page_controller, stg)
   local o = {
     config = cfg,
     main_window = mainwindow.MainWindow:new(cfg, page_controller),
-    help_window = helpwindow.HelpWindow:new(),
+    help_window = helpwindow.HelpWindow:new(cfg),
     group = vim.api.nvim_create_augroup("Buffon", { clear = true }),
     page_controller = page_controller,
     storage = stg,
@@ -208,19 +208,19 @@ end
 
 function MainController:register_shortcuts()
   for _, action in ipairs(self:get_shortcuts()) do
-    set_keymap(action.shortcut, function()
+    set_keymap(utils.replace_leader(self.config, action.shortcut), function()
       self:dispatch(action)
     end, action.help)
   end
 
-  for idx = 1, #self.config.keybindings.buffer_mapping.mapping_chars do
-    local char = self.config.keybindings.buffer_mapping.mapping_chars:sub(idx, idx)
-    set_keymap(";" .. char, function()
+  for idx = 1, #self.config.mapping_chars do
+    local char = self.config.mapping_chars:sub(idx, idx)
+    set_keymap(self.config.leader_key .. char, function()
       self:action_open_buffer_by_index(idx)
     end, "Goto to buffer " .. idx)
   end
 
-  set_keymap(self.config.keybindings.show_help, function()
+  set_keymap(utils.replace_leader(self.config, self.config.keybindings.show_help), function()
     self:action_show_help()
   end, "Show the help window")
 

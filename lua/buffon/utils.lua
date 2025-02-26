@@ -11,6 +11,14 @@ M.table_add = function(tbl1, tbl2)
   end
 end
 
+---@param cfg BuffonConfig
+---@param shortcut string
+---@return string
+M.replace_leader = function(cfg, shortcut)
+  local replaced_string = shortcut:gsub("<buffonleader>", cfg.leader_key)
+  return replaced_string
+end
+
 ---@class BuffonRecentlyClosed
 ---@field filenames? table<string>
 ---@field limit? number

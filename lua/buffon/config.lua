@@ -15,6 +15,8 @@ local default = {
       "gitrebase",
     },
   },
+  leader_key = ";",
+  mapping_chars = "qweryuiop",
   keybindings = {
     goto_next_buffer = "<s-j>",
     goto_previous_buffer = "<s-k>",
@@ -22,29 +24,21 @@ local default = {
     move_buffer_down = "<s-h>",
     move_buffer_top = "<s-t>",
     move_buffer_bottom = "<s-b>",
-    toggle_buffon_window = ";n",
-    switch_previous_used_buffer = ";;",
-    close_buffer = ";d",
-    close_buffers_above = ";v",
-    close_buffers_below = ";b",
-    close_all_buffers = ";cc",
-    close_others = ";cd",
-    reopen_recent_closed_buffer = ";t",
-    buffer_mapping = {
-      mapping_chars = "qweryuiop",
-      leader_key = ";",
-    },
-    show_help = ";h",
+    toggle_buffon_window = "<buffonleader>n",
+    switch_previous_used_buffer = "<buffonleader><buffonleader>",
+    close_buffer = "<buffonleader>d",
+    close_buffers_above = "<buffonleader>v",
+    close_buffers_below = "<buffonleader>b",
+    close_all_buffers = "<buffonleader>cc",
+    close_others = "<buffonleader>cd",
+    reopen_recent_closed_buffer = "<buffonleader>t",
+    show_help = "<buffonleader>h",
     previous_page = "<s-tab>",
     next_page = "<tab>",
-    move_to_previous_page = ";a",
-    move_to_next_page = ";s",
+    move_to_previous_page = "<buffonleader>a",
+    move_to_next_page = "<buffonleader>s",
   },
 }
-
----@class BuffonConfigKeyBindingBufferMapping
----@field mapping_chars string -- Each character maps to a buffer ("qwer" maps 'q' to buffer 1, 'w' to buffer 2, etc.)
----@field leader_key string -- Leader key used as a prefix for buffer mappings (';' creates mappings ';q', ';w', etc.)
 
 ---@class BuffonConfigOpen
 ---@field by_default boolean
@@ -64,7 +58,6 @@ local default = {
 ---@field close_all_buffers string
 ---@field close_others string
 ---@field restore_last_closed_buffer string
----@field buffer_mapping BuffonConfigKeyBindingBufferMapping
 ---@field show_help string
 ---@field next_page string
 ---@field previous_page string
@@ -77,6 +70,8 @@ local default = {
 ---@field new_buffer_position "start" | "end" | "after"
 ---@field open BuffonConfigOpen
 ---@field keybindings BuffonConfigKeyBinding
+---@field leader_key string -- Leader key used as a prefix for buffer mappings (';' creates mappings ';q', ';w', etc.)
+---@field mapping_chars string -- Each character maps to a buffer ("qwer" maps 'q' to buffer 1, 'w' to buffer 2, etc.)
 local Config = {}
 
 ---@param opts any
