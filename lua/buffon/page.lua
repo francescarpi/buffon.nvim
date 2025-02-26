@@ -39,11 +39,11 @@ end
 ---@param index number
 ---@return string
 function Page:_get_shortcut(index)
-  local shortcut = self.config.keybindings.buffer_mapping.mapping_chars:sub(index, index)
+  local shortcut = self.config.mapping_chars:sub(index, index)
   if shortcut ~= "" then
-    shortcut = self.config.keybindings.buffer_mapping.leader_key .. shortcut
+    shortcut = self.config.leader_key .. shortcut
   else
-    shortcut = string.rep(" ", #self.config.keybindings.buffer_mapping.leader_key + 1)
+    shortcut = string.rep(" ", #self.config.leader_key + 1)
   end
   return shortcut
 end
@@ -129,7 +129,7 @@ function Page:render(active_buffer)
 
     -- highlights
     local shortcut_start = 0
-    local shortcut_end = shortcut_start + #self.config.keybindings.buffer_mapping.leader_key + CHAR
+    local shortcut_end = shortcut_start + #self.config.leader_key + CHAR
     local filename_start = shortcut_end + WHITESPACE
     local filename_end = filename_start + #filename + WHITESPACE + ICON
     local modified_start = filename_end + WHITESPACE
