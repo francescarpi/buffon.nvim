@@ -1,4 +1,5 @@
 local window = require("buffon.ui.window")
+local utils = require("buffon.utils")
 
 local M = {}
 
@@ -11,7 +12,7 @@ local MainWindow = {}
 ---@param config BuffonConfig
 ---@param page_controller BuffonPageController
 function MainWindow:new(config, page_controller)
-  local title = " Buffon (" .. config.keybindings.show_help .. ") "
+  local title = " Buffon (" .. utils.replace_leader(config, config.keybindings.show_help) .. ") "
   local o = {
     window = window.Window:new(title, window.WIN_POSITIONS.TOP_RIGHT),
     page_controller = page_controller,
