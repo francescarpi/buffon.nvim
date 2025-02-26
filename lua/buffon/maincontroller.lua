@@ -63,100 +63,125 @@ end
 
 ---@return table<BuffonAction>
 function MainController:get_shortcuts()
-  return {
+  ---@type table<string>
+  local configurable_disabled_actions = {
+    move_buffer_up = true,
+    move_buffer_down = true,
+    move_buffer_top = true,
+    move_buffer_bottom = true,
+    switch_previous_used_buffer = true,
+    close_buffer = true,
+    close_buffers_above = true,
+    close_buffers_below = true,
+    close_all_buffers = true,
+    close_others = true,
+    reopen_recent_closed_buffer = true,
+  }
+
+  ---@type table<BuffonAction>
+  local shortcuts = {
     {
-      shortcut = self.config.keybindings.toggle_buffon_window,
+      shortcut = "toggle_buffon_window",
       help = "Show/hide buffer list",
       method = self.action_show_hide_buffon_window,
     },
     {
-      shortcut = self.config.keybindings.goto_next_buffer,
+      shortcut = "goto_next_buffer",
       help = "Next buffer",
       method = self.action_goto_next,
     },
     {
-      shortcut = self.config.keybindings.goto_previous_buffer,
+      shortcut = "goto_previous_buffer",
       help = "Previous buffer",
       method = self.action_goto_previous,
     },
     {
-      shortcut = self.config.keybindings.next_page,
+      shortcut = "next_page",
       help = "Next page",
       method = self.action_next_page,
       method_post_refresh = self.action_select_buffer,
     },
     {
-      shortcut = self.config.keybindings.previous_page,
+      shortcut = "previous_page",
       help = "Previous page",
       method = self.action_previous_page,
       method_post_refresh = self.action_select_buffer,
     },
     {
-      shortcut = self.config.keybindings.move_to_next_page,
+      shortcut = "move_to_next_page",
       help = "Buffer to next page",
       method = self.action_buffer_to_next_page,
     },
     {
-      shortcut = self.config.keybindings.move_to_previous_page,
+      shortcut = "move_to_previous_page",
       help = "Buffer to previous page",
       method = self.action_buffer_to_previous_page,
     },
     {
-      shortcut = self.config.keybindings.move_buffer_up,
+      shortcut = "move_buffer_up",
       help = "Move buffer up",
       method = self.action_move_buffer_up,
     },
     {
-      shortcut = self.config.keybindings.move_buffer_down,
+      shortcut = "move_buffer_down",
       help = "Move buffer down",
       method = self.action_move_buffer_down,
     },
     {
-      shortcut = self.config.keybindings.move_buffer_top,
+      shortcut = "move_buffer_top",
       help = "Move buffer to top",
       method = self.action_move_buffer_top,
     },
     {
-      shortcut = self.config.keybindings.move_buffer_bottom,
+      shortcut = "move_buffer_bottom",
       help = "Move buffer to bottom",
       method = self.action_move_buffer_bottom,
     },
     {
-      shortcut = self.config.keybindings.close_buffer,
+      shortcut = "close_buffer",
       help = "Close buffer",
       method = self.action_close_buffer,
     },
     {
-      shortcut = self.config.keybindings.close_buffers_above,
+      shortcut = "close_buffers_above",
       help = "Close buffers above",
       method = self.action_close_buffers_above,
     },
     {
-      shortcut = self.config.keybindings.close_buffers_below,
+      shortcut = "close_buffers_below",
       help = "Close buffers below",
       method = self.action_close_buffers_below,
     },
     {
-      shortcut = self.config.keybindings.close_all_buffers,
+      shortcut = "close_all_buffers",
       help = "Close all",
       method = self.action_close_buffers_all,
     },
     {
-      shortcut = self.config.keybindings.close_others,
+      shortcut = "close_others",
       help = "Close others",
       method = self.action_close_buffers_other,
     },
     {
-      shortcut = self.config.keybindings.switch_previous_used_buffer,
+      shortcut = "switch_previous_used_buffer",
       help = "Last used buffer",
       method = self.action_switch_previous_used,
     },
     {
-      shortcut = self.config.keybindings.reopen_recent_closed_buffer,
+      shortcut = "reopen_recent_closed_buffer",
       help = "Restore closed buffer",
       method = self.action_reopen_recent_closed,
     },
   }
+
+  ---@type table<BuffonAction>
+  local valid_shortcuts = {}
+  for _, action in ipairs(shortcuts) do
+    if not configurable_disabled_actions[action.shortcut] or self.config.keybindings[action.shortcut] ~= "false" then
+      table.insert(valid_shortcuts, action)
+    end
+  end
+  return valid_shortcuts
 end
 
 ---@return table<BuffonAction>
@@ -208,7 +233,7 @@ end
 
 function MainController:register_shortcuts()
   for _, action in ipairs(self:get_shortcuts()) do
-    set_keymap(utils.replace_leader(self.config, action.shortcut), function()
+    set_keymap(utils.replace_leader(self.config, self.config.keybindings[action.shortcut]), function()
       self:dispatch(action)
     end, action.help)
   end

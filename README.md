@@ -65,6 +65,7 @@ Based on this, I created *Buffon* with the best of both plugins, perfectly adapt
 return {
   {
     "francescarpi/buffon.nvim",
+    ---@type BuffonConfig
     opts = {
       --- Add your config here
     },
@@ -84,6 +85,7 @@ Below you can see the default configuration, which you can adjust to your liking
 return {
   {
     "francescarpi/buffon.nvim",
+    ---@type BuffonConfig
     opts = {
       cyclic_navigation = true,
     },
@@ -147,6 +149,41 @@ Take a look at the default shortcuts for navigating between buffers, changing th
 > ```lua
 > vim.keymap.set("n", "c-l", vim.lsp.buf.hover)
 > ````
+
+### Disable keybindings
+
+The keybindings shown in the following list can be deactivated. The reason for this is that some people may not be interested in using the functionality to close buffers, move them, etc.
+
+```lua
+{
+  move_buffer_up,
+  move_buffer_down,
+  move_buffer_top,
+  move_buffer_bottom,
+  switch_previous_used_buffer,
+  close_buffer,
+  close_buffers_above,
+  close_buffers_below,
+  close_all_buffers,
+  close_others,
+  reopen_recent_closed_buffer,
+}
+```
+
+To do this, you only have to assign the string "false" in the configuration. For example:
+
+
+```lua
+{
+  opts = {
+    keybindings = {
+      close_buffer = "false"
+      close_others = "false"
+    },
+  },
+}
+```
+
 
 ## Screenshots
 
