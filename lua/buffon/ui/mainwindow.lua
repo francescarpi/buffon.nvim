@@ -53,7 +53,9 @@ function MainWindow:refresh()
   local render = self.page_controller:get_active_page():render()
   self.window:set_content(render.content)
   self.window:set_highlight(render.highlights)
-  self.window:set_footer(self:footer())
+  if self.config.num_pages > 1 then
+    self.window:set_footer(self:footer())
+  end
   self.window:refresh_dimensions()
 end
 

@@ -47,17 +47,18 @@ local default = {
 ---@class BuffonConfigKeyBinding
 ---@field goto_next_buffer string
 ---@field goto_previous_buffer string
----@field move_buffer_up string
----@field move_buffer_down string
----@field move_buffer_top string
+---@field move_buffer_up string|false
+---@field move_buffer_down string|false
+---@field move_buffer_top string|false
+---@field move_buffer_bottom string|false
 ---@field toggle_buffon_window string
----@field switch_previous_used_buffer string
----@field close_buffer string
----@field close_buffers_above string
----@field close_buffers_below string
----@field close_all_buffers string
----@field close_others string
----@field restore_last_closed_buffer string
+---@field switch_previous_used_buffer string|false
+---@field close_buffer string|false
+---@field close_buffers_above string|false
+---@field close_buffers_below string|false
+---@field close_all_buffers string|false
+---@field close_others string|false
+---@field reopen_recent_closed_buffer string|false
 ---@field show_help string
 ---@field next_page string
 ---@field previous_page string
@@ -76,10 +77,13 @@ local Config = {}
 
 ---@param opts any
 function Config:new(opts)
-  local o = vim.tbl_deep_extend("force", default, opts or {})
-  setmetatable(o, self)
+  local cfg = vim.tbl_deep_extend("force", default, opts or {})
+  if cfg.num_pages < 1 or cfg.num_pages > 4 then
+    cfg.num_pages = 1
+  end
+  setmetatable(cfg, self)
   self.__index = self
-  return o
+  return cfg
 end
 
 M.Config = Config
