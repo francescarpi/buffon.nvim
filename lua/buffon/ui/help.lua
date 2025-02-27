@@ -32,7 +32,7 @@ function HelpWindow:toggle(actions)
     local highlight = { Constant = {} }
 
     for _, action in ipairs(actions) do
-      local action_len = #utils.replace_leader(self.config, action.shortcut)
+      local action_len = #utils.replace_leader(self.config, self.config.keybindings[action.shortcut])
       if action_len > max_length then
         max_length = action_len
       end
@@ -40,7 +40,7 @@ function HelpWindow:toggle(actions)
 
     local content = {}
     for idx, action in ipairs(actions) do
-      local shortcut = utils.replace_leader(self.config, action.shortcut)
+      local shortcut = utils.replace_leader(self.config, self.config.keybindings[action.shortcut])
       local shortcut_padded = shortcut .. string.rep(" ", max_length - #shortcut)
       local line = string.format("%s %s", shortcut_padded, action.help)
       table.insert(content, line)
