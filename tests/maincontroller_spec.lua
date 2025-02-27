@@ -40,8 +40,8 @@ describe("maincontrolelr", function()
     local stg = storage.Storage:new("/foo/boo")
     local pagectrl = pagecontroller.PageController:new(cfg)
     local ctrl = maincontroller.MainController:new(cfg, pagectrl, stg)
-    local shorcuts = ctrl:get_shortcuts()
-    compare_shortcuts(shorcuts, default_shortcuts)
+    local shortcuts = ctrl:get_shortcuts()
+    compare_shortcuts(shortcuts, default_shortcuts)
   end)
 
   it("disable close actions", function()
@@ -57,8 +57,8 @@ describe("maincontrolelr", function()
     local stg = storage.Storage:new("/foo/boo")
     local pagectrl = pagecontroller.PageController:new(cfg)
     local ctrl = maincontroller.MainController:new(cfg, pagectrl, stg)
-    local shorcuts = ctrl:get_shortcuts()
-    compare_shortcuts(shorcuts, {
+    local shortcuts = ctrl:get_shortcuts()
+    compare_shortcuts(shortcuts, {
       "toggle_buffon_window",
       "goto_next_buffer",
       "goto_previous_buffer",
@@ -84,7 +84,31 @@ describe("maincontrolelr", function()
     local stg = storage.Storage:new("/foo/boo")
     local pagectrl = pagecontroller.PageController:new(cfg)
     local ctrl = maincontroller.MainController:new(cfg, pagectrl, stg)
-    local shorcuts = ctrl:get_shortcuts()
-    compare_shortcuts(shorcuts, default_shortcuts)
+    local shortcuts = ctrl:get_shortcuts()
+    compare_shortcuts(shortcuts, default_shortcuts)
+  end)
+
+  it("if num_pages is 1, keybindings related with pagination are disabled", function()
+    local cfg = config.Config:new({ num_pages = 1 })
+    local stg = storage.Storage:new("/foo/boo")
+    local pagectrl = pagecontroller.PageController:new(cfg)
+    local ctrl = maincontroller.MainController:new(cfg, pagectrl, stg)
+    local shortcuts = ctrl:get_shortcuts()
+    compare_shortcuts(shortcuts, {
+      "toggle_buffon_window",
+      "goto_next_buffer",
+      "goto_previous_buffer",
+      "move_buffer_up",
+      "move_buffer_down",
+      "move_buffer_top",
+      "move_buffer_bottom",
+      "close_buffer",
+      "close_buffers_above",
+      "close_buffers_below",
+      "close_all_buffers",
+      "close_others",
+      "switch_previous_used_buffer",
+      "reopen_recent_closed_buffer",
+    })
   end)
 end)

@@ -77,10 +77,13 @@ local Config = {}
 
 ---@param opts any
 function Config:new(opts)
-  local o = vim.tbl_deep_extend("force", default, opts or {})
-  setmetatable(o, self)
+  local cfg = vim.tbl_deep_extend("force", default, opts or {})
+  if cfg.num_pages < 1 or cfg.num_pages > 4 then
+    cfg.num_pages = 1
+  end
+  setmetatable(cfg, self)
   self.__index = self
-  return o
+  return cfg
 end
 
 M.Config = Config

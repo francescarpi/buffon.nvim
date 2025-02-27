@@ -69,13 +69,11 @@ describe("page controller", function()
     local all_good_1, _ = pagectrl:validate_data({
       { { name = "foo", short_path = "foo", cursor = { 1, 1 }, short_name = "foo", filename = "foo" } },
       {},
-      {},
     })
     eq(all_good_1, true)
 
     local all_good_2, _ = pagectrl:validate_data({
       { { name = "foo", short_path = "foo", cursor = { 1, 1 }, short_name = "foo", filename = "foo", id = 1 } },
-      {},
       {},
     })
     eq(all_good_2, true)
@@ -83,13 +81,11 @@ describe("page controller", function()
     local id_is_missing, _ = pagectrl:validate_data({
       { { name = "foo", short_path = "foo", cursor = { 1, 1 }, short_name = "foo", filename = 1 }, {}, {} },
       {},
-      {},
     })
     eq(id_is_missing, false)
 
     local cursor_is_missing, _ = pagectrl:validate_data({
       { { name = "foo", short_path = "foo", short_name = "foo", filename = "foo", id = 1 }, {}, {} },
-      {},
       {},
     })
     eq(cursor_is_missing, false)
@@ -98,6 +94,13 @@ describe("page controller", function()
       { { name = "foo", short_path = "foo", cursor = { 1, 1 }, short_name = "foo", filename = "foo" } },
     })
     eq(invalid_groups_length, false)
+
+    local invalid_pages_number, _ = pagectrl:validate_data({
+      { { name = "foo", short_path = "foo", cursor = { 1, 1 }, short_name = "foo", filename = "foo" } },
+      {},
+      {},
+    })
+    eq(invalid_pages_number, false)
   end)
 
   it("navigate", function()
