@@ -83,6 +83,9 @@ end
 
 ---@param pages table<table<BuffonBuffer>>
 local validate_data = function(config, pages)
+  if config.num_pages ~= #pages then
+    error("number of pages doesn't match")
+  end
   for idx = 1, config.num_pages do
     local buffers = pages[idx]
     for _, buffer in ipairs(buffers) do

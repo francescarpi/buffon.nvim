@@ -40,4 +40,13 @@ describe("config", function()
       },
     })
   end)
+
+  it("if num_pages is invalid, set default to 1", function()
+    local cfg = config.Config:new({ num_pages = 0 })
+    eq(cfg.num_pages, 1)
+
+    -- limot of num_pages is 4
+    local cfg2 = config.Config:new({ num_pages = 5 })
+    eq(cfg2.num_pages, 1)
+  end)
 end)

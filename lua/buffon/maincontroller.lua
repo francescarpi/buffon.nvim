@@ -8,6 +8,29 @@ local utils = require("buffon.utils")
 
 local M = {}
 
+---@type table<string, boolean>
+local configurable_disabled_actions = {
+  move_buffer_up = true,
+  move_buffer_down = true,
+  move_buffer_top = true,
+  move_buffer_bottom = true,
+  switch_previous_used_buffer = true,
+  close_buffer = true,
+  close_buffers_above = true,
+  close_buffers_below = true,
+  close_all_buffers = true,
+  close_others = true,
+  reopen_recent_closed_buffer = true,
+}
+
+---@type table<string, boolean>
+local pagination_actions = {
+  next_page = true,
+  previous_page = true,
+  move_to_next_page = true,
+  move_to_previous_page = true,
+}
+
 --- Sets a keymap with the given parameters.
 ---@param lhs string The left-hand side of the keymap.
 ---@param rhs function | string The right-hand side of the keymap.
@@ -63,21 +86,6 @@ end
 
 ---@return table<BuffonAction>
 function MainController:get_shortcuts()
-  ---@type table<string>
-  local configurable_disabled_actions = {
-    move_buffer_up = true,
-    move_buffer_down = true,
-    move_buffer_top = true,
-    move_buffer_bottom = true,
-    switch_previous_used_buffer = true,
-    close_buffer = true,
-    close_buffers_above = true,
-    close_buffers_below = true,
-    close_all_buffers = true,
-    close_others = true,
-    reopen_recent_closed_buffer = true,
-  }
-
   ---@type table<BuffonAction>
   local shortcuts = {
     {
@@ -177,7 +185,15 @@ function MainController:get_shortcuts()
   ---@type table<BuffonAction>
   local valid_shortcuts = {}
   for _, action in ipairs(shortcuts) do
-    if not configurable_disabled_actions[action.shortcut] or self.config.keybindings[action.shortcut] ~= "false" then
+    local action_can_be_disabled = configurable_disabled_actions[action.shortcut]
+    local action_is_disabled = self.config.keybindings[action.shortcut] == "false"
+    local is_pagination_action = pagination_actions[action.shortcut]
+    local one_page = self.config.num_pages == 1
+
+    if (action_can_be_disabled and action_is_disabled) or (one_page and is_pagination_action) then
+      -- continue
+      log.debug("action ignored", action.shortcut)
+    else
       table.insert(valid_shortcuts, action)
     end
   end
