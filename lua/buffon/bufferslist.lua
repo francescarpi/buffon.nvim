@@ -226,6 +226,7 @@ function BuffersList:rename(name, new_name)
   if idx then
     local buf = buffon_buffer.Buffer:new(self.buffers[idx].id, new_name)
     self.buffers[idx] = buf
+    self:reindex()
   end
 end
 
