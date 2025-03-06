@@ -523,11 +523,13 @@ end
 --------------------------------------------------------------------------------------------
 
 function MainController:event_buffer_will_rename(buf)
+  log.debug("buffer will be renamed", vim.fn.fnamemodify(buf.match, ":t"))
   self.buffer_will_be_renamed = buf.match
 end
 
 function MainController:event_rename_buffer(buf)
   assert(self.buffer_will_be_renamed, "new buffer name is required")
+  log.debug("set new name", vim.fn.fnamemodify(buf.match, ":t"))
   for _, page in ipairs(self.page_controller.pages) do
     page.bufferslist:rename(self.buffer_will_be_renamed, buf.match)
   end
