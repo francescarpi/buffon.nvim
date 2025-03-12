@@ -1,4 +1,5 @@
 local log = require("buffon.log")
+local utils = require("buffon.utils")
 
 local M = {}
 
@@ -114,19 +115,6 @@ function Window:set_highlight(highlights)
   end
 end
 
----@return number
-function Window:get_max_width()
-  local lines = vim.api.nvim_buf_get_lines(self.buf_id, 0, -1, false)
-  local max_width = 0
-  for _, line in ipairs(lines) do
-    local line_length = vim.fn.strdisplaywidth(line)
-    if line_length > max_width then
-      max_width = line_length
-    end
-  end
-  return max_width
-end
-
 function Window:refresh_dimensions()
   if not self.win_id then
     return
@@ -136,7 +124,7 @@ function Window:refresh_dimensions()
   local editor_lines = vim.api.nvim_get_option("lines")
   local lines = vim.api.nvim_buf_get_lines(self.buf_id, 0, -1, false)
   local height = #lines
-  local max_width = self:get_max_width()
+  local max_width = utils.calc_max_length(vim.api.nvim_buf_get_lines(self.buf_id, 0, -1, false))
   local row = 1
   local col = 0
 
