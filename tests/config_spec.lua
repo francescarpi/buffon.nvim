@@ -25,6 +25,7 @@ describe("config", function()
         move_buffer_top = "<s-t>",
         move_buffer_bottom = "<s-b>",
         toggle_buffon_window = "<buffonleader>n",
+        toggle_buffon_window_position = "<buffonleader>nn",
         switch_previous_used_buffer = "<buffonleader><buffonleader>",
         close_buffer = "<buffonleader>d",
         close_buffers_above = "<buffonleader>v",

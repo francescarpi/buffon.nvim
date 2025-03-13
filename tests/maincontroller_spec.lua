@@ -15,6 +15,7 @@ end
 
 local default_shortcuts = {
   "toggle_buffon_window",
+  "toggle_buffon_window_position",
   "goto_next_buffer",
   "goto_previous_buffer",
   "next_page",
@@ -60,6 +61,7 @@ describe("maincontrolelr", function()
     local shortcuts = ctrl:get_shortcuts()
     compare_shortcuts(shortcuts, {
       "toggle_buffon_window",
+      "toggle_buffon_window_position",
       "goto_next_buffer",
       "goto_previous_buffer",
       "next_page",
@@ -96,6 +98,7 @@ describe("maincontrolelr", function()
     local shortcuts = ctrl:get_shortcuts()
     compare_shortcuts(shortcuts, {
       "toggle_buffon_window",
+      "toggle_buffon_window_position",
       "goto_next_buffer",
       "goto_previous_buffer",
       "move_buffer_up",

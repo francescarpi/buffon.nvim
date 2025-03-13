@@ -151,6 +151,14 @@ function Window:refresh_dimensions()
   vim.api.nvim_win_set_config(self.win_id, cfg)
 end
 
+function Window:toggle_position_between_top_right_bottom_right()
+  if self.position == WIN_POSITION.TOP_RIGHT then
+    self.position = WIN_POSITION.BOTTOM_RIGHT
+  else
+    self.position = WIN_POSITION.TOP_RIGHT
+  end
+end
+
 M.Window = Window
 M.WIN_POSITIONS = WIN_POSITION
 
