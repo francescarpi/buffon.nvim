@@ -23,15 +23,15 @@ describe("page", function()
     ---@type BuffonPageRender
     local render = pag:render("/foo/buffer2.lua")
     eq(render.content, {
-      ";q buffer1.lua ",
-      ";w buffer2.lua ",
-      ";e buffer3.lua ",
-      ";r buffer4.lua ",
-      ";y buffer5.lua ",
-      ";u buffer6.lua ",
-      ";i buffer7.lua ",
-      ";o buffer8.lua ",
-      ";p buffer9.lua ",
+      ";q buffer1.lua  ",
+      ";w buffer2.lua  ",
+      ";e buffer3.lua  ",
+      ";r buffer4.lua  ",
+      ";y buffer5.lua  ",
+      ";u buffer6.lua  ",
+      ";i buffer7.lua  ",
+      ";o buffer8.lua  ",
+      ";p buffer9.lua  ",
       "   buffer10.lua ",
     })
 
@@ -87,7 +87,7 @@ describe("page", function()
 
     eq(render.highlights.Label, {
       {
-        col_end = 16,
+        col_end = 18,
         col_start = 3,
         line = 1,
       },
@@ -95,7 +95,7 @@ describe("page", function()
 
     eq(render.highlights.LineNr, {
       {
-        col_end = 16,
+        col_end = 18,
         col_start = 0,
         line = 0,
       },
