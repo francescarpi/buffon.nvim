@@ -19,6 +19,19 @@ M.replace_leader = function(cfg, shortcut)
   return replaced_string
 end
 
+---@param lines table<string>
+---@return number
+M.calc_max_length = function(lines)
+  local max_length = 0
+  for _, line in ipairs(lines) do
+    local line_length = vim.fn.strdisplaywidth(line)
+    if line_length > max_length then
+      max_length = line_length
+    end
+  end
+  return max_length
+end
+
 ---@class BuffonRecentlyClosed
 ---@field filenames? table<string>
 ---@field limit? number

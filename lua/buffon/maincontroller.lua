@@ -94,6 +94,11 @@ function MainController:get_shortcuts()
       method = self.action_show_hide_buffon_window,
     },
     {
+      shortcut = "toggle_buffon_window_position",
+      help = "Toggle window position",
+      method = self.action_toggle_window_position,
+    },
+    {
       shortcut = "goto_next_buffer",
       help = "Next buffer",
       method = self.action_goto_next,
@@ -307,6 +312,10 @@ end
 
 function MainController:action_show_hide_buffon_window()
   self.main_window:toggle()
+end
+
+function MainController:action_toggle_window_position()
+  self.main_window.window:toggle_position_between_top_right_bottom_right()
 end
 
 function MainController:event_add_buffer(buf)
@@ -523,12 +532,19 @@ end
 --------------------------------------------------------------------------------------------
 
 function MainController:event_buffer_will_rename(buf)
+  if buf.match == "" then
+    return
+  end
+
   log.debug("buffer will be renamed", vim.fn.fnamemodify(buf.match, ":t"))
   self.buffer_will_be_renamed = buf.match
 end
 
 function MainController:event_rename_buffer(buf)
-  assert(self.buffer_will_be_renamed, "new buffer name is required")
+  if not self.buffer_will_be_renamed or self.buffer_will_be_renamed == buf.match then
+    return
+  end
+
   log.debug("set new name", vim.fn.fnamemodify(buf.match, ":t"))
   for _, page in ipairs(self.page_controller.pages) do
     page.bufferslist:rename(self.buffer_will_be_renamed, buf.match)

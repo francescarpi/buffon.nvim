@@ -25,6 +25,9 @@ local default = {
     move_buffer_top = "<s-t>",
     move_buffer_bottom = "<s-b>",
     toggle_buffon_window = "<buffonleader>n",
+    --- Toggle window position allows moving the main window position
+    --- between top-right and bottom-right positions
+    toggle_buffon_window_position = "<buffonleader>nn",
     switch_previous_used_buffer = "<buffonleader><buffonleader>",
     close_buffer = "<buffonleader>d",
     close_buffers_above = "<buffonleader>v",
@@ -52,6 +55,7 @@ local default = {
 ---@field move_buffer_top string|false
 ---@field move_buffer_bottom string|false
 ---@field toggle_buffon_window string
+---@field toggle_buffon_window_position string
 ---@field switch_previous_used_buffer string|false
 ---@field close_buffer string|false
 ---@field close_buffers_above string|false

@@ -117,6 +117,7 @@ function Page:render(active_buffer)
     },
   }
   local filenames = self:_get_filenames(self.bufferslist.buffers)
+  local max_length = utils.calc_max_length(filenames)
 
   for idx, buffer in ipairs(self.bufferslist.buffers) do
     -- content
@@ -124,14 +125,21 @@ function Page:render(active_buffer)
     local filename = filenames[idx]
     local modified = self:_get_modified(buffer)
     local icon = self:_get_icon(buffer.filename)
-    local line = string.format("%s %s %s%s", shortcut, filename, icon, modified)
+
+    local diff_file_length = max_length - vim.fn.strdisplaywidth(filename)
+    local spaces = string.rep(" ", diff_file_length + 1)
+    if diff_file_length == 0 then
+      spaces = " "
+    end
+
+    local line = string.format("%s %s%s%s%s", shortcut, filename, spaces, icon, modified)
     table.insert(response.content, line)
 
     -- highlights
     local shortcut_start = 0
     local shortcut_end = shortcut_start + #self.config.leader_key + CHAR
     local filename_start = shortcut_end + WHITESPACE
-    local filename_end = filename_start + #filename + WHITESPACE + ICON
+    local filename_end = filename_start + #filename + #spaces + WHITESPACE + ICON
     local modified_start = filename_end + WHITESPACE
     local modified_end = modified_start + MODIFIED
 
