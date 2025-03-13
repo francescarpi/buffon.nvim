@@ -94,6 +94,11 @@ function MainController:get_shortcuts()
       method = self.action_show_hide_buffon_window,
     },
     {
+      shortcut = "toggle_buffon_window_position",
+      help = "Toggle window position",
+      method = self.action_toggle_window_position,
+    },
+    {
       shortcut = "goto_next_buffer",
       help = "Next buffer",
       method = self.action_goto_next,
@@ -307,6 +312,10 @@ end
 
 function MainController:action_show_hide_buffon_window()
   self.main_window:toggle()
+end
+
+function MainController:action_toggle_window_position()
+  self.main_window.window:toggle_position_between_top_right_bottom_right()
 end
 
 function MainController:event_add_buffer(buf)
