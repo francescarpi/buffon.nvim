@@ -224,6 +224,7 @@ function MainController:get_events()
     },
     {
       vimevent = "BufEnter",
+      method = self.event_buf_enter,
       require_match = true,
     },
     {
@@ -348,6 +349,17 @@ end
 function MainController:event_before_buf_leave(buf)
   self.page_controller:get_active_page().bufferslist:update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
   self.index_buffer_active = self.page_controller:get_active_page().bufferslist:get_index(buf.match)
+
+  -- Save the current view (scroll position, cursor, etc) of the window
+  vim.b.view = vim.fn.winsaveview()
+end
+
+function MainController:event_buf_enter()
+  -- Restore the previously saved view (scroll position, cursor, etc) if it exists
+  if vim.b.view then
+    vim.fn.winrestview(vim.b.view)
+    vim.b.view = nil
+  end
 end
 
 ---@param index number
@@ -372,8 +384,6 @@ function MainController:action_open_or_activate_buffer(buf)
     if not set_cursor_success then
       vim.api.nvim_win_set_cursor(0, { 1, 1 })
     end
-
-    vim.cmd("normal! zz")
   end
 end
 
