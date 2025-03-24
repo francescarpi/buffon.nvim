@@ -159,6 +159,8 @@ The keybindings shown in the following list can be deactivated. The reason for t
 
 ```lua
 {
+  goto_next_buffer,
+  goto_previous_buffer,
   move_buffer_up,
   move_buffer_down,
   move_buffer_top,

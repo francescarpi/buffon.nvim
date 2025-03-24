@@ -10,6 +10,8 @@ local M = {}
 
 ---@type table<string, boolean>
 local configurable_disabled_actions = {
+  goto_next_buffer = true,
+  goto_previous_buffer = true,
   move_buffer_up = true,
   move_buffer_down = true,
   move_buffer_top = true,
