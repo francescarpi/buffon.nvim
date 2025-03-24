@@ -80,7 +80,7 @@ describe("maincontrolelr", function()
   it("try disable unauthorized keybinding", function()
     local cfg = config.Config:new({
       keybindings = {
-        goto_next_buffer = "false",
+        toggle_buffon_window = "false",
       },
     })
     local stg = storage.Storage:new("/foo/boo")

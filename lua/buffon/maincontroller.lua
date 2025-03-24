@@ -10,6 +10,8 @@ local M = {}
 
 ---@type table<string, boolean>
 local configurable_disabled_actions = {
+  goto_next_buffer = true,
+  goto_previous_buffer = true,
   move_buffer_up = true,
   move_buffer_down = true,
   move_buffer_top = true,
@@ -224,6 +226,7 @@ function MainController:get_events()
     },
     {
       vimevent = "BufEnter",
+      method = self.event_buf_enter,
       require_match = true,
     },
     {
@@ -248,6 +251,10 @@ function MainController:get_events()
     {
       vimevent = "BufFilePost",
       method = self.event_rename_buffer,
+    },
+    {
+      vimevent = "WinClosed",
+      method = self.event_win_closed,
     },
   }
 end
@@ -348,6 +355,17 @@ end
 function MainController:event_before_buf_leave(buf)
   self.page_controller:get_active_page().bufferslist:update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
   self.index_buffer_active = self.page_controller:get_active_page().bufferslist:get_index(buf.match)
+
+  -- Save the current view (scroll position, cursor, etc) of the window
+  vim.b.view = vim.fn.winsaveview()
+end
+
+function MainController:event_buf_enter()
+  -- Restore the previously saved view (scroll position, cursor, etc) if it exists
+  if vim.b.view then
+    vim.fn.winrestview(vim.b.view)
+    vim.b.view = nil
+  end
 end
 
 ---@param index number
@@ -372,8 +390,6 @@ function MainController:action_open_or_activate_buffer(buf)
     if not set_cursor_success then
       vim.api.nvim_win_set_cursor(0, { 1, 1 })
     end
-
-    vim.cmd("normal! zz")
   end
 end
 
@@ -568,6 +584,13 @@ end
 
 function MainController:action_show_help()
   self.help_window:toggle(self:get_shortcuts())
+end
+
+function MainController:event_win_closed(win)
+  if tonumber(win.match) == self.main_window.window.win_id then
+    log.debug("someone closed the buffon window")
+    self.main_window.window:clear_ids()
+  end
 end
 
 M.MainController = MainController
