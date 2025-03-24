@@ -250,6 +250,10 @@ function MainController:get_events()
       vimevent = "BufFilePost",
       method = self.event_rename_buffer,
     },
+    {
+      vimevent = "WinClosed",
+      method = self.event_win_closed,
+    },
   }
 end
 
@@ -578,6 +582,13 @@ end
 
 function MainController:action_show_help()
   self.help_window:toggle(self:get_shortcuts())
+end
+
+function MainController:event_win_closed(win)
+  if tonumber(win.match) == self.main_window.window.win_id then
+    log.debug("someone closed the buffon window")
+    self.main_window.window:clear_ids()
+  end
 end
 
 M.MainController = MainController

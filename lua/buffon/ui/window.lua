@@ -29,7 +29,7 @@ function Window:new(title, position)
   local o = {
     title = title,
     win_id = nil,
-    buf_id = vim.api.nvim_create_buf(false, true),
+    buf_id = nil,
     position = position,
   }
   setmetatable(o, self)
@@ -41,6 +41,7 @@ function Window:show()
   if self.win_id then
     return
   end
+  self.buf_id = vim.api.nvim_create_buf(false, true)
   self.win_id = vim.api.nvim_open_win(self.buf_id, false, {
     title = self.title,
     title_pos = "right",
@@ -64,11 +65,21 @@ function Window:is_open()
 end
 
 function Window:hide()
+  if self.win_id and not vim.api.nvim_win_is_valid(self.win_id) then
+    self:clear_ids()
+  end
+
   if not self.win_id then
     return
   end
-  vim.api.nvim_win_close(self.win_id, true)
+
+  vim.api.nvim_win_close(self.win_id, false)
+  self:clear_ids()
+end
+
+function Window:clear_ids()
   self.win_id = nil
+  self.buf_id = nil
 end
 
 function Window:toggle()
@@ -116,7 +127,7 @@ function Window:set_highlight(highlights)
 end
 
 function Window:refresh_dimensions()
-  if not self.win_id then
+  if not self.win_id or not vim.api.nvim_win_is_valid(self.win_id) then
     return
   end
 
