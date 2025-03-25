@@ -261,7 +261,9 @@ end
 
 function MainController:register_shortcuts()
   for _, action in ipairs(self:get_shortcuts()) do
-    set_keymap(utils.replace_leader(self.config, self.config.keybindings[action.shortcut]), function()
+    local shortcut = utils.replace_leader(self.config, self.config.keybindings[action.shortcut])
+    log.debug("registering shortcut", shortcut, "for", action.shortcut)
+    set_keymap(shortcut, function()
       self:dispatch(action)
     end, action.help)
   end
