@@ -383,7 +383,18 @@ function MainController:action_open_or_activate_buffer(buf)
   log.debug("open", buf.filename, "with id", buf.id)
 
   if buf.id then
-    pcall(vim.api.nvim_set_current_buf, buf.id)
+    -- If the buffer is in a different window than the active one, we will activate that window.
+    -- This is useful for split windows.
+    -- For example: We have the screen split with buffer A on the left and buffer B on the right.
+    -- If we are on the left (A) and want to switch to buffer B, instead of opening B on the left,
+    -- the right window will be activated.
+    local wins_id = vim.fn.win_findbuf(buf.id)
+    if wins_id and wins_id[1] then
+      log.debug("buffer is in another window", wins_id[1])
+      vim.api.nvim_set_current_win(wins_id[1])
+    else
+      pcall(vim.api.nvim_set_current_buf, buf.id)
+    end
   else
     vim.api.nvim_command("edit " .. buf.name)
     buf.id = vim.api.nvim_get_current_buf()
