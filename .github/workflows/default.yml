@@ -14,7 +14,7 @@ jobs:
 
       - name: Install Neovim ${{ matrix.neovim_version }}
         run: |
-         curl -LO https://github.com/neovim/neovim/releases/download/v${{ matrix.neovim_version }}/nvim-linux-x86_64.appimage
+          curl -LO https://github.com/neovim/neovim/releases/download/v${{ matrix.neovim_version }}/nvim-linux-x86_64.appimage
           chmod u+x nvim-linux-x86_64.appimage
           ./nvim-linux-x86_64.appimage --appimage-extract
           sudo mv squashfs-root / && sudo ln -s /squashfs-root/AppRun /usr/bin/nvim
