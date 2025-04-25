@@ -15,6 +15,12 @@ describe("config", function()
           "gitrebase",
         },
       },
+      theme = {
+        unloaded_buffer = "#404040",
+        shortcut = "#CC7832",
+        active = "#51afef",
+        unsaved_indicator = "#f70067",
+      },
       leader_key = ";",
       mapping_chars = "qweryuiop",
       keybindings = {

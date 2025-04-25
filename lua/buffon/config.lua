@@ -15,6 +15,12 @@ local default = {
       "gitrebase",
     },
   },
+  theme = {
+    unloaded_buffer = "#404040",
+    shortcut = "#CC7832",
+    active = "#51afef",
+    unsaved_indicator = "#f70067",
+  },
   leader_key = ";",
   mapping_chars = "qweryuiop",
   keybindings = {
@@ -69,6 +75,12 @@ local default = {
 ---@field move_to_previous_page string
 ---@field move_to_next_page string
 
+---@class BuffonTheme
+---@field unloaded_buffer string
+---@field shortcut string
+---@field active string
+---@field unsaved_indicator string
+
 ---@class BuffonConfig
 ---@field cyclic_navigation boolean -- If true, navigation between buffers will wrap around (cyclic navigation).
 ---@field num_pages number
@@ -87,7 +99,17 @@ function Config:new(opts)
   end
   setmetatable(cfg, self)
   self.__index = self
+
+  cfg:load_theme()
+
   return cfg
+end
+
+function Config:load_theme()
+  vim.api.nvim_set_hl(0, "BuffonUnloadedBuffer", { fg = self.theme.unloaded_buffer })
+  vim.api.nvim_set_hl(0, "BuffonShortcut", { fg = self.theme.shortcut })
+  vim.api.nvim_set_hl(0, "BuffonLineActive", { fg = self.theme.active })
+  vim.api.nvim_set_hl(0, "BuffonUnsavedIndicator", { fg = self.theme.unsaved_indicator })
 end
 
 M.Config = Config

@@ -35,7 +35,7 @@ describe("page", function()
       "   buffer10.lua ",
     })
 
-    eq(render.highlights.Constant, {
+    eq(render.highlights.BuffonShortcut, {
       {
         col_end = 2,
         col_start = 0,
@@ -83,9 +83,9 @@ describe("page", function()
       },
     })
 
-    eq(render.highlights.ErrorMsg, {})
+    eq(render.highlights.BuffonUnsavedIndicator, {})
 
-    eq(render.highlights.Label, {
+    eq(render.highlights.BuffonLineActive, {
       {
         col_end = 18,
         col_start = 3,
@@ -93,7 +93,7 @@ describe("page", function()
       },
     })
 
-    eq(render.highlights.LineNr, {
+    eq(render.highlights.BuffonUnloadedBuffer, {
       {
         col_end = 18,
         col_start = 0,
