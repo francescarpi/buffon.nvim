@@ -8,10 +8,10 @@ local M = {}
 
 ---@enum theme
 local THEME = {
-  UnloadedBuffers = "LineNr",
-  Shortcut = "Constant",
-  LineActive = "Label",
-  ModifiedIndicator = "ErrorMsg",
+  UnloadedBuffers = "BuffonUnloadedBuffer",
+  Shortcut = "BuffonShortcut",
+  LineActive = "BuffonLineActive",
+  ModifiedIndicator = "BuffonUnsavedIndicator",
 }
 
 local WHITESPACE = 1
