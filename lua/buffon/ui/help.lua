@@ -29,7 +29,7 @@ function HelpWindow:toggle(actions)
   end
 
   local max_length = 0
-  local highlight = { Constant = {} }
+  local highlight = { BuffonShortcut = {} }
 
   for _, action in ipairs(actions) do
     local action_len = #utils.replace_leader(self.config, self.config.keybindings[action.shortcut])
@@ -44,7 +44,7 @@ function HelpWindow:toggle(actions)
     local shortcut_padded = shortcut .. string.rep(" ", max_length - #shortcut)
     local line = string.format("%s %s", shortcut_padded, action.help)
     table.insert(content, line)
-    table.insert(highlight.Constant, { line = idx - 1, col_start = 0, col_end = max_length })
+    table.insert(highlight.BuffonShortcut, { line = idx - 1, col_start = 0, col_end = max_length })
   end
 
   self.window:show()
