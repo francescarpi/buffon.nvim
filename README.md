@@ -195,6 +195,35 @@ To do this, you only have to assign the string "false" in the configuration. For
 }
 ```
 
+### Theming
+
+The interface colors can be customized to your liking. There are four elements that can be personalized:
+
+1. Unloaded buffers (BuffonUnloadedBuffer)
+2. Shortcut (BuffonShortcut)
+3. Active buffers (BuffonActive)
+4. Modified buffer indicator (BuffonUnsavedIndicator)
+
+<div align="left">
+    <img alt="buffon.nvim highlight groups" height="100" src="./imgs/hlgroups.png" />
+</div>
+
+
+> [!NOTE]
+> The names of the Neovim highlight groups are indicated in parentheses.
+
+There are two ways to customize the colors:
+
+1) Use Neovim's API to change the colors. For example:
+
+```lua
+vim.api.nvim_set_hl(0, "BuffonUnloadedBuffer", { fg = "#404040" })
+```
+
+2) Use Buffon's own configuration. In the `theme` node, you can specify the different colors for each group.
+
+> [!NOTE]
+> If a highlight group exists in Neovim, it will take precendence over the one specified in Buffon's configuration. Therefore, if you want to change the color of a highlight group, you must first remove it with `vim.api.nvim_set_hl(0, "BuffonUnloadedBuffer", { fg = nil })` and then specify the new color. This is because if a colorscheme is installed that has a defined highlight group, it will take precedence over the one specified in Buffon's configuration.
 
 ## Screenshots
 
