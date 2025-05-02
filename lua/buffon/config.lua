@@ -105,11 +105,21 @@ function Config:new(opts)
   return cfg
 end
 
+---@param name string
+---@param color string
+local set_hl = function(name, color)
+  local ns = vim.api.nvim_get_hl_ns({})
+  local hl = vim.api.nvim_get_hl(ns, { name = name })
+  if hl.fg == nil then
+    vim.api.nvim_set_hl(0, name, { fg = color })
+  end
+end
+
 function Config:load_theme()
-  vim.api.nvim_set_hl(0, "BuffonUnloadedBuffer", { fg = self.theme.unloaded_buffer })
-  vim.api.nvim_set_hl(0, "BuffonShortcut", { fg = self.theme.shortcut })
-  vim.api.nvim_set_hl(0, "BuffonLineActive", { fg = self.theme.active })
-  vim.api.nvim_set_hl(0, "BuffonUnsavedIndicator", { fg = self.theme.unsaved_indicator })
+  set_hl("BuffonUnloadedBuffer", self.theme.unloaded_buffer)
+  set_hl("BuffonShortcut", self.theme.shortcut)
+  set_hl("BuffonLineActive", self.theme.active)
+  set_hl("BuffonUnsavedIndicator", self.theme.unsaved_indicator)
 end
 
 M.Config = Config
