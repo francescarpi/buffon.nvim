@@ -65,6 +65,7 @@ Based on this, I created *Buffon* with the best of both plugins, perfectly adapt
 return {
   {
     "francescarpi/buffon.nvim",
+    branch = "main",
     ---@type BuffonConfig
     opts = {
       --- Add your config here
@@ -85,6 +86,7 @@ Below you can see the default configuration, which you can adjust to your liking
 return {
   {
     "francescarpi/buffon.nvim",
+    branch = "main",
     ---@type BuffonConfig
     opts = {
       cyclic_navigation = true,
