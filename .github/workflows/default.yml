@@ -6,13 +6,19 @@ jobs:
   tests:
     name: tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        neovim_version: [0.10.4, 0.11.0]
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install dependencies
+      - name: Install Neovim ${{ matrix.neovim_version }}
         run: |
-          sudo apt-get update
-          sudo apt-get install neovim
+         curl -LO https://github.com/neovim/neovim/releases/download/v${{ matrix.neovim_version }}/nvim-linux-x86_64.appimage
+          chmod u+x nvim-linux-x86_64.appimage
+          ./nvim-linux-x86_64.appimage --appimage-extract
+          sudo mv squashfs-root / && sudo ln -s /squashfs-root/AppRun /usr/bin/nvim
+          nvim --version 
 
       - name: Check out required packages
         run: |
