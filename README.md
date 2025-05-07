@@ -37,7 +37,7 @@ Based on this, I created *Buffon* with the best of both plugins, perfectly adapt
 ## What Buffon offers
 
 * Simple and minimalist interface
-* The ability to link buffers to colors
+* Add colors to buffers
 * Always visible interface
 * Data persistence, storing the cursor position
 * Works with **all** open buffers
@@ -79,18 +79,6 @@ return {
   },
 }
 ```
-
-> [!TIP]
-> Buffon has a hl-group called `BuffonBufferColor` which is the color of the keymap which you used to get to that buffer.
-> For example, I go to a buffer with <buffonleader>b the hl-group will be the color of that key, so in this kase `[b]lue`.
-> We highly recommend you to use the hl-group provided by buffon.nvim for certain parts of the ui so that remembering the buffer becomes easier.
-> Here is an example of how you could do that:
->
-> ```lua
-> vim.o.winbar = "%#BuffonBufferColor# "
-> ```
->
-> This will display a top bar with the color of the buffer.
 
 ## Default Configuration
 

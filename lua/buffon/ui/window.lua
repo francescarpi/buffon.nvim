@@ -155,8 +155,8 @@ function Window:refresh_dimensions()
     col = editor_columns - (1 + max_width + 1)
   end
 
-	row = row + self.padding.y
-	col = col + self.padding.x
+  row = row + self.padding.y
+  col = col + self.padding.x
 
   if max_width == 0 then
     max_width = 20

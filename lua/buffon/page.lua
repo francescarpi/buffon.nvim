@@ -117,7 +117,7 @@ function Page:render(active_buffer)
   end
 
   active_buffer = active_buffer or utils.get_buffer_name()
-	active_buffer = active_buffer:gsub("\\", "/") -- very important for windows
+  active_buffer = active_buffer:gsub("\\", "/") -- very important for windows
   local response = {
     content = {},
     highlights = {
