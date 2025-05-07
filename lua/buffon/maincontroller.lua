@@ -38,9 +38,9 @@ local pagination_actions = {
 ---@param rhs function | string The right-hand side of the keymap.
 ---@param help string The description of the keymap.
 local set_keymap = function(lhs, rhs, help)
-	if lhs == "" then
-		return
-	end
+  if lhs == "" then
+    return
+  end
   vim.keymap.set("n", lhs, rhs, { silent = true, desc = "Buffon: " .. help })
 end
 
@@ -347,7 +347,7 @@ function MainController:event_buffon_window_needs_open()
   local should_open = self.config.open.by_default
   local buffer_ignored = vim.tbl_contains(self.config.open.ignore_ft, vim.bo.filetype)
 
-	self.main_window.window.position = self.config.open.position
+  self.main_window.window.position = self.config.open.position
   if should_open and not buffer_ignored then
     self.main_window:open()
   end
@@ -367,12 +367,13 @@ function MainController:event_before_buf_leave(buf)
 end
 
 function MainController:event_buf_enter(buf)
-	if self.config.colors ~= false then
-		local label = self.page_controller:get_active_page():_get_label(buf.buf - 1)
-		local fallback = vim.api.nvim_get_hl(0, { name = self.config.colors.fallback }).bg
-		local color = self.config.colors[label] or fallback
-		vim.api.nvim_set_hl(0, 'BuffonBufferColor', { bg = color, force = true })
-	end
+  if self.config.colors ~= false then
+    local label = self.page_controller:get_active_page():_get_label(buf.buf - 1)
+    local fallback = vim.api.nvim_get_hl(0, { name = self.config.colors.fallback }).bg
+    local color = self.config.colors[label] or fallback
+    vim.api.nvim_set_hl(0, 'BuffonBufferColor' .. buf.buf, { bg = color })
+    vim.wo.winbar = "%#BuffonBufferColor" .. buf.buf .. "# "
+  end
   -- Restore the previously saved view (scroll position, cursor, etc) if it exists
   if vim.b.view then
     vim.fn.winrestview(vim.b.view)
