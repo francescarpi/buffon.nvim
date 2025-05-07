@@ -137,7 +137,7 @@ Take a look at the default shortcuts for navigating between buffers, changing th
     fallback = "normal", -- hl group to use as fallback
     a = "#00FFFF", -- aqua
     b = "#0000FF", -- blue
-    c = "#00FFFF", -- cyan
+    c = "#6495ED", -- cornflowerblue
     d = "#A9A9A9", -- darkgray
     e = "#C2B280", -- ecru
     f = "#FF00FF", -- fuchsia
@@ -146,7 +146,7 @@ Take a look at the default shortcuts for navigating between buffers, changing th
     i = "#4B0082", -- indigo
     k = "#F0E68C", -- khaki
     l = "#00FF00", -- lime
-    m = "#FF00FF", -- magenta
+    m = "#800000", -- maroon
     n = "#000080", -- navy
     o = "#FFA500", -- orange
     p = "#800080", -- purple

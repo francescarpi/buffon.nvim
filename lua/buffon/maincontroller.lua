@@ -230,7 +230,7 @@ function MainController:get_events()
     {
       vimevent = "BufEnter",
       method = self.event_buf_enter,
-      require_match = true,
+      method_post_refresh = self.event_update_winbar,
     },
     {
       vimevent = "VimResized",
@@ -283,6 +283,19 @@ function MainController:register_shortcuts()
   end, "Show the help window")
 
   log.debug("shortcuts registered")
+end
+
+function MainController:register_colors()
+  if self.config.colors ~= false then
+    local fallback = vim.api.nvim_get_hl(0, { name = self.config.colors.fallback }).bg
+    for idx = 1, #self.config.mapping_chars do
+      local char = self.config.mapping_chars:sub(idx, idx)
+      local color = self.config.colors[char] or fallback
+      vim.api.nvim_set_hl(0, 'BuffonBufferColor' .. idx, { bg = color })
+    end
+  end
+
+  log.debug("colors registered")
 end
 
 function MainController:register_events()
@@ -366,18 +379,28 @@ function MainController:event_before_buf_leave(buf)
   vim.b.view = vim.fn.winsaveview()
 end
 
-function MainController:event_buf_enter(buf)
-  if self.config.colors ~= false then
-    local label = self.page_controller:get_active_page():_get_label(buf.buf - 1)
-    local fallback = vim.api.nvim_get_hl(0, { name = self.config.colors.fallback }).bg
-    local color = self.config.colors[label] or fallback
-    vim.api.nvim_set_hl(0, 'BuffonBufferColor' .. buf.buf, { bg = color })
-    vim.wo.winbar = "%#BuffonBufferColor" .. buf.buf .. "# "
-  end
+function MainController:event_buf_enter()
   -- Restore the previously saved view (scroll position, cursor, etc) if it exists
   if vim.b.view then
     vim.fn.winrestview(vim.b.view)
     vim.b.view = nil
+  end
+end
+
+function MainController:event_update_winbar(buf)
+  if self.config.colors ~= false then
+    vim.schedule(function ()
+      local buf_idx
+      for key, value in ipairs(self.page_controller:get_active_page().bufferslist.buffers) do
+        if value.id == buf.buf then
+          buf_idx = key
+          break
+        end
+      end
+      if buf_idx ~= nil then
+        vim.wo.winbar = "%#BuffonBufferColor" .. buf_idx .. "# "
+      end
+    end)
   end
 end
 
