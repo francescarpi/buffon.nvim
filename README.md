@@ -37,6 +37,7 @@ Based on this, I created *Buffon* with the best of both plugins, perfectly adapt
 ## What Buffon offers
 
 * Simple and minimalist interface
+* The ability to link buffers to colors
 * Always visible interface
 * Data persistence, storing the cursor position
 * Works with **all** open buffers
@@ -65,6 +66,7 @@ Based on this, I created *Buffon* with the best of both plugins, perfectly adapt
 return {
   {
     "francescarpi/buffon.nvim",
+    lazy = false, -- very important! otherwise the plugin breaks
     branch = "main",
     ---@type BuffonConfig
     opts = {
@@ -77,6 +79,18 @@ return {
   },
 }
 ```
+
+> [!TIP]
+> Buffon has a hl-group called `BuffonBufferColor` which is the color of the keymap which you used to get to that buffer.
+> For example, I go to a buffer with <buffonleader>b the hl-group will be the color of that key, so in this kase `[b]lue`.
+> We highly recommend you to use the hl-group provided by buffon.nvim for certain parts of the ui so that remembering the buffer becomes easier.
+> Here is an example of how you could do that:
+>
+> ```lua
+> vim.o.winbar = "%#BuffonBufferColor# "
+> ```
+>
+> This will display a top bar with the color of the buffer.
 
 ## Default Configuration
 
@@ -115,6 +129,9 @@ Take a look at the default shortcuts for navigating between buffers, changing th
   num_pages = 2,
   open = {
     by_default = true,
+    position = "top_right",
+    padding = { x = 0, y = 0 },
+    event = "BufReadPost", -- event to open the window
     ignore_ft = {
       "gitcommit",
       "gitrebase",
@@ -125,6 +142,32 @@ Take a look at the default shortcuts for navigating between buffers, changing th
     shortcut = "#CC7832",
     active = "#51afef",
     unsaved_indicator = "#f70067",
+  },
+  --- colors to use for each mapping
+  --- set to false to disable
+  colors = {
+    fallback = "normal", -- hl group to use as fallback
+    a = "#00FFFF", -- aqua
+    b = "#0000FF", -- blue
+    c = "#00FFFF", -- cyan
+    d = "#A9A9A9", -- darkgray
+    e = "#C2B280", -- ecru
+    f = "#FF00FF", -- fuchsia
+    g = "#008000", -- green
+    h = "#FF69B4", -- hotpink
+    i = "#4B0082", -- indigo
+    k = "#F0E68C", -- khaki
+    l = "#00FF00", -- lime
+    m = "#FF00FF", -- magenta
+    n = "#000080", -- navy
+    o = "#FFA500", -- orange
+    p = "#800080", -- purple
+    r = "#FF0000", -- red
+    s = "#C0C0C0", -- silver
+    t = "#008080", -- teal
+    v = "#EE82EE", -- violet
+    w = "#FFFFFF", -- white
+    y = "#FFFF00", -- yellow
   },
   leader_key = ";",
   mapping_chars = "qweryuiop",
@@ -183,15 +226,16 @@ The keybindings shown in the following list can be deactivated. The reason for t
 }
 ```
 
-To do this, you only have to assign the string "false" in the configuration. For example:
+To do this, you can either assign "false" or "". For example:
 
 
 ```lua
 {
   opts = {
     keybindings = {
-      close_buffer = "false"
-      close_others = "false"
+      close_buffer = "false",
+      close_others = "false",
+      close_buffers_below = "",
     },
   },
 }

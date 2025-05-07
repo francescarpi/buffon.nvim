@@ -10,6 +10,9 @@ local default = {
   num_pages = 2,
   open = {
     by_default = true,
+    position = "top_right",
+    padding = { x = 0, y = 0 },
+    event = "BufReadPost", -- event to open the window
     ignore_ft = {
       "gitcommit",
       "gitrebase",
@@ -20,6 +23,32 @@ local default = {
     shortcut = "#CC7832",
     active = "#51afef",
     unsaved_indicator = "#f70067",
+  },
+  --- colors to use for each mapping
+  --- set to false to disable
+  colors = {
+    fallback = "normal", -- hl group to use as fallback
+    a = "#00FFFF", -- aqua
+    b = "#0000FF", -- blue
+    c = "#00FFFF", -- cyan
+    d = "#A9A9A9", -- darkgray
+    e = "#C2B280", -- ecru
+    f = "#FF00FF", -- fuchsia
+    g = "#008000", -- green
+    h = "#FF69B4", -- hotpink
+    i = "#4B0082", -- indigo
+    k = "#F0E68C", -- khaki
+    l = "#00FF00", -- lime
+    m = "#FF00FF", -- magenta
+    n = "#000080", -- navy
+    o = "#FFA500", -- orange
+    p = "#800080", -- purple
+    r = "#FF0000", -- red
+    s = "#C0C0C0", -- silver
+    t = "#008080", -- teal
+    v = "#EE82EE", -- violet
+    w = "#FFFFFF", -- white
+    y = "#FFFF00", -- yellow
   },
   leader_key = ";",
   mapping_chars = "qweryuiop",
@@ -49,8 +78,15 @@ local default = {
   },
 }
 
+---@class BuffonColor
+---@field [string] string
+---@field fallback string
+
 ---@class BuffonConfigOpen
 ---@field by_default boolean
+---@field position "top_right" | "bottom_right"
+---@field padding Vector2
+---@field event string
 ---@field ignore_ft table<string>
 
 ---@class BuffonConfigKeyBinding
@@ -86,6 +122,7 @@ local default = {
 ---@field num_pages number
 ---@field new_buffer_position "start" | "end" | "after"
 ---@field open BuffonConfigOpen
+---@field colors table<BuffonColor> | false
 ---@field keybindings BuffonConfigKeyBinding
 ---@field leader_key string -- Leader key used as a prefix for buffer mappings (';' creates mappings ';q', ';w', etc.)
 ---@field mapping_chars string -- Each character maps to a buffer ("qwer" maps 'q' to buffer 1, 'w' to buffer 2, etc.)

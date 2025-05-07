@@ -48,6 +48,16 @@ function Page:_get_shortcut(index)
   return shortcut
 end
 
+---@param index number
+---@return string
+function Page:_get_label(index)
+  local shortcut = self.config.mapping_chars:sub(index, index)
+  if shortcut == "" then
+    shortcut = string.rep(" ", #self.config.leader_key + 1)
+  end
+  return shortcut
+end
+
 ---@param buffer BuffonBuffer
 ---@return string
 function Page:_get_modified(buffer)
@@ -107,6 +117,7 @@ function Page:render(active_buffer)
   end
 
   active_buffer = active_buffer or utils.get_buffer_name()
+	active_buffer = active_buffer:gsub("\\", "/") -- very important for windows
   local response = {
     content = {},
     highlights = {

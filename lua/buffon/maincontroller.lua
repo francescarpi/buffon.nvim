@@ -38,6 +38,9 @@ local pagination_actions = {
 ---@param rhs function | string The right-hand side of the keymap.
 ---@param help string The description of the keymap.
 local set_keymap = function(lhs, rhs, help)
+	if lhs == "" then
+		return
+	end
   vim.keymap.set("n", lhs, rhs, { silent = true, desc = "Buffon: " .. help })
 end
 
@@ -211,7 +214,11 @@ end
 function MainController:get_events()
   return {
     {
-      vimevent = "BufAdd",
+      vimevent = self.config.open.event,
+      method = self.event_buffon_window_needs_open,
+    },
+    {
+      vimevent = "BufAdd", --
       method = self.event_add_buffer,
       require_match = true,
     },
@@ -219,10 +226,6 @@ function MainController:get_events()
       vimevent = "BufDelete",
       method = self.event_remove_buffer,
       require_match = true,
-    },
-    {
-      vimevent = "VimEnter",
-      method = self.event_buffon_window_needs_open,
     },
     {
       vimevent = "BufEnter",
@@ -237,7 +240,7 @@ function MainController:get_events()
       method = self.event_before_exit,
     },
     {
-      vimevent = "BufLeave",
+      vimevent = "BufLeave", --
       method = self.event_before_buf_leave,
       require_match = true,
     },
@@ -344,6 +347,7 @@ function MainController:event_buffon_window_needs_open()
   local should_open = self.config.open.by_default
   local buffer_ignored = vim.tbl_contains(self.config.open.ignore_ft, vim.bo.filetype)
 
+	self.main_window.window.position = self.config.open.position
   if should_open and not buffer_ignored then
     self.main_window:open()
   end
@@ -362,7 +366,13 @@ function MainController:event_before_buf_leave(buf)
   vim.b.view = vim.fn.winsaveview()
 end
 
-function MainController:event_buf_enter()
+function MainController:event_buf_enter(buf)
+	if self.config.colors ~= false then
+		local label = self.page_controller:get_active_page():_get_label(buf.buf - 1)
+		local fallback = vim.api.nvim_get_hl(0, { name = self.config.colors.fallback }).bg
+		local color = self.config.colors[label] or fallback
+		vim.api.nvim_set_hl(0, 'BuffonBufferColor', { bg = color, force = true })
+	end
   -- Restore the previously saved view (scroll position, cursor, etc) if it exists
   if vim.b.view then
     vim.fn.winrestview(vim.b.view)

@@ -5,32 +5,40 @@ local M = {}
 
 ---@enum win_position
 local WIN_POSITION = {
-  TOP_RIGHT = 0,
-  BOTTOM_RIGHT = 1,
+  TOP_RIGHT = "top_right",
+  BOTTOM_RIGHT = "bottom_right",
 }
+
+---@class Vector2
+---@field x integer
+---@field y integer
 
 ---@class BuffonWindow
 ---@field title string
 ---@field win_id number | nil
 ---@field buf_id number | nil
 ---@field position win_position
+---@field padding Vector2
 local Window = {
   title = "",
   footer = "",
   win_id = nil,
   buf_id = nil,
   position = WIN_POSITION.TOP_RIGHT,
+  padding = { x = 0, y = 0 },
 }
 
 ---@param title string
 ---@param position win_position
+---@param padding Vector2
 ---@return BuffonWindow
-function Window:new(title, position)
+function Window:new(title, position, padding)
   local o = {
     title = title,
     win_id = nil,
     buf_id = nil,
     position = position,
+    padding = padding,
   }
   setmetatable(o, self)
   self.__index = self
@@ -146,6 +154,9 @@ function Window:refresh_dimensions()
     row = editor_lines - (1 + #lines + 1) - 2
     col = editor_columns - (1 + max_width + 1)
   end
+
+	row = row + self.padding.y
+	col = col + self.padding.x
 
   if max_width == 0 then
     max_width = 20
