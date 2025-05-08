@@ -26,7 +26,7 @@ end
 --- Converts a string into a URL-friendly "slug" by replacing spaces and non-alphanumeric characters with hyphens.
 ---@param str string The original string to be slugified.
 ---@return string The slugified string.
-local slugify = function(str)
+local function slugify(str)
   local replacement = "-"
   local result = ""
   -- loop through each word or number
@@ -60,8 +60,13 @@ function Storage:filename_path()
   return string.format("%s/%s", self.data_path, self:filename())
 end
 
+---@param workspace string
+function Storage:change_workspace(workspace)
+	self.workspace = workspace
+end
+
 ---@param data_path string
-local initialize_data_path = function(data_path)
+local function initialize_data_path(data_path)
   local path = Path:new(data_path)
   if not path:exists() then
     path:mkdir()
@@ -88,7 +93,7 @@ end
 --- Loads the list of buffers from a JSON file and returns them.
 ---@param filename_path string
 --- @return table<table<BuffonBuffer>> The list of buffers.
-local load_data = function(filename_path)
+local function load_data(filename_path)
   local path = Path:new(filename_path)
   if not path:exists() then
     return {}
