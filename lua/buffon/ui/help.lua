@@ -12,7 +12,7 @@ local HelpWindow = {}
 function HelpWindow:new(cfg)
   local o = {
     config = cfg,
-    window = window.Window:new(" Buffon Help ", window.WIN_POSITIONS.BOTTOM_RIGHT),
+    window = window.Window:new(" Buffon Help ", window.WIN_POSITIONS.BOTTOM_RIGHT, cfg.open.offset),
   }
 
   setmetatable(o, self)

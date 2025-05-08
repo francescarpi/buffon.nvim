@@ -11,7 +11,7 @@ local default = {
   open = {
     by_default = true,
     position = "top_right",
-    padding = { x = 0, y = 0 },
+    offset = { x = 0, y = 0 },
     event = "BufReadPost", -- event to open the window
     ignore_ft = {
       "gitcommit",
@@ -85,7 +85,7 @@ local default = {
 ---@class BuffonConfigOpen
 ---@field by_default boolean
 ---@field position "top_right" | "bottom_right"
----@field padding Vector2
+---@field offset Vector2
 ---@field event string
 ---@field ignore_ft table<string>
 

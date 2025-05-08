@@ -18,27 +18,27 @@ local WIN_POSITION = {
 ---@field win_id number | nil
 ---@field buf_id number | nil
 ---@field position win_position
----@field padding Vector2
+---@field offset Vector2
 local Window = {
   title = "",
   footer = "",
   win_id = nil,
   buf_id = nil,
   position = WIN_POSITION.TOP_RIGHT,
-  padding = { x = 0, y = 0 },
+  offset = { x = 0, y = 0 },
 }
 
 ---@param title string
 ---@param position win_position
----@param padding Vector2
+---@param offset Vector2
 ---@return BuffonWindow
-function Window:new(title, position, padding)
+function Window:new(title, position, offset)
   local o = {
     title = title,
     win_id = nil,
     buf_id = nil,
     position = position,
-    padding = padding,
+    offset = offset,
   }
   setmetatable(o, self)
   self.__index = self
@@ -155,8 +155,8 @@ function Window:refresh_dimensions()
     col = editor_columns - (1 + max_width + 1)
   end
 
-  row = row + self.padding.y
-  col = col + self.padding.x
+  row = row + self.offset.y
+  col = col + self.offset.x
 
   if max_width == 0 then
     max_width = 20

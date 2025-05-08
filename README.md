@@ -118,7 +118,7 @@ Take a look at the default shortcuts for navigating between buffers, changing th
   open = {
     by_default = true,
     position = "top_right",
-    padding = { x = 0, y = 0 },
+    offset = { x = 0, y = 0 },
     event = "BufReadPost", -- event to open the window
     ignore_ft = {
       "gitcommit",
