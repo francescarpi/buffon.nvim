@@ -117,7 +117,6 @@ function Page:render(active_buffer)
   end
 
   active_buffer = active_buffer or utils.get_buffer_name()
-  active_buffer = active_buffer:gsub("\\", "/") -- very important for windows
   local response = {
     content = {},
     highlights = {
@@ -189,8 +188,6 @@ end
 ---@param buffer BuffonBuffer
 ---@param index_of_active_buffer number | nil
 function Page:add_buffer(buffer, index_of_active_buffer)
-  buffer.short_name = buffer.short_name:gsub("\\", "/") -- very important for windows
-  buffer.short_path = buffer.short_name:gsub("\\", "/") -- very important for windows
   self.bufferslist:add(buffer, index_of_active_buffer)
 end
 
