@@ -41,6 +41,8 @@ M.setup = function(opts)
   for _, callback in ipairs(Buffon.on_created) do
     callback(Buffon.ctrl)
   end
+
+  return Buffon.ctrl
 end
 
 ---@param callback BuffonPluginFunc

@@ -29,9 +29,9 @@ function Buffer:new(id, name)
   local o = {
     id = id,
     name = name,
-    short_name = vim.fn.fnamemodify(name, ":."),
     filename = vim.fn.fnamemodify(name, ":t"),
-    short_path = M.abbreviate_path(vim.fn.fnamemodify(name, ":.")),
+    short_name = vim.fn.fnamemodify(name, ":."):gsub("\\", "/"),
+    short_path = M.abbreviate_path(vim.fn.fnamemodify(name, ":.")):gsub("\\", "/"),
     cursor = { 1, 1 },
   }
   setmetatable(o, self)

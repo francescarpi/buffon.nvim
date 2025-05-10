@@ -41,10 +41,16 @@ function HelpWindow:toggle(actions)
   local content = {}
   for idx, action in ipairs(actions) do
     local shortcut = utils.replace_leader(self.config, self.config.keybindings[action.shortcut])
+		if shortcut == "" then
+      goto continue
+    end
+
     local shortcut_padded = shortcut .. string.rep(" ", max_length - #shortcut)
     local line = string.format("%s %s", shortcut_padded, action.help)
     table.insert(content, line)
     table.insert(highlight.BuffonShortcut, { line = idx - 1, col_start = 0, col_end = max_length })
+
+    ::continue::
   end
 
   self.window:show()
