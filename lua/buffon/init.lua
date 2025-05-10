@@ -25,6 +25,8 @@ M.setup = function(opts)
   local ctrl = maincontroller.MainController:new(cfg, pagectrl, stg)
   ctrl:register_shortcuts()
   ctrl:register_events()
+
+  return ctrl
 end
 
 return M
