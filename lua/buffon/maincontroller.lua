@@ -295,23 +295,24 @@ function MainController:register_events()
 end
 
 ---@param action BuffonAction
-function MainController:dispatch(action, buf)
-  if action.require_match and buf and buf.event and buf.match == "" then
+---@param event_data vim.api.keyset.create_autocmd.callback_args
+function MainController:dispatch(action, event_data)
+  if action.require_match and event_data and event_data.event and event_data.match == "" then
     return
   end
 
-  if buf and buf.event and buf.match ~= "" then
-    log.debug("event:", buf.event, "on", vim.fn.fnamemodify(buf.match, ":t"))
+  if event_data and event_data.event and event_data.match ~= "" then
+    log.debug("event:", event_data.event, "on", vim.fn.fnamemodify(event_data.match, ":t"))
   end
 
   if action.method then
-    action.method(self, buf)
+    action.method(self, event_data)
   end
 
   self.main_window:refresh()
 
   if action.method_post_refresh then
-    action.method_post_refresh(self, buf)
+    action.method_post_refresh(self, event_data)
   end
 end
 
@@ -327,16 +328,17 @@ function MainController:action_toggle_window_position()
   self.main_window.window:toggle_position_between_top_right_bottom_right()
 end
 
-function MainController:event_add_buffer(buf)
-  local existent_buf, num_page = self.page_controller:get_buffer_and_page(buf.match)
-  log.debug("add", vim.fn.fnamemodify(buf.match, ":t"), "in page", num_page)
+---@param event_data vim.api.keyset.create_autocmd.callback_args
+function MainController:event_add_buffer(event_data)
+  local existent_buf, num_page = self.page_controller:get_buffer_and_page(event_data.match)
+  log.debug("add", vim.fn.fnamemodify(event_data.match, ":t"), "in page", num_page)
 
   -- if num_page is not nil, it means the buffer already exists. in that case, it should be activated
   if num_page and existent_buf then
     self.page_controller:set_page(num_page)
-    existent_buf.id = buf.buf
+    existent_buf.id = event_data.buf
   else
-    self.page_controller:add_buffer_to_active_page(buffer.Buffer:new(buf.buf, buf.match), self.index_buffer_active)
+    self.page_controller:add_buffer_to_active_page(buffer.Buffer:new(event_data.buf, event_data.match), self.index_buffer_active)
   end
 end
 
@@ -349,14 +351,16 @@ function MainController:event_buffon_window_needs_open()
   end
 end
 
-function MainController:event_before_exit(buf)
-  self.page_controller:get_active_page().bufferslist:update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
+---@param event_data vim.api.keyset.create_autocmd.callback_args
+function MainController:event_before_exit(event_data)
+  self.page_controller:get_active_page().bufferslist:update_cursor(event_data.match, vim.api.nvim_win_get_cursor(0))
   self.storage:save(self.page_controller:get_data())
 end
 
-function MainController:event_before_buf_leave(buf)
-  self.page_controller:get_active_page().bufferslist:update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
-  self.index_buffer_active = self.page_controller:get_active_page().bufferslist:get_index(buf.match)
+---@param event_data vim.api.keyset.create_autocmd.callback_args
+function MainController:event_before_buf_leave(event_data)
+  self.page_controller:get_active_page().bufferslist:update_cursor(event_data.match, vim.api.nvim_win_get_cursor(0))
+  self.index_buffer_active = self.page_controller:get_active_page().bufferslist:get_index(event_data.match)
 
   -- Save the current view (scroll position, cursor, etc) of the window
   vim.b.view = vim.fn.winsaveview()
