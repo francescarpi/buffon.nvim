@@ -29,8 +29,8 @@ function Buffer:new(id, name)
   local o = {
     id = id,
     name = name,
-    short_name = vim.fn.fnamemodify(name, ":."),
-    filename = vim.fn.fnamemodify(name, ":t"),
+    short_name = vim.fn.fnamemodify(name, ":."):gsub("\\", "/"),
+    filename = vim.fn.fnamemodify(name, ":t"):gsub("\\", "/"),
     short_path = M.abbreviate_path(vim.fn.fnamemodify(name, ":.")),
     cursor = { 1, 1 },
   }
