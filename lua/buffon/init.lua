@@ -47,6 +47,10 @@ end
 
 ---@param callback BuffonPluginFunc
 function M.add(callback)
+  if Buffon == nil then
+    return
+  end
+
   if Buffon.ctrl ~= nil then
     callback(Buffon.ctrl)
   else
