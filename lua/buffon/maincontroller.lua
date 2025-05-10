@@ -38,6 +38,9 @@ local pagination_actions = {
 ---@param rhs function | string The right-hand side of the keymap.
 ---@param help string The description of the keymap.
 local set_keymap = function(lhs, rhs, help)
+  if lhs == "" then
+    return
+  end
   vim.keymap.set("n", lhs, rhs, { silent = true, desc = "Buffon: " .. help })
 end
 
