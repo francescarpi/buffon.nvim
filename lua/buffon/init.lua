@@ -6,6 +6,18 @@ local pagecontroller = require("buffon.pagecontroller")
 
 local M = {}
 
+---@alias BuffonPluginFunc fun(BuffonCtrl: BuffonMainController):nil
+
+---@class BuffonGlobals
+---@field ctrl BuffonMainController|nil
+---@field extensions_queue BuffonPluginFunc[]
+
+---@type BuffonGlobals
+Buffon = {
+  ctrl = nil,
+  extensions_queue = {}
+}
+
 M.setup = function(opts)
   log.debug("==== initial setup ====")
   local cfg = config.Config:new(opts or {})
@@ -22,9 +34,24 @@ M.setup = function(opts)
   local pagectrl = pagecontroller.PageController:new(cfg)
   pagectrl:set_data(pages)
 
-  local ctrl = maincontroller.MainController:new(cfg, pagectrl, stg)
-  ctrl:register_shortcuts()
-  ctrl:register_events()
+  Buffon.ctrl = maincontroller.MainController:new(cfg, pagectrl, stg)
+  Buffon.ctrl:register_shortcuts()
+  Buffon.ctrl:register_events()
+
+  for _, callback in ipairs(Buffon.extensions_queue) do
+    callback(Buffon.ctrl)
+  end
+
+  return Buffon.ctrl
+end
+
+---@param callback BuffonPluginFunc
+function M.add(callback)
+  if Buffon.ctrl ~= nil then
+    callback(Buffon.ctrl)
+  else
+    table.insert(Buffon.extensions_queue, callback)
+  end
 end
 
 return M
