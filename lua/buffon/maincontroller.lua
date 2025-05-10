@@ -338,7 +338,10 @@ function MainController:event_add_buffer(event_data)
     self.page_controller:set_page(num_page)
     existent_buf.id = event_data.buf
   else
-    self.page_controller:add_buffer_to_active_page(buffer.Buffer:new(event_data.buf, event_data.match), self.index_buffer_active)
+    self.page_controller:add_buffer_to_active_page(
+      buffer.Buffer:new(event_data.buf, event_data.match),
+      self.index_buffer_active
+    )
   end
 end
 
