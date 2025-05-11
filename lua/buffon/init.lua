@@ -10,12 +10,12 @@ local M = {}
 
 ---@class BuffonGlobals
 ---@field ctrl BuffonMainController|nil
----@field on_created BuffonPluginFunc[]
+---@field extensions_queue BuffonPluginFunc[]
 
 ---@type BuffonGlobals
 Buffon = {
   ctrl = nil,
-  on_created = {}
+  extensions_queue = {}
 }
 
 M.setup = function(opts)
@@ -38,7 +38,7 @@ M.setup = function(opts)
   Buffon.ctrl:register_shortcuts()
   Buffon.ctrl:register_events()
 
-  for _, callback in ipairs(Buffon.on_created) do
+  for _, callback in ipairs(Buffon.extensions_queue) do
     callback(Buffon.ctrl)
   end
 
@@ -50,7 +50,7 @@ function M.add(callback)
   if Buffon.ctrl ~= nil then
     callback(Buffon.ctrl)
   else
-    table.insert(Buffon.on_created, callback)
+    table.insert(Buffon.extensions_queue, callback)
   end
 end
 

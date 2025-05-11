@@ -237,6 +237,51 @@ Showing the help window:
 
 ![With help](./imgs/withhelp.png)
 
+## Extensions
+
+You can build extensions for Buffon by using the `require("buffon").add()` function. The function expects a callback function which has the [maincontroller](/lua/buffon/maincontroller) as its first parameter. This way you can manipulate Buffon in whichever way you want:
+
+```lua
+require("buffon").add(function (maincontroller)
+  vim.notify(vim.inspect(maincontroller.config))
+end)
+```
+
+This also allows you to make plugins which other people can use too, by simply adding them to their config:
+
+```lua
+return {
+  "plugin-author/plugin-repo",
+  opts = {},
+  ...
+}
+```
+
+The plugin might have following structure:
+
+```lua
+local M = {}
+local config = {}
+
+---@type BuffonPluginFunc add this for better completion
+local function initialize_plugin(maincontroller)
+  if config.remap["x"] then
+    maincontroller.config.mapping_chars["x"] = "z"
+  else
+    maincontroller.config.mapping_chars = ""
+  end
+end
+
+function M.setup(opts)
+  config = opts
+  require("buffon").add(initialize_plugin)
+end
+
+return M
+```
+
+The function will be executed as soon as Buffon is fully set up.
+
 ## API
 
 All the code has been developed using objects (OOP), facilitating maintenance, debugging, and readability. In the [Project Structure](./?tab=readme-ov-file#project-structure) section, the functionality of each file is detailed. If you want to start analyzing the code, start with `init.lua`, which is where the plugin is configured and the different objects are instantiated, and continue with `maincontroller.lua`, which is responsible for orchestrating user actions and neovim events with the plugin logic.
