@@ -183,7 +183,7 @@ The keybindings shown in the following list can be deactivated. The reason for t
 }
 ```
 
-To do this, you only have to assign the string "false" in the configuration. For example:
+To do this, you only have to assign the string "false" or leave it blank in the configuration. For example:
 
 
 ```lua
@@ -191,7 +191,7 @@ To do this, you only have to assign the string "false" in the configuration. For
   opts = {
     keybindings = {
       close_buffer = "false"
-      close_others = "false"
+      close_others = ""
     },
   },
 }
