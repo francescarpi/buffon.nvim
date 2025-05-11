@@ -38,9 +38,6 @@ local pagination_actions = {
 ---@param rhs function | string The right-hand side of the keymap.
 ---@param help string The description of the keymap.
 local set_keymap = function(lhs, rhs, help)
-  if lhs == "" then
-    return
-  end
   vim.keymap.set("n", lhs, rhs, { silent = true, desc = "Buffon: " .. help })
 end
 
@@ -196,7 +193,8 @@ function MainController:get_shortcuts()
   local valid_shortcuts = {}
   for _, action in ipairs(shortcuts) do
     local action_can_be_disabled = configurable_disabled_actions[action.shortcut]
-    local action_is_disabled = self.config.keybindings[action.shortcut] == "false"
+    local action_is_disabled = (self.config.keybindings[action.shortcut] == "false")
+      or (self.config.keybindings[action.shortcut] == "")
     local is_pagination_action = pagination_actions[action.shortcut]
     local one_page = self.config.num_pages == 1
 
