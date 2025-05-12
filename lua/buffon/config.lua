@@ -10,6 +10,10 @@ local default = {
   num_pages = 2,
   open = {
     by_default = true,
+    offset = {
+      x = 0,
+      y = 0,
+    },
     ignore_ft = {
       "gitcommit",
       "gitrebase",
@@ -52,6 +56,7 @@ local default = {
 ---@class BuffonConfigOpen
 ---@field by_default boolean
 ---@field ignore_ft table<string>
+---@field offset Vector2
 
 ---@class BuffonConfigKeyBinding
 ---@field goto_next_buffer string
