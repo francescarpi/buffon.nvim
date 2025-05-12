@@ -6,6 +6,7 @@ local buffer = require("buffon.buffer")
 local buf1 = buffer.Buffer:new(1, "buffer1.lua")
 local buf2 = buffer.Buffer:new(2, "buffer2.lua")
 local buf3 = buffer.Buffer:new(3, "buffer3.lua")
+local buf4 = buffer.Buffer:new(4, "buffer4.lua")
 
 describe("buffers list", function()
   it("instantation", function()
@@ -236,5 +237,32 @@ describe("buffers list", function()
     list:add(buffer.Buffer:new(1, "diffpanel_3"))
     list:add(buffer.Buffer:new(1, "/foo/bar/diffpanel_3"))
     eq(list.buffers, {})
+  end)
+
+  it("add buffers having unloaded buffers", function()
+    -- initial state
+    local cfg = config.Config:new({ sort_buffers_by_loaded_status = true })
+    local list = bufferslist.BuffersList:new(cfg)
+
+    list:set_buffers({
+      buffer.Buffer:new(nil, "buffer1.lua"),
+      buffer.Buffer:new(nil, "buffer2.lua"),
+    })
+
+    eq(list.buffers[1].id, nil)
+    eq(list.buffers[2].id, nil)
+
+    -- add buffer3. the expected buffers list, should be: buffer3, buffer1, buffer2
+    list:add(buf3)
+    eq(list.buffers[1].id, buf3.id)
+    eq(list.buffers[2].id, nil)
+    eq(list.buffers[3].id, nil)
+
+    -- add buffer4. the expected buffers list, should be: buffer3, buffer4, buffer1, buffer2
+    list:add(buf4)
+    eq(list.buffers[1].id, buf3.id)
+    eq(list.buffers[2].id, buf4.id)
+    eq(list.buffers[3].id, nil)
+    eq(list.buffers[4].id, nil)
   end)
 end)
