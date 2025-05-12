@@ -15,6 +15,9 @@ describe("config", function()
           "gitrebase",
         },
       },
+      ignore_buff_names = {
+        "diffpanel_",
+      },
       theme = {
         unloaded_buffer = "#404040",
         shortcut = "#CC7832",

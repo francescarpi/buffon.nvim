@@ -2,12 +2,6 @@ local log = require("buffon.log")
 local buffon_buffer = require("buffon.buffer")
 
 local M = {}
----
----@param name string
----@return boolean
-local allowed_buffer = function(name)
-  return name ~= "" and name ~= "/"
-end
 
 --- Swaps two buffers in the list.
 ---@param list table<BuffonBuffer> The list of buffers.
@@ -39,10 +33,21 @@ function BuffersList:new(config)
   return o
 end
 
+---@param name string
+---@return boolean
+function BuffersList:allowed_buffer(name)
+  for _, regex in ipairs(self.config.ignore_buff_names) do
+    if name:match(regex) then
+      return false
+    end
+  end
+  return name ~= "" and name ~= "/"
+end
+
 ---@param buffer BuffonBuffer
 ---@param index_of_active_buffer number | nil
 function BuffersList:add(buffer, index_of_active_buffer)
-  if not allowed_buffer(buffer.name) then
+  if not self:allowed_buffer(buffer.name) then
     return
   end
 

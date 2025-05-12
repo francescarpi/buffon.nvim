@@ -120,6 +120,11 @@ Take a look at the default shortcuts for navigating between buffers, changing th
       "gitrebase",
     },
   },
+  --- Buffers that should be ignored by buffon
+  --- It accepts a list of regex patterns
+  ignore_buff_names = {
+    "diffpanel_",
+  },
   theme = {
     unloaded_buffer = "#404040",
     shortcut = "#CC7832",
