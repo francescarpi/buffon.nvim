@@ -239,7 +239,7 @@ Showing the help window:
 
 ## Extensions
 
-You can build extensions for Buffon by using the `require("buffon").add()` function. The function expects a callback function which has the [maincontroller](/lua/buffon/maincontroller) as its first parameter. This way you can manipulate Buffon in whichever way you want:
+You can build extensions for Buffon by using the `require("buffon").add()` function. The function expects a callback function which has the [maincontroller](/lua/buffon/maincontroller.lua) as its first parameter. This way you can manipulate Buffon in whichever way you want:
 
 ```lua
 require("buffon").add(function (maincontroller)
