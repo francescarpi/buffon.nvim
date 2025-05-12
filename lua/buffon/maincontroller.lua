@@ -257,6 +257,14 @@ function MainController:get_events()
       vimevent = "WinClosed",
       method = self.event_win_closed,
     },
+    {
+      vimevent = "DirChanged",
+      method = self.event_dir_changed,
+    },
+    {
+      vimevent = "DirChangedPre",
+      method = self.event_dir_changed_pre,
+    },
   }
 end
 
@@ -357,8 +365,7 @@ end
 
 ---@param event_data vim.api.keyset.create_autocmd.callback_args
 function MainController:event_before_exit(event_data)
-  self.page_controller:get_active_page().bufferslist:update_cursor(event_data.match, vim.api.nvim_win_get_cursor(0))
-  self.storage:save(self.page_controller:get_data())
+  self:action_save_state(event_data)
 end
 
 ---@param event_data vim.api.keyset.create_autocmd.callback_args
@@ -376,6 +383,24 @@ function MainController:event_buf_enter()
     vim.fn.winrestview(vim.b.view)
     vim.b.view = nil
   end
+end
+
+function MainController:event_dir_changed()
+  self.storage:change_workspace(vim.fn.getcwd())
+  local pages = self.storage:load()
+
+  self.page_controller:set_data(pages)
+end
+
+---@param event_data vim.api.keyset.create_autocmd.callback_args
+function MainController:event_dir_changed_pre(event_data)
+  self:action_save_state(event_data)
+end
+
+---@param event_data vim.api.keyset.create_autocmd.callback_args
+function MainController:action_save_state(event_data)
+  self.page_controller:get_active_page().bufferslist:update_cursor(event_data.match, vim.api.nvim_win_get_cursor(0))
+  self.storage:save(self.page_controller:get_data())
 end
 
 ---@param index number
