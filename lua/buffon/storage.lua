@@ -60,6 +60,11 @@ function Storage:filename_path()
   return string.format("%s/%s", self.data_path, self:filename())
 end
 
+---@param workspace string
+function Storage:change_workspace(workspace)
+  self.workspace = workspace
+end
+
 ---@param data_path string
 local initialize_data_path = function(data_path)
   local path = Path:new(data_path)
