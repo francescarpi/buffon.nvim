@@ -239,6 +239,9 @@ Showing the help window:
 
 ## Extensions
 
+> [!NOTE]
+> You can view all available extensions [here](/extensions.md)
+
 You can build extensions for Buffon by using the `require("buffon").add()` function. The function expects a callback function which has the [maincontroller](/lua/buffon/maincontroller.lua) as its first parameter. This way you can manipulate Buffon in whichever way you want:
 
 ```lua
@@ -281,6 +284,8 @@ return M
 ```
 
 The function will be executed as soon as Buffon is fully set up.
+
+> If you've built an extension, feel free to add it to the [extensions](/extensions.md) file!
 
 ## API
 
