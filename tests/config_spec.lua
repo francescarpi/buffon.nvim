@@ -22,6 +22,7 @@ describe("config", function()
       ignore_buff_names = {
         "diffpanel_",
       },
+      sort_buffers_by_loaded_status = false,
       theme = {
         unloaded_buffer = "#404040",
         shortcut = "#CC7832",

@@ -436,6 +436,9 @@ function MainController:action_open_or_activate_buffer(buf)
     if not set_cursor_success then
       vim.api.nvim_win_set_cursor(0, { 1, 1 })
     end
+
+    self.page_controller:get_active_page().bufferslist:sort_buffers_by_loaded_status(true)
+    self.main_window:refresh()
   end
 end
 

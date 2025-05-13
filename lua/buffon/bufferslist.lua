@@ -73,7 +73,37 @@ function BuffersList:add(buffer, index_of_active_buffer)
       table.insert(self.buffers, position, buffer)
     end
   end
+
+  self:sort_buffers_by_loaded_status(false)
   self:reindex()
+end
+
+---@param reindex boolean
+function BuffersList:sort_buffers_by_loaded_status(reindex)
+  if not self.config.sort_buffers_by_loaded_status then
+    return
+  end
+
+  local table1 = {}
+  local table2 = {}
+
+  for _, buffer in ipairs(self.buffers) do
+    if buffer.id ~= nil then
+      table.insert(table1, buffer)
+    else
+      table.insert(table2, buffer)
+    end
+  end
+
+  for i = 1, #table2 do
+    table.insert(table1, table2[i])
+  end
+
+  self.buffers = table1
+
+  if reindex then
+    self:reindex()
+  end
 end
 
 ---@param name string

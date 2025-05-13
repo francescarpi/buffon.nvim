@@ -23,7 +23,7 @@ M.abbreviate_path = function(path)
   return "/" .. table.concat(parts, "/", start_index)
 end
 
----@param id number
+---@param id number?
 ---@param name string
 function Buffer:new(id, name)
   local o = {
