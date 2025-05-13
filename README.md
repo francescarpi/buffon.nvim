@@ -115,11 +115,21 @@ Take a look at the default shortcuts for navigating between buffers, changing th
   num_pages = 2,
   open = {
     by_default = true,
+    offset = {
+      x = 0,
+      y = 0,
+    },
     ignore_ft = {
       "gitcommit",
       "gitrebase",
     },
   },
+  --- Buffers that should be ignored by buffon
+  --- It accepts a list of regex patterns
+  ignore_buff_names = {
+    "diffpanel_",
+  },
+  sort_buffers_by_loaded_status = false,
   theme = {
     unloaded_buffer = "#404040",
     shortcut = "#CC7832",
@@ -183,7 +193,7 @@ The keybindings shown in the following list can be deactivated. The reason for t
 }
 ```
 
-To do this, you only have to assign the string "false" in the configuration. For example:
+To do this, you only have to assign the string "false" or leave it blank in the configuration. For example:
 
 
 ```lua
@@ -191,7 +201,7 @@ To do this, you only have to assign the string "false" in the configuration. For
   opts = {
     keybindings = {
       close_buffer = "false"
-      close_others = "false"
+      close_others = ""
     },
   },
 }
@@ -236,6 +246,56 @@ Buffon window, showing the buffer list:
 Showing the help window:
 
 ![With help](./imgs/withhelp.png)
+
+## Extensions
+
+> [!NOTE]
+> You can view all available extensions [here](/extensions.md)
+
+You can build extensions for Buffon by using the `require("buffon").add()` function. The function expects a callback function which has the [maincontroller](/lua/buffon/maincontroller.lua) as its first parameter. This way you can manipulate Buffon in whichever way you want:
+
+```lua
+require("buffon").add(function (maincontroller)
+  vim.notify(vim.inspect(maincontroller.config))
+end)
+```
+
+This also allows you to make plugins which other people can use too, by simply adding them to their config:
+
+```lua
+return {
+  "plugin-author/plugin-repo",
+  opts = {},
+  ...
+}
+```
+
+The plugin might have following structure:
+
+```lua
+local M = {}
+local config = {}
+
+---@type BuffonPluginFunc add this for better completion
+local function initialize_plugin(maincontroller)
+  if config.remap["x"] then
+    maincontroller.config.mapping_chars["x"] = "z"
+  else
+    maincontroller.config.mapping_chars = ""
+  end
+end
+
+function M.setup(opts)
+  config = opts
+  require("buffon").add(initialize_plugin)
+end
+
+return M
+```
+
+The function will be executed as soon as Buffon is fully set up.
+
+> If you've built an extension, feel free to add it to the [extensions](/extensions.md) file!
 
 ## API
 

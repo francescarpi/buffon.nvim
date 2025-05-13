@@ -193,7 +193,8 @@ function MainController:get_shortcuts()
   local valid_shortcuts = {}
   for _, action in ipairs(shortcuts) do
     local action_can_be_disabled = configurable_disabled_actions[action.shortcut]
-    local action_is_disabled = self.config.keybindings[action.shortcut] == "false"
+    local action_is_disabled = (self.config.keybindings[action.shortcut] == "false")
+      or (self.config.keybindings[action.shortcut] == "")
     local is_pagination_action = pagination_actions[action.shortcut]
     local one_page = self.config.num_pages == 1
 
@@ -223,6 +224,11 @@ function MainController:get_events()
     {
       vimevent = "VimEnter",
       method = self.event_buffon_window_needs_open,
+    },
+    {
+      vimevent = "UIEnter",
+      method = self.event_add_buffer,
+      require_match = true,
     },
     {
       vimevent = "BufEnter",
@@ -255,6 +261,14 @@ function MainController:get_events()
     {
       vimevent = "WinClosed",
       method = self.event_win_closed,
+    },
+    {
+      vimevent = "DirChanged",
+      method = self.event_dir_changed,
+    },
+    {
+      vimevent = "DirChangedPre",
+      method = self.event_dir_changed_pre,
     },
   }
 end
@@ -295,23 +309,28 @@ function MainController:register_events()
 end
 
 ---@param action BuffonAction
-function MainController:dispatch(action, buf)
-  if action.require_match and buf and buf.event and buf.match == "" then
+---@param event_data vim.api.keyset.create_autocmd.callback_args
+function MainController:dispatch(action, event_data)
+  if action.require_match and event_data and event_data.event and event_data.match == "" then
     return
   end
 
-  if buf and buf.event and buf.match ~= "" then
-    log.debug("event:", buf.event, "on", vim.fn.fnamemodify(buf.match, ":t"))
+  pcall(function ()
+    event_data.file = event_data.file:gsub("\\", "/") -- important for windows
+  end)
+
+  if event_data and event_data.event and event_data.match ~= "" then
+    log.debug("event:", event_data.event, "on", vim.fn.fnamemodify(event_data.match, ":t"))
   end
 
   if action.method then
-    action.method(self, buf)
+    action.method(self, event_data)
   end
 
   self.main_window:refresh()
 
   if action.method_post_refresh then
-    action.method_post_refresh(self, buf)
+    action.method_post_refresh(self, event_data)
   end
 end
 
@@ -327,16 +346,20 @@ function MainController:action_toggle_window_position()
   self.main_window.window:toggle_position_between_top_right_bottom_right()
 end
 
-function MainController:event_add_buffer(buf)
-  local existent_buf, num_page = self.page_controller:get_buffer_and_page(buf.match)
-  log.debug("add", vim.fn.fnamemodify(buf.match, ":t"), "in page", num_page)
+---@param event_data vim.api.keyset.create_autocmd.callback_args
+function MainController:event_add_buffer(event_data)
+  local existent_buf, num_page = self.page_controller:get_buffer_and_page(event_data.match)
+  log.debug("add", vim.fn.fnamemodify(event_data.match, ":t"), "in page", num_page)
 
   -- if num_page is not nil, it means the buffer already exists. in that case, it should be activated
   if num_page and existent_buf then
     self.page_controller:set_page(num_page)
-    existent_buf.id = buf.buf
+    existent_buf.id = event_data.buf
   else
-    self.page_controller:add_buffer_to_active_page(buffer.Buffer:new(buf.buf, buf.match), self.index_buffer_active)
+    self.page_controller:add_buffer_to_active_page(
+      buffer.Buffer:new(event_data.buf, event_data.match),
+      self.index_buffer_active
+    )
   end
 end
 
@@ -349,14 +372,15 @@ function MainController:event_buffon_window_needs_open()
   end
 end
 
-function MainController:event_before_exit(buf)
-  self.page_controller:get_active_page().bufferslist:update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
-  self.storage:save(self.page_controller:get_data())
+---@param event_data vim.api.keyset.create_autocmd.callback_args
+function MainController:event_before_exit(event_data)
+  self:action_save_state(event_data)
 end
 
-function MainController:event_before_buf_leave(buf)
-  self.page_controller:get_active_page().bufferslist:update_cursor(buf.match, vim.api.nvim_win_get_cursor(0))
-  self.index_buffer_active = self.page_controller:get_active_page().bufferslist:get_index(buf.match)
+---@param event_data vim.api.keyset.create_autocmd.callback_args
+function MainController:event_before_buf_leave(event_data)
+  self.page_controller:get_active_page().bufferslist:update_cursor(event_data.match, vim.api.nvim_win_get_cursor(0))
+  self.index_buffer_active = self.page_controller:get_active_page().bufferslist:get_index(event_data.match)
 
   -- Save the current view (scroll position, cursor, etc) of the window
   vim.b.view = vim.fn.winsaveview()
@@ -368,6 +392,24 @@ function MainController:event_buf_enter()
     vim.fn.winrestview(vim.b.view)
     vim.b.view = nil
   end
+end
+
+function MainController:event_dir_changed()
+  self.storage:change_workspace(vim.fn.getcwd())
+  local pages = self.storage:load()
+
+  self.page_controller:set_data(pages)
+end
+
+---@param event_data vim.api.keyset.create_autocmd.callback_args
+function MainController:event_dir_changed_pre(event_data)
+  self:action_save_state(event_data)
+end
+
+---@param event_data vim.api.keyset.create_autocmd.callback_args
+function MainController:action_save_state(event_data)
+  self.page_controller:get_active_page().bufferslist:update_cursor(event_data.match, vim.api.nvim_win_get_cursor(0))
+  self.storage:save(self.page_controller:get_data())
 end
 
 ---@param index number
@@ -403,6 +445,9 @@ function MainController:action_open_or_activate_buffer(buf)
     if not set_cursor_success then
       vim.api.nvim_win_set_cursor(0, { 1, 1 })
     end
+
+    self.page_controller:get_active_page().bufferslist:sort_buffers_by_loaded_status(true)
+    self.main_window:refresh()
   end
 end
 

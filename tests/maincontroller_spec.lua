@@ -45,12 +45,12 @@ describe("maincontrolelr", function()
     compare_shortcuts(shortcuts, default_shortcuts)
   end)
 
-  it("disable close actions", function()
+  it("disabling some actions", function()
     local cfg = config.Config:new({
       keybindings = {
         close_buffer = "false",
         close_buffers_above = "false",
-        close_buffers_below = "false",
+        close_buffers_below = "",
         close_all_buffers = "false",
         close_others = "false",
       },

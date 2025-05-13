@@ -2,7 +2,7 @@ local M = {}
 
 ---@return string
 M.get_buffer_name = function()
-  return vim.fn.expand("%:p")
+  return vim.fn.expand("%:p"):gsub("\\", "/") -- important for windows
 end
 
 M.table_add = function(tbl1, tbl2)
