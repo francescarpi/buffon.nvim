@@ -115,6 +115,10 @@ Take a look at the default shortcuts for navigating between buffers, changing th
   num_pages = 2,
   open = {
     by_default = true,
+    offset = {
+      x = 0,
+      y = 0,
+    },
     ignore_ft = {
       "gitcommit",
       "gitrebase",

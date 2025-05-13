@@ -10,6 +10,10 @@ describe("config", function()
       num_pages = 2,
       open = {
         by_default = true,
+        offset = {
+          x = 0,
+          y = 0,
+        },
         ignore_ft = {
           "gitcommit",
           "gitrebase",
