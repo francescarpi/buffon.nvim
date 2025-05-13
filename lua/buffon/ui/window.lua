@@ -65,7 +65,7 @@ function Window:show()
     row = 0,
     style = "minimal",
     border = "single",
-    zindex = 1,
+    zindex = 21,
     focusable = false,
   })
   self:refresh_dimensions()
