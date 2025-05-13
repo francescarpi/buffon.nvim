@@ -226,6 +226,11 @@ function MainController:get_events()
       method = self.event_buffon_window_needs_open,
     },
     {
+      vimevent = "UIEnter",
+      method = self.event_add_buffer,
+      require_match = true,
+    },
+    {
       vimevent = "BufEnter",
       method = self.event_buf_enter,
       require_match = true,
@@ -309,6 +314,10 @@ function MainController:dispatch(action, event_data)
   if action.require_match and event_data and event_data.event and event_data.match == "" then
     return
   end
+
+  pcall(function ()
+    event_data.file = event_data.file:gsub("\\", "/") -- important for windows
+  end)
 
   if event_data and event_data.event and event_data.match ~= "" then
     log.debug("event:", event_data.event, "on", vim.fn.fnamemodify(event_data.match, ":t"))
