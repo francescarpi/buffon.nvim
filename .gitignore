@@ -41,3 +41,7 @@ luac.out
 
 packages/
 .DS_Store
+
+.nvimrc
+.nvim.lua
+.exrc
