@@ -18,6 +18,7 @@ describe("config", function()
           "gitcommit",
           "gitrebase",
         },
+        default_position = "top_right",
       },
       ignore_buff_names = {
         "diffpanel_",
