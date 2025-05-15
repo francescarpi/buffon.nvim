@@ -89,13 +89,11 @@ local validate_data = function(config, pages)
   for idx = 1, config.num_pages do
     local buffers = pages[idx]
     for _, buffer in ipairs(buffers) do
-      vim.validate({
-        name = { buffer.name, "string" },
-        short_path = { buffer.short_path, "string" },
-        short_name = { buffer.short_name, "string" },
-        filename = { buffer.filename, "string" },
-        cursor = { buffer.cursor, "table" },
-      })
+      vim.validate("name", buffer.name, "string")
+      vim.validate("short_path", buffer.short_path, "string")
+      vim.validate("short_name", buffer.short_name, "string")
+      vim.validate("filename", buffer.filename, "string")
+      vim.validate("cursor", buffer.cursor, "table")
     end
   end
 end
