@@ -58,10 +58,11 @@ local MainController = {}
 ---@param cfg BuffonConfig
 ---@param page_controller BuffonPageController
 function MainController:new(cfg, page_controller, stg)
+  local main_window = mainwindow.MainWindow:new(cfg, page_controller)
   local o = {
     config = cfg,
-    main_window = mainwindow.MainWindow:new(cfg, page_controller),
-    help_window = helpwindow.HelpWindow:new(cfg),
+    main_window = main_window,
+    help_window = helpwindow.HelpWindow:new(cfg, main_window),
     group = vim.api.nvim_create_augroup("Buffon", { clear = true }),
     page_controller = page_controller,
     storage = stg,
