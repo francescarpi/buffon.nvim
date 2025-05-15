@@ -123,6 +123,7 @@ Take a look at the default shortcuts for navigating between buffers, changing th
       "gitcommit",
       "gitrebase",
     },
+    default_position = "top_right"
   },
   --- Buffers that should be ignored by buffon
   --- It accepts a list of regex patterns

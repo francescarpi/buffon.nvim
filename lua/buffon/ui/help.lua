@@ -5,13 +5,16 @@ local M = {}
 
 ---@class BuffonHelpWindow
 ---@field config BuffonConfig
+---@field main_window BuffonMainWindow
 ---@field window BuffonWindow
 local HelpWindow = {}
 
 ---@param cfg BuffonConfig
-function HelpWindow:new(cfg)
+---@param main_window BuffonMainWindow
+function HelpWindow:new(cfg, main_window)
   local o = {
     config = cfg,
+    main_window = main_window,
     window = window.Window:new(" Buffon Help ", window.WIN_POSITIONS.BOTTOM_RIGHT, cfg.open.offset),
   }
 
@@ -45,6 +48,12 @@ function HelpWindow:toggle(actions)
     local line = string.format("%s %s", shortcut_padded, action.help)
     table.insert(content, line)
     table.insert(highlight.BuffonShortcut, { line = idx - 1, col_start = 0, col_end = max_length })
+  end
+
+  if self.main_window.window.position == window.WIN_POSITIONS.BOTTOM_RIGHT then
+    self.window.position = window.WIN_POSITIONS.TOP_RIGHT
+  else
+    self.window.position = window.WIN_POSITIONS.BOTTOM_RIGHT
   end
 
   self.window:show()
