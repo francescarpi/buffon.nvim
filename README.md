@@ -34,7 +34,7 @@ Things I like and dislike about these plugins:
 
 Based on this, I created *Buffon* with the best of both plugins, perfectly adapting to my way of working.
 
-## What Buffon offers
+## 🎯 What Buffon offers
 
 * Simple and minimalist interface
 * Always visible interface
@@ -54,7 +54,7 @@ Based on this, I created *Buffon* with the best of both plugins, perfectly adapt
 > [!NOTE]
 > If you like all these features and the plugin also adapts to your needs, I would greatly appreciate it if you **click on the star**.
 
-## Installation
+## 📦 Installation
 
 > [!NOTE]
 > require neovim 0.10.0+
@@ -78,7 +78,7 @@ return {
 }
 ```
 
-## Default Configuration
+## ⚙️ Default Configuration
 
 Below you can see the default configuration, which you can adjust to your liking in the setup. For example:
 
@@ -238,7 +238,7 @@ vim.api.nvim_set_hl(0, "BuffonUnloadedBuffer", { fg = "#404040" })
 > [!NOTE]
 > If a highlight group exists in Neovim, it will take precendence over the one specified in Buffon's configuration. Therefore, if you want to change the color of a highlight group, you must first remove it with `vim.api.nvim_set_hl(0, "BuffonUnloadedBuffer", { fg = nil })` and then specify the new color. This is because if a colorscheme is installed that has a defined highlight group, it will take precedence over the one specified in Buffon's configuration.
 
-## Screenshots
+## 📸 Screenshots
 
 Buffon window, showing the buffer list:
 
@@ -248,7 +248,7 @@ Showing the help window:
 
 ![With help](./imgs/withhelp.png)
 
-## Extensions
+## 🔌 Extensions
 
 > [!NOTE]
 > You can view all available extensions [here](/extensions.md)
@@ -297,52 +297,6 @@ return M
 The function will be executed as soon as Buffon is fully set up.
 
 > If you've built an extension, feel free to add it to the [extensions](/extensions.md) file!
-
-## API
-
-All the code has been developed using objects (OOP), facilitating maintenance, debugging, and readability. In the [Project Structure](./?tab=readme-ov-file#project-structure) section, the functionality of each file is detailed. If you want to start analyzing the code, start with `init.lua`, which is where the plugin is configured and the different objects are instantiated, and continue with `maincontroller.lua`, which is responsible for orchestrating user actions and neovim events with the plugin logic.
-
-## Contribution
-
-You are welcome to propose improvements, report bugs, or send pull requests. Keep in mind that for a PR to be accepted, it must pass the various CI checks, such as tests or the linter.
-
-To run the tests locally, it is necessary to follow these steps:
-
-```bash
-cd buffon.nvim
-mkdir packages
-git clone https://github.com/nvim-lua/plenary.nvim.git packages/plenary.nvim
-git clone https://github.com/nvim-tree/nvim-web-devicons.git packages/nvim-web-devicons
-make test
-```
-
-### Project Structure
-
-I have tried to organize the code in the best way I knew how, although it can surely be improved. Below I explain how it is structured:
-
-* buffer.lua: Buffer object, where the properties of each buffer shown in the list are stored.
-* bufferslist.lua: Manages the buffer list
-* config.lua: Manages the configuration
-* init.lua: Configures and starts the plugin.
-* log.lua: Manages the logs (uses [plenary](https://github.com/nvim-lua/plenary.nvim))
-* maincontroller.lua: Orchestrates user actions and events with the plugin logic
-* page.lua: Manages a page
-* pagecontroller.lua: Manages all pages
-* storage.lua: Manages data persistence
-* ui
-  * mainwindow.lua: Buffon's main window
-  * help.lua: Help window
-  * window.lua: Object to display windows
-* utils.lua: Various utilities
-
-The `tests` folder includes the entire battery of tests for the plugin.
-
-### Development branch
-
-The integration branch will always be **develop**. All pull requests should be directed to this branch. When the code is stable, the repository owner will merge the changes from *develop* to *main* to release a new version.
-
-> [!NOTE]
-> I don't know the impact this plugin will have, but if it grows a lot or there is a lot of movement, I will be unable to maintain it and will need help from one or two maintainers.
 
 **I hope you like it and enjoy it!**
 
