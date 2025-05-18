@@ -14,44 +14,44 @@ local M = {}
 
 ---@type BuffonGlobals
 Buffon = {
-  ctrl = nil,
-  extensions_queue = {}
+	ctrl = nil,
+	extensions_queue = {}
 }
 
 M.setup = function(opts)
-  log.debug("==== initial setup ====")
-  local cfg = config.Config:new(opts or {})
+	log.debug("==== initial setup ====")
+	local cfg = config.Config:new(opts or {})
 
-  local stg = storage.Storage:new(vim.fn.getcwd())
-  local success = stg:init()
-  if not success then
-    vim.notify("buffon: storage couldn't be initialized", vim.log.levels.ERROR)
-    return
-  end
+	local stg = storage.Storage:new(vim.fn.getcwd())
+	local success = stg:init()
+	if not success then
+		vim.notify("buffon: storage couldn't be initialized", vim.log.levels.ERROR)
+		return
+	end
 
-  local pages = stg:load()
+	local pages = stg:load()
 
-  local pagectrl = pagecontroller.PageController:new(cfg)
-  pagectrl:set_data(pages)
+	local pagectrl = pagecontroller.PageController:new(cfg)
+	pagectrl:set_data(pages)
 
-  Buffon.ctrl = maincontroller.MainController:new(cfg, pagectrl, stg)
-  Buffon.ctrl:register_shortcuts()
-  Buffon.ctrl:register_events()
+	Buffon.ctrl = maincontroller.MainController:new(cfg, pagectrl, stg)
+	Buffon.ctrl:register_shortcuts()
+	Buffon.ctrl:register_events()
 
-  for _, callback in ipairs(Buffon.extensions_queue) do
-    callback(Buffon.ctrl)
-  end
+	for _, callback in ipairs(Buffon.extensions_queue) do
+		callback(Buffon.ctrl)
+	end
 
-  return Buffon.ctrl
+	return Buffon.ctrl
 end
 
 ---@param callback BuffonPluginFunc
 function M.add(callback)
-  if Buffon.ctrl ~= nil then
-    callback(Buffon.ctrl)
-  else
-    table.insert(Buffon.extensions_queue, callback)
-  end
+	if Buffon.ctrl ~= nil then
+		callback(Buffon.ctrl)
+	else
+		table.insert(Buffon.extensions_queue, callback)
+	end
 end
 
 return M

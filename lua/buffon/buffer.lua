@@ -10,33 +10,33 @@ local M = {}
 local Buffer = {}
 
 M.abbreviate_path = function(path)
-  local parts = {}
-  for part in string.gmatch(path, "[^/]+") do
-    table.insert(parts, part)
-  end
+	local parts = {}
+	for part in string.gmatch(path, "[^/]+") do
+		table.insert(parts, part)
+	end
 
-  local start_index = math.max(1, #parts - 3)
-  for i = start_index, #parts - 1 do
-    parts[i] = parts[i]:gsub("(%w)%w+", "%1")
-  end
+	local start_index = math.max(1, #parts - 3)
+	for i = start_index, #parts - 1 do
+		parts[i] = parts[i]:gsub("(%w)%w+", "%1")
+	end
 
-  return "/" .. table.concat(parts, "/", start_index)
+	return "/" .. table.concat(parts, "/", start_index)
 end
 
 ---@param id number?
 ---@param name string
 function Buffer:new(id, name)
-  local o = {
-    id = id,
-    name = name,
-    filename = vim.fn.fnamemodify(name, ":t"),
-    short_name = vim.fn.fnamemodify(name, ":."):gsub("\\", "/"),
-    short_path = M.abbreviate_path(vim.fn.fnamemodify(name, ":.")):gsub("\\", "/"),
-    cursor = { 1, 1 },
-  }
-  setmetatable(o, self)
-  self.__index = self
-  return o
+	local o = {
+		id = id,
+		name = name,
+		filename = vim.fn.fnamemodify(name, ":t"),
+		short_name = vim.fn.fnamemodify(name, ":."):gsub("\\", "/"),
+		short_path = M.abbreviate_path(vim.fn.fnamemodify(name, ":.")):gsub("\\", "/"),
+		cursor = { 1, 1 },
+	}
+	setmetatable(o, self)
+	self.__index = self
+	return o
 end
 
 M.Buffer = Buffer
