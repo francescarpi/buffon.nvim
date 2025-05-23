@@ -271,6 +271,14 @@ function MainController:get_events()
 			vimevent = "DirChangedPre",
 			method = self.event_dir_changed_pre,
 		},
+		{
+			vimevent = "CursorMoved",
+			method = self.event_cursor_moved,
+		},
+		{
+			vimevent = "CursorMovedI",
+			method = self.event_cursor_moved,
+		},
 	}
 end
 
@@ -338,6 +346,12 @@ end
 ---=========================================================================================
 --- ↓ Actions starts here ↓
 ---=========================================================================================
+
+function MainController:event_cursor_moved()
+	if self.main_window.window:is_open() then
+		self.main_window.window:refresh_dimensions()
+	end
+end
 
 function MainController:action_show_hide_buffon_window()
 	self.main_window:toggle()

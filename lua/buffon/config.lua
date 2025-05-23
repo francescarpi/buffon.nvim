@@ -18,7 +18,6 @@ local default = {
 			"gitcommit",
 			"gitrebase",
 		},
-		default_position = "top_right",
 	},
 	--- Buffers that should be ignored by buffon
 	--- It accepts a list of regex patterns
@@ -64,7 +63,6 @@ local default = {
 ---@field by_default boolean
 ---@field ignore_ft table<string>
 ---@field offset Vector2
----@field default_position "top_right" | "bottom_right"
 
 ---@class BuffonConfigKeyBinding
 ---@field goto_next_buffer string
