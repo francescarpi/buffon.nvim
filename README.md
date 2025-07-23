@@ -248,6 +248,9 @@ Showing the help window:
 
 ![With help](./imgs/withhelp.png)
 
+> [!NOTE]
+> If you are a fan of the [catpuccin](https://github.com/catppuccin/nvim) theme, it is already integrated with buffon ;)
+
 ## 🔌 Extensions
 
 > [!NOTE]
