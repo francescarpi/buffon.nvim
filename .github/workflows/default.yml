@@ -28,6 +28,21 @@ jobs:
 
       - name: Run test
         run: make
+        env:
+          BUFFON_LOGS: debug
+
+      - name: Check logs
+        if: always()
+        run: |
+          ls /tmp
+          mv /tmp/buffon-$(date +'%Y-%m-%d').log /tmp/buffon_.log
+
+      - name: Upload buffon log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: buffon-log-${{ matrix.neovim_version }}
+          path: /tmp/buffon.log
 
   lint:
       name: lint

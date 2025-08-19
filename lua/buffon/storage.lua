@@ -78,6 +78,7 @@ end
 function Storage:init()
 	local ok, msg = pcall(initialize_data_path, self.data_path)
 	if not ok then
+		log.debug("data path", self.data_path)
 		log.debug("storage couldn't be initialized", msg)
 	end
 	return ok
