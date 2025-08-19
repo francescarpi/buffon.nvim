@@ -5,6 +5,7 @@ local mainwindow = require("buffon.ui.mainwindow")
 local helpwindow = require("buffon.ui.help")
 local buffer = require("buffon.buffer")
 local utils = require("buffon.utils")
+local config = require("buffon.config")
 
 local M = {}
 
@@ -195,7 +196,7 @@ function MainController:get_shortcuts()
 	for _, action in ipairs(shortcuts) do
 		local action_can_be_disabled = configurable_disabled_actions[action.shortcut]
 		local action_is_disabled = (self.config.keybindings[action.shortcut] == "false")
-			or (self.config.keybindings[action.shortcut] == "")
+				or (self.config.keybindings[action.shortcut] == "")
 		local is_pagination_action = pagination_actions[action.shortcut]
 		local one_page = self.config.num_pages == 1
 
@@ -274,7 +275,7 @@ function MainController:get_events()
 	}
 end
 
-function MainController:register_shortcuts()
+function MainController:register_user_shortcuts()
 	for _, action in ipairs(self:get_shortcuts()) do
 		local shortcut = utils.replace_leader(self.config, self.config.keybindings[action.shortcut])
 		log.debug("registering shortcut", shortcut, "for", action.shortcut)
@@ -282,6 +283,18 @@ function MainController:register_shortcuts()
 			self:dispatch(action)
 		end, action.help)
 	end
+end
+
+function MainController:unregister_user_shortcuts()
+	for _, action in ipairs(self:get_shortcuts()) do
+		local shortcut = utils.replace_leader(self.config, self.config.keybindings[action.shortcut])
+		log.debug("unregistering shortcut", shortcut)
+		vim.keymap.del("n", shortcut)
+	end
+end
+
+function MainController:register_shortcuts()
+	self:register_user_shortcuts()
 
 	for idx = 1, #self.config.mapping_chars do
 		local char = self.config.mapping_chars:sub(idx, idx)
@@ -316,7 +329,7 @@ function MainController:dispatch(action, event_data)
 		return
 	end
 
-	pcall(function ()
+	pcall(function()
 		event_data.file = event_data.file:gsub("\\", "/") -- important for windows
 	end)
 
@@ -465,7 +478,7 @@ end
 
 function MainController:action_goto_previous()
 	local previous_buffer =
-		self.page_controller:get_active_page().bufferslist:get_previous_buffer(utils.get_buffer_name())
+			self.page_controller:get_active_page().bufferslist:get_previous_buffer(utils.get_buffer_name())
 	if previous_buffer then
 		self:action_open_or_activate_buffer(previous_buffer)
 	end
@@ -650,6 +663,19 @@ function MainController:event_win_closed(win)
 		log.debug("someone closed the buffon window")
 		self.main_window.window:clear_ids()
 	end
+end
+
+---@param partial_shortcuts table<string, string>
+function MainController:update_shortcuts(partial_shortcuts)
+	self:unregister_user_shortcuts()
+
+	local original_cfg = config.Config:new({})
+	local merged_keybindings = vim.tbl_deep_extend("force", original_cfg.keybindings, partial_shortcuts)
+
+	local cfg = vim.tbl_deep_extend("force", self.config, { keybindings = merged_keybindings })
+	self.config = cfg
+
+	self:register_user_shortcuts()
 end
 
 M.MainController = MainController

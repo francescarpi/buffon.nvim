@@ -208,6 +208,26 @@ To do this, you only have to assign the string "false" or leave it blank in the 
 }
 ```
 
+It is also possible to disable/enable keybindings on the fly.
+
+Here is an example of how to disable the keybinding for closing buffers:
+
+```lua
+require("buffon").update_shortcuts({ close_buffer = "false" })
+```
+
+To enable it again, simply assign the keybinding you want:
+
+```lua
+require("buffon").update_shortcuts({ close_buffer = "<buffonleader>d" })
+```
+
+And if you want to restore all default values, you can do so with:
+
+```lua
+require("buffon").update_shortcuts({})
+```
+
 ### Theming
 
 The interface colors can be customized to your liking. There are four elements that can be personalized:

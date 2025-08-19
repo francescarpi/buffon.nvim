@@ -54,4 +54,13 @@ function M.add(callback)
 	end
 end
 
+---@param partial_shortcuts table<string, string>
+function M.update_shortcuts(partial_shortcuts)
+	if Buffon.ctrl == nil then
+		log.error("Buffon controller is not initialized yet.")
+		return
+	end
+	Buffon.ctrl:update_shortcuts(partial_shortcuts)
+end
+
 return M
