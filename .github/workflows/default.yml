@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        neovim_version: [0.10.4, 0.11.0]
+        neovim_version: [0.10.4, 0.11.0, 0.12.0]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Install Neovim ${{ matrix.neovim_version }}
         run: |
@@ -33,7 +33,7 @@ jobs:
       name: lint
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v6
 
         - name: Install dependencies
           run: |
