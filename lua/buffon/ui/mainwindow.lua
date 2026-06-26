@@ -14,7 +14,7 @@ local MainWindow = {}
 function MainWindow:new(config, page_controller)
 	local title = " Buffon (" .. utils.replace_leader(config, config.keybindings.show_help) .. ") "
 	local o = {
-		window = window.Window:new(title, config.open.default_position, config.open.offset),
+		window = window.Window:new(title, config.open.default_position, config.open.offset, config.theme.transparent),
 		page_controller = page_controller,
 		config = config,
 	}

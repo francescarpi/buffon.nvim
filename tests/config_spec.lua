@@ -29,6 +29,7 @@ describe("config", function()
         shortcut = "#CC7832",
         active = "#51afef",
         unsaved_indicator = "#f70067",
+        transparent = false,
       },
       leader_key = ";",
       mapping_chars = "qweryuiop",
@@ -64,5 +65,33 @@ describe("config", function()
     -- limot of num_pages is 4
     local cfg2 = config.Config:new({ num_pages = 5 })
     eq(cfg2.num_pages, 1)
+  end)
+
+  it("theme.transparent defaults to false", function()
+    local cfg = config.Config:new()
+    eq(cfg.theme.transparent, false)
+  end)
+
+  it("theme.transparent can be set to true", function()
+    local cfg = config.Config:new({ theme = { transparent = true } })
+    eq(cfg.theme.transparent, true)
+  end)
+
+  it("creates BuffonWindow hl group when transparent is true", function()
+    config.Config:new({ theme = { transparent = true } })
+    local ns = vim.api.nvim_get_hl_ns({})
+    local hl = vim.api.nvim_get_hl(ns, { name = "BuffonWindow" })
+    -- bg = "NONE" is represented as default = true in nvim_get_hl output
+    eq(hl.default, true)
+  end)
+
+  it("does not override BuffonWindow hl when transparent is false", function()
+    -- set a known bg first
+    vim.api.nvim_set_hl(0, "BuffonWindow", { bg = "#123456" })
+    config.Config:new({ theme = { transparent = false } })
+    local ns = vim.api.nvim_get_hl_ns({})
+    local hl = vim.api.nvim_get_hl(ns, { name = "BuffonWindow" })
+    -- nvim normalizes #123456 to integer 0x123456 = 1193046
+    eq(hl.bg, 1193046)
   end)
 end)

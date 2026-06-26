@@ -31,6 +31,7 @@ local default = {
 		shortcut = "#CC7832",
 		active = "#51afef",
 		unsaved_indicator = "#f70067",
+		transparent = false,
 	},
 	leader_key = ";",
 	mapping_chars = "qweryuiop",
@@ -93,6 +94,7 @@ local default = {
 ---@field shortcut string
 ---@field active string
 ---@field unsaved_indicator string
+---@field transparent boolean
 
 ---@class BuffonConfig
 ---@field cyclic_navigation boolean -- If true, navigation between buffers will wrap around (cyclic navigation).
@@ -133,6 +135,9 @@ function Config:load_theme()
 	set_hl("BuffonShortcut", self.theme.shortcut)
 	set_hl("BuffonLineActive", self.theme.active)
 	set_hl("BuffonUnsavedIndicator", self.theme.unsaved_indicator)
+	if self.theme.transparent then
+		vim.api.nvim_set_hl(0, "BuffonWindow", { bg = "NONE", default = true })
+	end
 end
 
 M.Config = Config

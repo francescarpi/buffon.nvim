@@ -136,6 +136,7 @@ Take a look at the default shortcuts for navigating between buffers, changing th
     shortcut = "#CC7832",
     active = "#51afef",
     unsaved_indicator = "#f70067",
+    transparent = false,
   },
   leader_key = ";",
   mapping_chars = "qweryuiop",
@@ -237,6 +238,22 @@ vim.api.nvim_set_hl(0, "BuffonUnloadedBuffer", { fg = "#404040" })
 
 > [!NOTE]
 > If a highlight group exists in Neovim, it will take precendence over the one specified in Buffon's configuration. Therefore, if you want to change the color of a highlight group, you must first remove it with `vim.api.nvim_set_hl(0, "BuffonUnloadedBuffer", { fg = nil })` and then specify the new color. This is because if a colorscheme is installed that has a defined highlight group, it will take precedence over the one specified in Buffon's configuration.
+
+### Transparent background
+
+If you want the Buffon window (and the help window) to render with a transparent background, set `theme.transparent = true`:
+
+```lua
+{
+  opts = {
+    theme = {
+      transparent = true,
+    },
+  },
+}
+```
+
+When enabled, Buffon creates a `BuffonWindow` highlight group with `bg = "NONE"` and applies it to the floating window's `Normal`, `FloatBorder`, `FloatTitle`, `FloatFooter`, and `EndOfBuffer` groups via `winhighlight`. The foreground colors are kept from your colorscheme, so the text and border remain visible — only the background becomes transparent.
 
 ## 📸 Screenshots
 
