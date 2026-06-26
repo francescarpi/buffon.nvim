@@ -19,6 +19,7 @@ local WIN_POSITION = {
 ---@field buf_id number | nil
 ---@field position win_position
 ---@field offset Vector2
+---@field transparent boolean
 local Window = {
 	title = "",
 	footer = "",
@@ -29,19 +30,22 @@ local Window = {
 		x = 0,
 		y = 0,
 	},
+	transparent = false,
 }
 
 ---@param title string
 ---@param position win_position
 ---@param offset Vector2
+---@param transparent boolean
 ---@return BuffonWindow
-function Window:new(title, position, offset)
+function Window:new(title, position, offset, transparent)
 	local o = {
 		title = title,
 		win_id = nil,
 		buf_id = nil,
 		position = position,
 		offset = offset,
+		transparent = transparent or false,
 	}
 	setmetatable(o, self)
 	self.__index = self
@@ -68,6 +72,11 @@ function Window:show()
 		zindex = 21,
 		focusable = false,
 	})
+	if self.transparent then
+		local hl = "Normal:BuffonWindow,FloatBorder:BuffonWindow,FloatTitle:BuffonWindow,FloatFooter:BuffonWindow,"
+			.. "EndOfBuffer:BuffonWindow"
+		vim.api.nvim_set_option_value("winhighlight", hl, { win = self.win_id })
+	end
 	self:refresh_dimensions()
 end
 
